@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build / cache
+dist/
+dist-ssr/
+*.local
+stats.html
+
+# IDE / OS
+.idea/
+.vscode/
+.trae/
+.DS_Store
+*.iml
+
+# Env secrets (keep non-secret templates if needed)
+.env
+.env.*.local
+
+# Archives / vendor backups
+*.zip
+release-zip/
+v-form/vform3_pro_3.0.5_lib/
+v-form/lib/vuedraggable/dist_bak/
+v-form/index2.html
+v-form/index2_bak.html
