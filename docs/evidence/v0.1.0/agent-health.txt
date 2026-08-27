@@ -1,0 +1,5 @@
+﻿case: agent-health
+observed: {"ok":true,"service":"v-form-agent","port":3040,"deepseekConfigured":true}
+environment: local-windows; agent:3040
+sourceRevision: main@7a58b7e (working tree has uncommitted changes)
+capturedAt: 2026-08-27T12:32:07+08:00

@@ -57,6 +57,11 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3030,
        proxy: {
+          '/api/agent': {
+            target: env.VITE_AGENT_PROXY_TARGET || 'http://127.0.0.1:3040',
+            changeOrigin: true,
+          },
+          // 旧 Dify/Coze 直连路径保留旁路，主路径已切换本地 agent
           [env.VITE_APP_DIFY_API]: {
             target: 'http://192.168.1.56',
             changeOrigin: true,

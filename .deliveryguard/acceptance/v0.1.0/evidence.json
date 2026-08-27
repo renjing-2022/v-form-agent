@@ -1,0 +1,167 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.1.0",
+  "documents": [
+    {
+      "documentId": "ai-form-agent-prd",
+      "requirementIds": [
+        "fr-1-local-agent",
+        "fr-2-text-generate",
+        "fr-3-excel-generate",
+        "fr-4-confirm-apply",
+        "fr-5-ops-basics"
+      ]
+    },
+    {
+      "documentId": "ai-form-agent-design",
+      "requirementIds": [
+        "td-local-agent-service",
+        "td-fieldplan-pipeline",
+        "td-excel-layout-parse",
+        "td-security-boundary"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-local-agent",
+      "description": "本地 Agent 同机服务；密钥不出前端；主路径走 /api/agent",
+      "caseIds": ["agent-health", "agent-proxy-path", "frontend-no-secret"]
+    },
+    {
+      "id": "fr-2-text-generate",
+      "description": "自然语言整表生成返回 summary/warnings/formJson",
+      "caseIds": ["text-generate-api", "agent-smoke"]
+    },
+    {
+      "id": "fr-3-excel-generate",
+      "description": "评估量表 Excel 解析并生成分区与评分单选题",
+      "caseIds": ["excel-generate-api", "agent-smoke", "ui-excel-canvas-apply-e2e"]
+    },
+    {
+      "id": "fr-4-confirm-apply",
+      "description": "生成后确认再应用；校验失败不写画布；可应用到设计器",
+      "caseIds": [
+        "apply-confirm-wiring",
+        "ui-canvas-apply-e2e",
+        "ui-excel-canvas-apply-e2e"
+      ]
+    },
+    {
+      "id": "fr-5-ops-basics",
+      "description": "错误提示与上传限制等基础可运维能力",
+      "caseIds": [
+        "empty-upload-negative",
+        "agent-health",
+        "ui-invalid-upload-preserves-canvas"
+      ]
+    },
+    {
+      "id": "td-local-agent-service",
+      "description": "agent 服务与 Vite 代理契约落地",
+      "caseIds": ["agent-health", "agent-proxy-path"]
+    },
+    {
+      "id": "td-fieldplan-pipeline",
+      "description": "FieldPlan + Assembler + Validator 合规组装链路",
+      "caseIds": ["fieldplan-assemble-contract", "agent-smoke"]
+    },
+    {
+      "id": "td-excel-layout-parse",
+      "description": "评估量表版式 Excel 解析而非表头字段表",
+      "caseIds": ["excel-generate-api"]
+    },
+    {
+      "id": "td-security-boundary",
+      "description": "DeepSeek Key 仅服务端；前端不再硬编码外部 Bearer",
+      "caseIds": ["frontend-no-secret"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "agent-health",
+      "title": "Agent 健康检查可用且 DeepSeek 已配置",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.1.0/agent-health.txt"]
+    },
+    {
+      "id": "agent-smoke",
+      "title": "agent npm smoke（文本/Excel/负例单元）通过",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.1.0/agent-smoke.txt"]
+    },
+    {
+      "id": "text-generate-api",
+      "title": "自然语言 POST /api/agent/v1/generate 返回合规表单",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.1.0/text-generate-api.txt"]
+    },
+    {
+      "id": "excel-generate-api",
+      "title": "评估量表 Excel 生成分区与 radio 选项",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.1.0/excel-generate-api.txt"],
+      "note": "模型规划曾失败并回退启发式，仍产出分区与 radio 选项"
+    },
+    {
+      "id": "empty-upload-negative",
+      "title": "空 Excel 上传返回可读错误",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.1.0/empty-upload-negative.txt"]
+    },
+    {
+      "id": "frontend-no-secret",
+      "title": "前端源码不含 DeepSeek Key / 硬编码 PAT",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.1.0/frontend-no-secret.txt"]
+    },
+    {
+      "id": "agent-proxy-path",
+      "title": "前端主路径指向本地 /api/agent 代理",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.1.0/agent-proxy-path.txt"]
+    },
+    {
+      "id": "apply-confirm-wiring",
+      "title": "确认后再 loadFormJson，禁止静默覆盖",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.1.0/apply-confirm-wiring.txt"],
+      "note": "确认为 summary/warnings/控件数预览，非可视化表单渲染弹窗"
+    },
+    {
+      "id": "fieldplan-assemble-contract",
+      "title": "FieldPlan 组装与校验契约成立",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.1.0/fieldplan-assemble-contract.txt"]
+    },
+    {
+      "id": "ui-canvas-apply-e2e",
+      "title": "设计器 AI 面板端到端生成并应用到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.1.0/ui-canvas-apply-e2e.txt",
+        "docs/evidence/v0.1.0/ui-canvas-apply-e2e.png"
+      ],
+      "note": "Playwright mock Agent 验证本地代理、显式确认和画布控件渲染"
+    },
+    {
+      "id": "ui-excel-canvas-apply-e2e",
+      "title": "设计器上传评估量表 Excel 并应用评分题到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.1.0/ui-excel-canvas-apply-e2e.txt",
+        "docs/evidence/v0.1.0/ui-excel-canvas-apply-e2e.png"
+      ]
+    },
+    {
+      "id": "ui-invalid-upload-preserves-canvas",
+      "title": "空 Excel 显示错误且不破坏已有画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.1.0/ui-invalid-upload-preserves-canvas.txt",
+        "docs/evidence/v0.1.0/ui-invalid-upload-preserves-canvas.png"
+      ]
+    }
+  ]
+}

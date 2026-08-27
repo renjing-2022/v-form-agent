@@ -1,0 +1,5 @@
+﻿case: excel-generate-api
+observed: {"status":200,"summary":"已根据 Excel 生成「老年人认知能力专项评估 (1-5级)」，共 2 个分区、2 个字段","warnings":["模型规划失败，已回退启发式：[\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 1,\n    \"type\": \"array\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Array must contain at least 1 element(s)\",\n    \"path\": [\n      \"sections\",\n      0,\n      \"fields\"\n    ]\n  }\n]"],"widgetCount":4,"radioCount":2,"optionCount":5}
+environment: local-windows; agent:3040; synthetic assessment xlsx
+sourceRevision: main@7a58b7e
+capturedAt: 2026-08-26T18:51:09+08:00

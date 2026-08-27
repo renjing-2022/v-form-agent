@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/version.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.1.0",
+  "title": "v-form AI 表单生成 Agent MVP",
+  "documents": [
+    {
+      "id": "ai-form-agent-prd",
+      "type": "product-requirement",
+      "title": "v-form AI 表单生成 Agent（MVP）产品需求",
+      "ref": "docs/requirements/ai-form-agent-mvp.md",
+      "revision": 1,
+      "primary": true
+    },
+    {
+      "id": "ai-form-agent-design",
+      "type": "technical-design",
+      "title": "v-form AI 表单生成 Agent（MVP）技术设计",
+      "ref": "docs/design/ai-form-agent-mvp.md",
+      "revision": 1
+    }
+  ],
+  "openSpec": {
+    "changeId": "ai-form-agent-mvp",
+    "path": "openspec/changes/ai-form-agent-mvp",
+    "status": "applied"
+  },
+  "sources": [],
+  "acceptance": {
+    "status": "blocked",
+    "evidence": ".deliveryguard/acceptance/v0.1.0/evidence.json",
+    "report": "docs/acceptance/v0.1.0.md"
+  },
+  "deployments": [],
+  "release": {
+    "status": "pending"
+  }
+}

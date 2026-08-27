@@ -1,22 +1,74 @@
-// 修复 sendMessage 方法的参数格式
 import { get, post } from '@/utils/requestFetch';
-import { createRequestInstance } from '@/utils/requestFetch';
-
-// const customRequest = createRequestInstance('http://192.168.1.56/v1');
-// const customRequest = createRequestInstance('/dify-ai/v1');
-const customRequest = createRequestInstance(import.meta.env.VITE_APP_DIFY_API);
-const customRequestCoze = createRequestInstance(import.meta.env.VITE_APP_COZE_API);
-
-
-
 
 export function getModelList() {
   return get('/system/model/modelList').json();
 }
 
 export const send = (data) => post<null>('/chat/send', data);
-// 正确格式：将 headers 作为配置对象的属性传递
-export const sendMessage = (data) => customRequest.post<null>('/chat-messages', data);
-export const sendMessageCoze = (data) => customRequestCoze.post<null>('/chat', data);
-// export const sendMessage = (data) => post<null>('http://192.168.1.56/v1/chat-messages', data);
 
+/** @deprecated 已切换本地 Agent，保留空实现避免旧组件引用报错 */
+export const sendMessage = async () => {
+  throw new Error('Dify 直连已停用，请使用 generateFormByAgent');
+};
+
+/** @deprecated 已切换本地 Agent，保留空实现避免旧组件引用报错 */
+export const sendMessageCoze = async () => {
+  throw new Error('Coze 直连已停用，请使用 generateFormByAgent');
+};
+
+export type AgentGenerateResponse = {
+  summary: string;
+  warnings: string[];
+  formJson: {
+    widgetList: any[];
+    formConfig: Record<string, any>;
+  };
+  message?: string;
+};
+
+/**
+ * 本地 Agent 整表生成（主路径）
+ * - text: JSON body
+ * - excel: multipart file + optional prompt
+ */
+export async function generateFormByAgent(payload: {
+  mode: 'text' | 'excel';
+  prompt?: string;
+  file?: File | null;
+}): Promise<AgentGenerateResponse> {
+  const base = import.meta.env.VITE_APP_AGENT_API || '/api/agent';
+
+  if (payload.mode === 'excel') {
+    if (!payload.file) {
+      throw new Error('请先选择 Excel 文件');
+    }
+    const form = new FormData();
+    form.append('mode', 'excel');
+    if (payload.prompt) form.append('prompt', payload.prompt);
+    form.append('file', payload.file);
+
+    const res = await fetch(`${base}/v1/generate`, {
+      method: 'POST',
+      body: form,
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data?.message || `生成失败 (${res.status})`);
+    }
+    return data;
+  }
+
+  const res = await fetch(`${base}/v1/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      mode: 'text',
+      prompt: payload.prompt || '',
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data?.message || `生成失败 (${res.status})`);
+  }
+  return data;
+}

@@ -1,0 +1,8 @@
+case: ui-excel-canvas-apply-e2e
+status: pass
+observed: Synthetic assessment workbook returned 200; 9 scoring radio options and the expected assessment labels were visible after apply
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@7a58b7e6a8c3 (working tree has uncommitted changes)
+capturedAt: 2026-08-27T04:33:38.106Z
+durationMs: 2838
+screenshot: docs/evidence/v0.1.0/ui-excel-canvas-apply-e2e.png

@@ -25,3 +25,11 @@ v-form/vform3_pro_3.0.5_lib/
 v-form/lib/vuedraggable/dist_bak/
 v-form/index2.html
 v-form/index2_bak.html
+
+# Agent local artifacts
+agent/scripts/_smoke.xlsx
+agent/uploads/
+
+# Playwright local reports (stable acceptance evidence lives under docs/evidence/)
+e2e/playwright-report/
+e2e/test-results/

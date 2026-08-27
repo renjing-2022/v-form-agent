@@ -1,0 +1,5 @@
+﻿case: empty-upload-negative
+observed: {"status":400,"message":"上传文件为空"}
+environment: local-windows; agent:3040
+sourceRevision: main@7a58b7e
+capturedAt: 2026-08-26T18:51:09+08:00

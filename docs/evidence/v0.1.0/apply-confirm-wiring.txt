@@ -1,0 +1,6 @@
+case: apply-confirm-wiring
+observed: AiChat shows summary/warnings/widget-count after generate and requires explicit "应用到设计器" click; setting-panel applyAiFormJson validates formJson.widgetList then calls designer.loadFormJson; invalid formJson path returns error and does not write canvas
+environment: local-windows; code inspection of AiChat/index.vue and setting-panel/index.vue
+sourceRevision: main@7a58b7e (working tree includes uncommitted v0.1.0 implementation)
+capturedAt: 2026-08-26T18:51:40+08:00
+note: visual form render preview dialog is not implemented; confirmation preview is summary/warnings/count only

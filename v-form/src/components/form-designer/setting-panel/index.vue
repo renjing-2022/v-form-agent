@@ -167,7 +167,7 @@
 
       <el-tab-pane label="AI" name="3">
         <el-scrollbar class="setting-scrollbar">
-          <ai-chat></ai-chat>
+          <ai-chat @apply="applyAiFormJson"></ai-chat>
         </el-scrollbar>
       </el-tab-pane>
       <el-tab-pane :label="i18nt('designer.setting.dataSource')" name="4">
@@ -456,6 +456,24 @@ export default {
 
       this.selectedWidget.options[this.curEventName] = this.eventHandlerCode;
       this.showWidgetEventDialogFlag = false;
+    },
+
+    applyAiFormJson(formJson) {
+      if (!formJson || !Array.isArray(formJson.widgetList)) {
+        this.$message.error("AI 返回的 formJson 无效，未写入画布");
+        return;
+      }
+      if (!this.designer || typeof this.designer.loadFormJson !== "function") {
+        this.$message.error("设计器不可用，无法应用表单");
+        return;
+      }
+      const ok = this.designer.loadFormJson(formJson);
+      if (ok) {
+        this.designer.emitHistoryChange();
+        this.$message.success("已应用到设计器，可继续拖拽微调");
+      } else {
+        this.$message.warning("应用未生效，请检查返回的表单结构");
+      }
     },
   },
 };

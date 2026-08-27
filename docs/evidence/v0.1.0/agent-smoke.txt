@@ -1,0 +1,12 @@
+﻿case: agent-smoke
+observed: > v-form-agent-service@0.1.0 smoke
+> tsx scripts/smoke.ts
+
+[ok] text generate pipeline
+[ok] score option parse
+[ok] excel heuristic pipeline { sections: 3, warnings: [] }
+[ok] empty excel negative path
+SMOKE_PASSED
+environment: local-windows; node; agent package scripts
+sourceRevision: main@7a58b7e (working tree has uncommitted changes)
+capturedAt: 2026-08-27T12:32:07+08:00

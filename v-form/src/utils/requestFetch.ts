@@ -56,10 +56,7 @@ function jwtPlugin(): HookFetchPlugin<BaseResponse> {
     //     config.headers.set('appId', import.meta.env.VITE_APP_ID);
     //     config.headers.set('clientId', import.meta.env.VITE_APP_CLIENT_ID);
     //   }
-    //  config.headers.set('authorization', `Bearer app-HnO04J3kSzcUwu94Fgc0PcMT`);
-     config.headers.set('authorization', `Bearer pat_Fo9m4hmKRI1wFntYzIFS3xtqjXZkWzZ7DrST2JEhLzqHYqqlSbzHip1EG9R2sEbE`);
-      console.log('config', config);
-
+    // 旧 Coze/Dify Bearer 已移除；AI 主路径改为本地 /api/agent，不再在浏览器携带平台密钥。
       return config;
     },
     afterResponse: async (res) => {

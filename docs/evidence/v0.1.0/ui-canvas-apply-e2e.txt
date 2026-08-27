@@ -1,0 +1,8 @@
+case: ui-canvas-apply-e2e
+status: pass
+observed: POST /api/agent/v1/generate returned 200 through the Vite proxy; 7 top-level widgets were visible after explicit apply
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@7a58b7e6a8c3 (working tree has uncommitted changes)
+capturedAt: 2026-08-27T04:33:35.265Z
+durationMs: 15149
+screenshot: docs/evidence/v0.1.0/ui-canvas-apply-e2e.png
