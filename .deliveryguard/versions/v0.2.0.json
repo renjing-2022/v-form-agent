@@ -25,7 +25,14 @@
     "path": "openspec/changes/ai-form-multiturn-refine",
     "status": "applied"
   },
-  "sources": [],
+  "sources": [
+    {
+      "repositoryId": "app",
+      "branch": "main",
+      "commit": "26bbb3c92d8fca19a5602d8788dbb84f21b2fde8",
+      "status": "local"
+    }
+  ],
   "acceptance": {
     "status": "pending"
   },
