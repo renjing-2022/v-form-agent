@@ -72,3 +72,34 @@ export async function generateFormByAgent(payload: {
   }
   return data;
 }
+
+/**
+ * 基于当前画布 formJson 的多轮优化
+ */
+export async function refineFormByAgent(payload: {
+  instruction: string;
+  currentFormJson: AgentGenerateResponse['formJson'];
+  messages?: Array<{ role: 'user' | 'assistant'; content: string }>;
+}): Promise<AgentGenerateResponse> {
+  const base = import.meta.env.VITE_APP_AGENT_API || '/api/agent';
+  const res = await fetch(`${base}/v1/refine`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      instruction: payload.instruction,
+      currentFormJson: payload.currentFormJson,
+      messages: payload.messages || [],
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    const issueHint = Array.isArray(data?.issues)
+      ? `：${data.issues
+          .slice(0, 3)
+          .map((i: any) => i.message)
+          .join('；')}`
+      : '';
+    throw new Error((data?.message || `优化失败 (${res.status})`) + issueHint);
+  }
+  return data;
+}

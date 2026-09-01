@@ -3,6 +3,7 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import multipart from '@fastify/multipart'
 import { registerGenerateRoutes } from './routes/generate.js'
+import { registerRefineRoutes } from './routes/refine.js'
 
 const port = Number(process.env.PORT || 3040)
 
@@ -23,6 +24,7 @@ async function main() {
   }))
 
   await registerGenerateRoutes(app)
+  await registerRefineRoutes(app)
 
   await app.listen({ port, host: '0.0.0.0' })
 }

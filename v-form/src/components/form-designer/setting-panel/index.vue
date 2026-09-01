@@ -167,7 +167,10 @@
 
       <el-tab-pane label="AI" name="3">
         <el-scrollbar class="setting-scrollbar">
-          <ai-chat @apply="applyAiFormJson"></ai-chat>
+          <ai-chat
+            :get-current-form-json="getCurrentFormJsonForAi"
+            @apply="applyAiFormJson"
+          ></ai-chat>
         </el-scrollbar>
       </el-tab-pane>
       <el-tab-pane :label="i18nt('designer.setting.dataSource')" name="4">
@@ -470,10 +473,18 @@ export default {
       const ok = this.designer.loadFormJson(formJson);
       if (ok) {
         this.designer.emitHistoryChange();
-        this.$message.success("已应用到设计器，可继续拖拽微调");
+        this.$message.success("已整表覆盖应用到设计器，可继续拖拽微调");
       } else {
         this.$message.warning("应用未生效，请检查返回的表单结构");
       }
+    },
+
+    getCurrentFormJsonForAi() {
+      if (!this.designer) return null;
+      return {
+        widgetList: JSON.parse(JSON.stringify(this.designer.widgetList || [])),
+        formConfig: JSON.parse(JSON.stringify(this.designer.formConfig || {})),
+      };
     },
   },
 };

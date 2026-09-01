@@ -1,7 +1,7 @@
 import type { FieldType } from '../schemas/fieldPlan.js'
 
-/** MVP 白名单，对齐 v-form widgetsConfig.js 关键字段语义（精简副本） */
-export const WIDGET_WHITELIST: FieldType[] = [
+/** 整表生成 / FieldPlan 可用字段类型 */
+export const FIELD_WHITELIST: FieldType[] = [
   'input',
   'textarea',
   'radio',
@@ -12,12 +12,37 @@ export const WIDGET_WHITELIST: FieldType[] = [
   'divider',
 ]
 
+/** refine 可新建的容器类型（对齐 widgetsConfig.js） */
+export const CONTAINER_CREATE_WHITELIST = ['tab', 'tab-pane', 'grid', 'grid-col'] as const
+
+export type ContainerCreateType = (typeof CONTAINER_CREATE_WHITELIST)[number]
+
+/** 校验用：生成路径允许的类型 */
+export const WIDGET_WHITELIST: Array<FieldType | ContainerCreateType> = [
+  ...FIELD_WHITELIST,
+  ...CONTAINER_CREATE_WHITELIST,
+]
+
+/** refine 新建节点允许的类型 */
+export const REFINE_CREATE_WHITELIST: Array<FieldType | ContainerCreateType> = [
+  ...FIELD_WHITELIST,
+  ...CONTAINER_CREATE_WHITELIST,
+]
+
 export const MAX_FIELDS = 120
 export const MAX_DEPTH_HINT = 4
 
-type Template = {
+type FieldTemplate = {
   type: FieldType
   icon: string
+  formItemFlag?: boolean
+  options: Record<string, unknown>
+}
+
+type ContainerTemplate = {
+  type: ContainerCreateType
+  icon: string
+  category: 'container'
   formItemFlag?: boolean
   options: Record<string, unknown>
 }
@@ -45,7 +70,7 @@ const commonFieldOptions = {
   onValidate: '',
 }
 
-export const widgetTemplates: Record<FieldType, Template> = {
+export const widgetTemplates: Record<FieldType, FieldTemplate> = {
   input: {
     type: 'input',
     icon: 'text-field',
@@ -217,6 +242,65 @@ export const widgetTemplates: Record<FieldType, Template> = {
       customClass: '',
       onCreated: '',
       onMounted: '',
+    },
+  },
+}
+
+export const containerTemplates: Record<ContainerCreateType, ContainerTemplate> = {
+  tab: {
+    type: 'tab',
+    icon: 'tab',
+    category: 'container',
+    options: {
+      name: '',
+      tabType: 'border-card',
+      tabPosition: 'top',
+      hidden: false,
+      customClass: '',
+      onTabClick: '',
+    },
+  },
+  'tab-pane': {
+    type: 'tab-pane',
+    icon: 'tab-pane',
+    category: 'container',
+    options: {
+      name: '',
+      label: '',
+      hidden: false,
+      active: false,
+      disabled: false,
+      customClass: '',
+    },
+  },
+  grid: {
+    type: 'grid',
+    icon: 'column-2-grid',
+    category: 'container',
+    options: {
+      name: '',
+      hidden: false,
+      gutter: 12,
+      colHeight: null,
+      customClass: '',
+    },
+  },
+  'grid-col': {
+    type: 'grid-col',
+    icon: 'grid-col',
+    category: 'container',
+    options: {
+      name: '',
+      hidden: false,
+      span: 12,
+      offset: 0,
+      push: 0,
+      pull: 0,
+      responsive: false,
+      md: 12,
+      sm: 12,
+      xs: 24,
+      customClass: '',
     },
   },
 }

@@ -1,5 +1,5 @@
 import { fieldPlanSchema, type ExcelDigest, type FieldPlan } from '../schemas/fieldPlan.js'
-import { WIDGET_WHITELIST } from '../knowledge/widgetWhitelist.js'
+import { FIELD_WHITELIST } from '../knowledge/widgetWhitelist.js'
 import { chatCompletion } from './deepseek.js'
 
 function extractJsonObject(text: string): unknown {
@@ -18,7 +18,7 @@ function extractJsonObject(text: string): unknown {
 
 const systemPrompt = `你是 v-form 低代码表单规划器。根据用户需求输出 FieldPlan JSON（不要 Markdown）。
 规则：
-1. 只允许 type: ${WIDGET_WHITELIST.join(', ')}
+1. 只允许 type: ${FIELD_WHITELIST.join(', ')}
 2. 评估/量表题目优先用 radio，options 的 value 用分值，label 用评分说明
 3. 不要输出事件回调代码
 4. layout 用 sectioned 或 single-column

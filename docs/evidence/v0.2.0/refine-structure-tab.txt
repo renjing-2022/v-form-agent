@@ -1,0 +1,7 @@
+case: refine-structure-tab
+status: pass
+observed: wrapInTabs produced tab; string-target coerce path also produced tab; validate issues=0
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: working-tree-uncommitted
+capturedAt: 2026-09-01T09:13:46.934Z
+type: api+smoke

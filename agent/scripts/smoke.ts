@@ -2,8 +2,10 @@ import * as XLSX from 'xlsx'
 import { assembleFormJson } from '../src/services/assembler.js'
 import { parseAssessmentExcel } from '../src/services/excelParser.js'
 import { heuristicPlanFromExcel, mockPlanFromText, parseScoreOptions } from '../src/services/planner.js'
-import { validateFormJson } from '../src/services/validator.js'
+import { collectWidgetIds, validateFormJson } from '../src/services/validator.js'
 import { planFromText } from '../src/services/planner.js'
+import { mockRefinePlan } from '../src/services/refinePlanner.js'
+import { applyRefinePlan } from '../src/services/refineMerger.js'
 
 function assert(cond: unknown, msg: string) {
   if (!cond) throw new Error(msg)
@@ -62,6 +64,65 @@ async function main() {
   // ensure mockPlan still valid
   const mock = mockPlanFromText('x')
   assert(mock.sections.length > 0, 'mock plan empty')
+
+  // 5) refine: tab wrap + options + formula (two-round)
+  const existingIds = collectWidgetIds(textJson)
+  const plan1 = mockRefinePlan('给表单增加两个 tab：基本信息 / 评估题目', textJson)
+  const merge1 = applyRefinePlan(textJson, plan1)
+  const issues1 = validateFormJson(merge1.formJson, { mode: 'refine', existingIds })
+  assert(issues1.length === 0, `refine round1 validate failed: ${JSON.stringify(issues1)}`)
+  assert(
+    merge1.formJson.widgetList.some((w: any) => w.type === 'tab'),
+    'refine round1 missing tab',
+  )
+  console.log('[ok] refine round1 wrapInTabs')
+
+  // 5b) model often returns string targets — coerce must succeed
+  const { normalizeRefinePlanRaw } = await import('../src/services/refinePlanner.js')
+  const { refinePlanSchema } = await import('../src/schemas/refinePlan.js')
+  const coercedPlan = refinePlanSchema.parse(
+    normalizeRefinePlanRaw({
+      summary: 'coerce string targets',
+      warnings: [],
+      operations: [
+        {
+          op: 'wrapInTabs',
+          panes: [
+            { label: 'A', targets: [String((textJson.widgetList[0] as any)?.options?.name || 'name')] },
+            { label: 'B', targets: [] },
+          ],
+        },
+      ],
+    }),
+  )
+  const coercedMerge = applyRefinePlan(textJson, coercedPlan)
+  assert(
+    coercedMerge.formJson.widgetList.some((w: any) => w.type === 'tab'),
+    'string-target coerce wrapInTabs failed',
+  )
+  console.log('[ok] refine string-target coerce')
+
+  const existingIds2 = collectWidgetIds(merge1.formJson)
+  const plan2 = mockRefinePlan('优化选项分值，并增加总分公式', merge1.formJson)
+  const merge2 = applyRefinePlan(merge1.formJson, plan2)
+  const issues2 = validateFormJson(merge2.formJson, { mode: 'refine', existingIds: existingIds2 })
+  assert(issues2.length === 0, `refine round2 validate failed: ${JSON.stringify(issues2)}`)
+  console.log('[ok] refine round2 options/formula')
+
+  // 6) refine validation failure path: invent illegal new type
+  const badJson = structuredClone(textJson) as any
+  badJson.widgetList.push({
+    type: 'data-table',
+    id: 'new_illegal_1',
+    options: { name: 'bad_table' },
+    widgetList: [],
+  })
+  const badIssues = validateFormJson(badJson, { mode: 'refine', existingIds })
+  assert(
+    badIssues.some((i) => i.message.includes('refine create whitelist')),
+    'expected refine create whitelist failure',
+  )
+  console.log('[ok] refine reject illegal new type')
 
   console.log('SMOKE_PASSED')
 }
