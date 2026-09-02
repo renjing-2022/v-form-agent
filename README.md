@@ -4,7 +4,8 @@
 
 ## 当前版本
 
-- DeliveryGuard 版本：`v0.2.0`（阶段：`specified`；OpenSpec `applied`；source=`local`；acceptance=`pending`）
+- DeliveryGuard 版本：`v0.2.0`（阶段：`released`；OpenSpec `applied`；acceptance=`passed`）
+- 发布锚点：https://github.com/renjing-2022/v-form-agent/releases/tag/v0.2.0
 - OpenSpec change：`ai-form-multiturn-refine`
 - 已发布：`v0.1.0`（整表生成 MVP）
 - 验收报告：`docs/acceptance/v0.2.0.md`
