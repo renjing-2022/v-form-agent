@@ -57,7 +57,8 @@
 - [x] `cd e2e && npm run typecheck` 通过
 - [x] 按 DeliveryGuard E2E 约定新增/维护 Playwright 用例及 case-map，运行 v0.3.0 验收候选
 - [x] 复跑 v0.2.0 主路径回归：生成、tab/options/formula、显式文案、样式禁改文案
-- [ ] 实现完成后仅从真实 revision 记录 source；建立 v0.3.0 Evidence Manifest 并验证后再更新 acceptance
+- [x] 实现完成后仅从真实 revision 记录 source（`2c910d17` on `main`）
+- [ ] 建立 v0.3.0 Evidence Manifest 并验证后再更新 acceptance
 - [x] 运行 `deliveryguard check`，在无诊断且任务完成后再申请归档 OpenSpec
 
 ## Acceptance candidates
