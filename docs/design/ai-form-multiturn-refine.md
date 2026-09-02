@@ -36,6 +36,21 @@
 3. P0 **优先 formula**，不开放自由 `onChange` / `cssCode` 作为验收路径。
 4. 生成入口保留：空画布或显式「重新生成」走既有 generate。
 
+### 规划器文案策略（FR-6 技术落点）
+
+| 用户意图 | 允许的操作 | 禁止 |
+|---|---|---|
+| 明确改文案/标题/选项文字 | `updateField.patch.label` / `textContent` / `optionItems` | — |
+| 改选项分值/分制（业务配置） | `optionItems`（value + label 若用户要求） | 无明确 options 意图时改 label 冒充布局修复 |
+| 样式/布局/重叠/间距/颜色/字体 | `warnings` 说明 P0 无 CSS；结构/tab/公式若相关 | **仅**改 label/textContent/option label 使视觉「变好」 |
+| 结构/tab/公式 | `wrapInTabs` / `addField` / `setFormula` | 顺带改未提及字段文案 |
+
+实现：
+
+1. **Planner system prompt**（`refinePlanner.ts`）写入上述规则；
+2. **代码兜底** `enforceRefineTextPolicy(instruction, plan)`：样式意图且无明确改文案/选项意图时，剔除 copy 类 `updateField.patch`；若剔除后无可应用 op → **422** + warnings；
+3. Issue / Repair：见 `docs/issues/refine-no-text-for-style.md`、`.deliveryguard/repairs/refine-text-style-workaround.json`。
+
 ## 3. API 契约（P0）
 
 ### 方案（二选一，实现时定一）

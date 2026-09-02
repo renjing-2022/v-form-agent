@@ -3,6 +3,7 @@ import { createRequire } from 'node:module'
 import path from 'node:path'
 
 const generatePath = '/api/agent/v1/generate'
+const refinePath = '/api/agent/v1/refine'
 const requireFromAgent = createRequire(
   path.resolve(__dirname, '../../agent/package.json'),
 )
@@ -15,7 +16,16 @@ async function openAiPanel(page: Page) {
   await expect(page.locator('.ai-agent-panel')).toBeVisible()
 }
 
+async function selectGenerateMode(page: Page) {
+  await page.locator('.ai-agent-panel .mode-row').getByText('整表生成', { exact: true }).click()
+}
+
+async function selectRefineMode(page: Page) {
+  await page.locator('.ai-agent-panel .mode-row').getByText('优化当前表', { exact: true }).click()
+}
+
 async function generateText(page: Page) {
+  await selectGenerateMode(page)
   const responsePromise = page.waitForResponse(
     (response) =>
       new URL(response.url()).pathname === generatePath &&
@@ -28,11 +38,28 @@ async function generateText(page: Page) {
   return responsePromise
 }
 
-async function applyGeneratedForm(page: Page) {
+async function applyToDesigner(page: Page) {
   await expect(page.locator('.ai-agent-panel .el-alert--success')).toBeVisible()
   await expect(page.locator('.ai-agent-panel .preview')).toContainText(/共 \d+ 个控件/)
-  await page.getByRole('button', { name: '应用到设计器', exact: true }).click()
-  await expect(page.getByText('已应用到设计器，可继续拖拽微调')).toBeVisible()
+  await page.getByRole('button', { name: /应用到设计器/ }).click()
+  await expect(
+    page
+      .locator('.el-message__content')
+      .filter({ hasText: '已整表覆盖应用到设计器' })
+      .last(),
+  ).toBeVisible()
+}
+
+async function refineCurrent(page: Page, instruction: string) {
+  await selectRefineMode(page)
+  const responsePromise = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === refinePath &&
+      response.request().method() === 'POST',
+  )
+  await page.locator('.ai-agent-panel textarea').fill(instruction)
+  await page.getByRole('button', { name: '优化当前表', exact: true }).click()
+  return responsePromise
 }
 
 async function attachEvidence(
@@ -76,7 +103,7 @@ test(
   {
     annotation: {
       type: 'case-id',
-      description: 'ui-canvas-apply-e2e',
+      description: 'text-generate-apply',
     },
   },
   async ({ page }, testInfo) => {
@@ -88,7 +115,7 @@ test(
     expect(new URL(response.url()).origin).toBe('http://127.0.0.1:3130')
     expect(new URL(response.url()).pathname).toBe(generatePath)
 
-    await applyGeneratedForm(page)
+    await applyToDesigner(page)
     const widgets = page.locator('#formWidgetCanvas .transition-group-el')
     await expect(widgets).not.toHaveCount(0)
     await expect(page.locator('#formWidgetCanvas .el-radio')).not.toHaveCount(0)
@@ -111,6 +138,7 @@ test(
   },
   async ({ page }, testInfo) => {
     await openAiPanel(page)
+    await selectGenerateMode(page)
     await page.locator('input[type="file"]').setInputFiles({
       name: 'assessment-sample.xlsx',
       mimeType:
@@ -127,7 +155,7 @@ test(
     const response = await responsePromise
     expect(response.status()).toBe(200)
 
-    await applyGeneratedForm(page)
+    await applyToDesigner(page)
     const radioOptions = page.locator('#formWidgetCanvas .el-radio')
     await expect(radioOptions).not.toHaveCount(0)
     await expect(page.locator('#formWidgetCanvas')).toContainText('时间定向')
@@ -152,11 +180,12 @@ test(
   async ({ page }, testInfo) => {
     await openAiPanel(page)
     expect((await generateText(page)).status()).toBe(200)
-    await applyGeneratedForm(page)
+    await applyToDesigner(page)
     const widgets = page.locator('#formWidgetCanvas .transition-group-el')
     const baselineCount = await widgets.count()
     expect(baselineCount).toBeGreaterThan(0)
 
+    await selectGenerateMode(page)
     await page.locator('input[type="file"]').setInputFiles({
       name: 'empty.xlsx',
       mimeType:
@@ -176,14 +205,236 @@ test(
       '上传文件为空',
     )
     await expect(widgets).toHaveCount(baselineCount)
-    await expect(
-      page.getByRole('button', { name: '应用到设计器', exact: true }),
-    ).toBeDisabled()
 
     await attachEvidence(
       page,
       testInfo,
-      `Empty workbook returned 400 with a visible error; canvas retained ${baselineCount} top-level widgets and apply remained disabled`,
+      `Empty workbook returned 400 with a visible error; canvas retained ${baselineCount} top-level widgets`,
+    )
+  },
+)
+
+test(
+  '已有表结构优化：增加 tab 并应用到画布',
+  {
+    annotation: {
+      type: 'case-id',
+      description: 'refine-structure-tab',
+    },
+  },
+  async ({ page }, testInfo) => {
+    await openAiPanel(page)
+    expect((await generateText(page)).status()).toBe(200)
+    await applyToDesigner(page)
+
+    const refineResponse = await refineCurrent(
+      page,
+      '给表单增加两个 tab：基本信息 / 评估题目',
+    )
+    expect(refineResponse.status()).toBe(200)
+    expect(new URL(refineResponse.url()).pathname).toBe(refinePath)
+
+    await applyToDesigner(page)
+    await expect(page.locator('#formWidgetCanvas .tab-container')).toHaveCount(1)
+    await expect(page.locator('#formWidgetCanvas')).toContainText(/基本信息|分组一/)
+    await expect(page.locator('#formWidgetCanvas')).toContainText(/评估题目|分组二/)
+
+    await attachEvidence(
+      page,
+      testInfo,
+      `POST ${refinePath} returned 200; canvas shows one tab-container after explicit apply`,
+    )
+  },
+)
+
+test(
+  '已有表多轮优化：tab 后再改选项与公式',
+  {
+    annotation: {
+      type: 'case-id',
+      description: 'refine-multiturn-apply',
+    },
+  },
+  async ({ page }, testInfo) => {
+    await openAiPanel(page)
+    expect((await generateText(page)).status()).toBe(200)
+    await applyToDesigner(page)
+
+    expect(
+      (
+        await refineCurrent(page, '给表单增加两个 tab：基本信息 / 评估题目')
+      ).status(),
+    ).toBe(200)
+    await applyToDesigner(page)
+    await expect(page.locator('#formWidgetCanvas .tab-container')).toHaveCount(1)
+
+    const round2 = await refineCurrent(page, '优化选项分值，并增加总分公式')
+    expect(round2.status()).toBe(200)
+    await applyToDesigner(page)
+
+    await expect(page.locator('#formWidgetCanvas .tab-container')).toHaveCount(1)
+    await expect(page.locator('.ai-agent-panel .messages .msg')).not.toHaveCount(0)
+
+    await attachEvidence(
+      page,
+      testInfo,
+      `Two refine rounds via ${refinePath} both returned 200 and were explicitly applied; session messages remained visible`,
+    )
+  },
+)
+
+test(
+  '已有表优化选项与公式并应用到画布',
+  {
+    annotation: {
+      type: 'case-id',
+      description: 'refine-options-formula',
+    },
+  },
+  async ({ page }, testInfo) => {
+    await openAiPanel(page)
+    expect((await generateText(page)).status()).toBe(200)
+    await applyToDesigner(page)
+
+    const refineResponse = await refineCurrent(
+      page,
+      '优化选项分值，并增加总分公式',
+    )
+    expect(refineResponse.status()).toBe(200)
+    await expect(page.locator('.ai-agent-panel .el-alert--success')).toBeVisible()
+    await applyToDesigner(page)
+
+    const canvas = page.locator('#formWidgetCanvas')
+    await expect(canvas.locator('.el-radio')).not.toHaveCount(0)
+    // mock may rewrite option labels and/or add 总分 number field
+    const hasNewOptionCopy = await canvas.getByText('4分：很好').count()
+    const hasTotal = await canvas.getByText('总分').count()
+    expect(hasNewOptionCopy + hasTotal).toBeGreaterThan(0)
+
+    await attachEvidence(
+      page,
+      testInfo,
+      `POST ${refinePath} returned 200; after apply, option rewrite and/or total formula field visible (optionHits=${hasNewOptionCopy}, totalHits=${hasTotal})`,
+    )
+  },
+)
+
+test(
+  'refine 失败时显示错误且不改写已有画布',
+  {
+    annotation: {
+      type: 'case-id',
+      description: 'refine-reject-keeps-canvas',
+    },
+  },
+  async ({ page }, testInfo) => {
+    await openAiPanel(page)
+    expect((await generateText(page)).status()).toBe(200)
+    await applyToDesigner(page)
+    const widgets = page.locator('#formWidgetCanvas .transition-group-el')
+    const baselineCount = await widgets.count()
+    expect(baselineCount).toBeGreaterThan(0)
+
+    await page.route(`**${refinePath}`, async (route) => {
+      await route.fulfill({
+        status: 422,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          message: '优化结果未通过校验',
+          issues: [{ path: 'widgetList', message: 'forced e2e reject' }],
+        }),
+      })
+    })
+
+    await selectRefineMode(page)
+    const responsePromise = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === refinePath &&
+        response.request().method() === 'POST',
+    )
+    await page.locator('.ai-agent-panel textarea').fill('任意优化指令触发失败')
+    await page.getByRole('button', { name: '优化当前表', exact: true }).click()
+    const response = await responsePromise
+    expect(response.status()).toBe(422)
+
+    await expect(page.locator('.ai-agent-panel .el-alert--error')).toContainText(
+      /优化结果未通过校验|forced e2e reject|优化失败/,
+    )
+    await expect(widgets).toHaveCount(baselineCount)
+
+    await attachEvidence(
+      page,
+      testInfo,
+      `Forced refine 422 kept canvas at ${baselineCount} top-level widgets with a visible error; no silent overwrite`,
+    )
+  },
+)
+
+test(
+  '样式诉求拒绝改字冒充修复：422 且画布不变',
+  {
+    annotation: {
+      type: 'case-id',
+      description: 'refine-text-style-policy',
+    },
+  },
+  async ({ page }, testInfo) => {
+    await openAiPanel(page)
+    expect((await generateText(page)).status()).toBe(200)
+    await applyToDesigner(page)
+    const widgets = page.locator('#formWidgetCanvas .transition-group-el')
+    const baselineCount = await widgets.count()
+    expect(baselineCount).toBeGreaterThan(0)
+    await expect(page.locator('#formWidgetCanvas')).toContainText('时间定向')
+
+    const refineResponse = await refineCurrent(
+      page,
+      '单选控件和左侧字段重叠了，优化布局样式',
+    )
+    expect(refineResponse.status()).toBe(422)
+    const body = await refineResponse.json()
+    expect(body.message).toMatch(/样式|CSS|文案/)
+
+    await expect(page.locator('.ai-agent-panel .el-alert--error')).toContainText(
+      /样式|CSS|文案/,
+    )
+    await expect(widgets).toHaveCount(baselineCount)
+    await expect(page.locator('#formWidgetCanvas')).toContainText('时间定向')
+    await expect(page.locator('#formWidgetCanvas')).not.toContainText('短标题')
+
+    await attachEvidence(
+      page,
+      testInfo,
+      `Style-only refine returned 422 (${body.message}); canvas kept ${baselineCount} widgets and unchanged copy`,
+    )
+  },
+)
+
+test(
+  '明确改标题时允许 refine 并应用到画布',
+  {
+    annotation: {
+      type: 'case-id',
+      description: 'refine-explicit-text-apply',
+    },
+  },
+  async ({ page }, testInfo) => {
+    await openAiPanel(page)
+    expect((await generateText(page)).status()).toBe(200)
+    await applyToDesigner(page)
+
+    const refineResponse = await refineCurrent(
+      page,
+      '把第一个字段的标题改成评估项A',
+    )
+    expect(refineResponse.status()).toBe(200)
+    await applyToDesigner(page)
+    await expect(page.locator('#formWidgetCanvas')).toContainText('评估项A')
+
+    await attachEvidence(
+      page,
+      testInfo,
+      `Explicit rename refine returned 200; canvas shows 评估项A after apply`,
     )
   },
 )

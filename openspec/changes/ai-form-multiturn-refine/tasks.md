@@ -34,20 +34,18 @@
 
 ## Acceptance candidates
 
-Planned proof for this change. Status values: `planned` | `reuse` | `implemented` | `verified` | `deferred`.
-Only Playwright (or other non-exploratory) runs that write `docs/evidence/<version>/<case-id>.*` may move a UI case to `verified`.
-agent-browser output under `docs/exploratory/` is discovery only.
-
-本轮按产品要求**不跑 Playwright**；原 playwright 候选改为 `api+static` / `api+smoke` 取证，证据见 `docs/evidence/v0.2.0/<case-id>.txt`。再生：`cd agent && npm run acceptance:cases`。
+再生：`cd e2e && npm test`（`EVIDENCE_VERSION=v0.2.0`）；Agent：`cd agent && npm run acceptance:cases`。
 
 | case-id | Requirement id(s) | Type | Verification notes | Exploratory? | Status |
 |---|---|---|---|---|---|
-| `agent-health` | `fr-1` (v0.1 reuse) | api | health 路由 + refine 注册；`docs/evidence/v0.2.0/agent-health.txt` | no | verified |
-| `text-generate-apply` | `FR-1` 生成入口 | api+static | generate 管道 + AiChat 显式 apply 接线；Playwright deferred | no | verified |
-| `refine-multiturn-apply` | `FR-2` `FR-5` | api+static | 两轮 refine 合入成功；UI 仍需确认 apply | no | verified |
-| `refine-structure-tab` | `FR-3` | api+smoke | wrapInTabs + 字符串 targets 归一化 | no | verified |
-| `refine-options-formula` | `FR-3` `FR-4` | api+smoke | 第二轮 options/公式 | no | verified |
-| `refine-reject-keeps-canvas` | `FR-5` | api+static | 非法新建类型校验拒绝 + 无 lastResult 不可 apply | no | verified |
+| `agent-health` | `td-refine-endpoint` | api/static | health + refine 注册 | no | verified |
+| `text-generate-apply` | `FR-1` `FR-5` | playwright | 空画布生成并确认应用 | no | verified |
+| `refine-multiturn-apply` | `FR-2` `FR-5` | playwright | 两轮 refine 后应用到画布 | no | verified |
+| `refine-structure-tab` | `FR-3` | playwright | wrapInTabs 后画布出现 tab | no | verified |
+| `refine-options-formula` | `FR-3` `FR-4` | playwright | options/公式优化后可见 | no | verified |
+| `refine-reject-keeps-canvas` | `FR-5` | playwright | refine 422 不改写画布 | no | verified |
+| `agent-smoke-refine` | smoke | smoke | `npm run smoke` / acceptance:cases | no | verified |
+| `frontend-no-secret` | `td-security-boundary` | static | 前端无 DeepSeek Key / PAT | no | verified |
 
 ### Candidate rules
 
@@ -55,4 +53,4 @@ agent-browser output under `docs/exploratory/` is discovery only.
 2. New UI case-ids must be added to `.agents/skills/deliveryguard-e2e/references/case-map.md` when implemented.
 3. If exploratory finds a bug that becomes a new case, append a row to `docs/e2e/promotion-log.md` when the Playwright case lands.
 4. Do not check a candidate as `verified` until evidence exists and `deliveryguard acceptance validate` is clean for in-scope updates.
-5. 本 change 明确延后 Playwright；上述 `verified` 仅表示非 UI E2E 证据已落盘，**不等于** DeliveryGuard Manifest `acceptance.status=passed`。
+5. Manifest `acceptance.status=passed` 仍受 source=`submitted|merged` 门禁约束；当前 source 若为 `local` 则版本 acceptance 保持 `pending`。

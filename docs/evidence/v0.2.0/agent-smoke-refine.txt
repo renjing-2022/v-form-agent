@@ -1,5 +1,7 @@
 case: agent-smoke-refine
-observed: npm run typecheck passed; npm run smoke passed with refine round1 wrapInTabs, refine round2 options/formula, refine reject illegal new type; HTTP POST /api/agent/v1/generate then /api/agent/v1/refine on :3041 returned hasTab=true
-environment: local-windows; node; agent package scripts; AGENT_ALLOW_MOCK=1 for smoke
-note: Playwright UI cases for v0.2.0 remain planned (not verified here)
-capturedAt: 2026-09-01T17:05:00+08:00
+status: pass
+observed: npm run typecheck passed; npm run smoke -> SMOKE_PASSED (text/excel generate regression, refine wrapInTabs, string-target coerce, options/formula round2, illegal type reject); npm run acceptance:cases -> ACCEPTANCE_CASES_PASSED
+environment: local-windows; node; agent package scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: main@26bbb3c92d8fca19a5602d8788dbb84f21b2fde8
+capturedAt: 2026-09-01T09:25:00.000Z
+note: Playwright UI deferred for this version by product request

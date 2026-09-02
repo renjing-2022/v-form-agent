@@ -5,7 +5,7 @@
 | 文档 ID | `ai-form-multiturn-refine-prd` |
 | 类型 | product-requirement |
 | 目标版本 | `v0.2.0` |
-| 状态 | 已确认范围（待实现） |
+| 状态 | 已实现；验收证据已齐（版本 acceptance 仍 pending，待 source submitted） |
 | 关联 OpenSpec | `ai-form-multiturn-refine` |
 
 ## 1. 背景与问题
@@ -78,6 +78,14 @@
 - 返回 `{ summary, warnings[], formJson }`；
 - 用户确认后整表 `loadFormJson`；校验失败不写画布。
 
+### FR-6 文案修改边界（禁止「改字冒充样式修复」）
+
+- 表单字段的 **label、textContent、选项 label** 等展示文字，**仅当**用户话术**明确**要求改文案/改标题/改选项文字时，才允许通过 refine 修改。
+- 用户描述 **样式、布局、对齐、间距、重叠、颜色、字体** 等视觉问题时：
+  - **禁止**通过缩短/改写 label 或 optionItems 文案来使问题「看起来消失」；
+  - 应通过 `warnings` 说明 P0 不支持自由 CSS，引导用户手动样式或改用允许的结构/options/公式指令。
+- 未明确要求改文案时，refine 对未提及字段的文案必须保持不变（与 FR-3 的 id/name 保留策略一致）。
+
 ## 7. 验收标准（产品层）
 
 1. 空画布仍可完成至少一次整表生成并应用。
@@ -85,6 +93,7 @@
 3. 至少覆盖：一类结构变更（如增加 tab 或调整分区）、一类 options 变更、一类公式字段变更（或明确 warnings 降级且不破坏画布）。
 4. 未确认前画布不被静默覆盖；非法结果有可读错误。
 5. DeepSeek Key 仍仅存在于 Agent 服务端。
+6. 样式/布局类指令在未明确要求改文案时，不得静默修改字段或选项文字；若无法通过允许能力解决，应给出可读 warning 或拒绝（422），而不是改字规避。
 
 ## 8. 约束与假设
 
@@ -98,3 +107,4 @@
 - 深嵌套与全组件知识不全导致组装失败率高 → P0 以可校验白名单+模板扩展为主，失败进 warnings/错误；
 - 整表覆盖误伤未表达的手改 → 尽量按 id/name 保留未改节点，并在 UI 提示「确认将覆盖当前表」；
 - 大 JSON 多轮超上下文 → 可做摘要/裁剪，但必须以每轮最新 formJson 为真相源。
+- LLM 为规避 P0 无 CSS，可能改文案冒充样式修复 → 产品/Planner/代码三层约束（见 FR-6 与 issue `docs/issues/refine-no-text-for-style.md`）。

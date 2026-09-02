@@ -1,0 +1,46 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/repair-case.schema.json",
+  "schemaVersion": 1,
+  "id": "REFINE-TEXT-STYLE-WORKAROUND",
+  "title": "Refine 样式诉求不得通过改表单文案规避",
+  "stage": "diagnosed",
+  "status": "active",
+  "classification": "code",
+  "baseline": {
+    "repository": ".",
+    "commit": "26bbb3c92d8fca19a5602d8788dbb84f21b2fde8"
+  },
+  "symptom": {
+    "environment": "v0.2.0 refine；用户描述样式/布局问题（如标签与选项重叠）",
+    "expected": "未明确要求改文案时，规划不得修改 label/textContent/optionItems 文案；应 warnings 说明 P0 无 CSS",
+    "actual": "LLM 可能输出 updateField 改字段或选项文字，以视觉问题消失冒充样式修复"
+  },
+  "phases": {
+    "reproduction": [
+      {
+        "id": "manual-style-overlap",
+        "command": ["node", "-e", "console.log('manual: AiChat instruction 标签和选项重叠; inspect refine plan for label/optionItems patches')"],
+        "cwd": "agent",
+        "expectedExitCode": 0
+      }
+    ],
+    "targeted": [
+      {
+        "id": "text-policy-unit",
+        "command": ["npm", "run", "acceptance:cases"],
+        "cwd": "agent",
+        "expectedExitCode": 0,
+        "outputPattern": "refine-text-style-policy"
+      }
+    ],
+    "regression": [
+      {
+        "id": "agent-smoke",
+        "command": ["npm", "run", "smoke"],
+        "cwd": "agent",
+        "expectedExitCode": 0,
+        "outputPattern": "SMOKE_PASSED"
+      }
+    ]
+  }
+}

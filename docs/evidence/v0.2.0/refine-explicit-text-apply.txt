@@ -1,0 +1,8 @@
+case: refine-explicit-text-apply
+status: pass
+observed: Explicit rename refine returned 200; canvas shows 评估项A after apply
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@7f87bde98bca (working tree has uncommitted changes)
+capturedAt: 2026-09-02T05:49:49.149Z
+durationMs: 3537
+screenshot: docs/evidence/v0.2.0/refine-explicit-text-apply.png

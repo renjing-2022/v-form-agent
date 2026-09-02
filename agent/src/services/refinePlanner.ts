@@ -56,6 +56,12 @@ const systemPrompt = `你是 v-form 表单优化规划器。根据用户指令�
 - addField: { op, field:{key,label,type,required?,options?,formula?}, parent? }
 - wrapInTabs: { op, tabName?, panes:[{label, targets:[{id:"..."} 或 {name:"..."}]}] }
 重要：target / targets 必须是对象，禁止写成字符串。正确示例 targets:[{"name":"input1"},{"id":"radio2"}]；错误示例 targets:["input1","radio2"]。
+
+文案修改规则（必须遵守）：
+- 仅当用户明确要改文字/标题/选项文案/描述时，才可在 updateField.patch 中修改 label、textContent 或 optionItems 的 label。
+- 用户描述样式/布局/对齐/间距/重叠/颜色/字体等视觉问题时：禁止通过改字段或选项文案来「假装」修复样式；不要输出仅改文案的 updateField。
+- P0 不支持 cssCode / 自由 CSS；样式类诉求应在 warnings 中说明需手动样式或后续版本，而不是改字规避。
+
 可新建 type 仅限：${REFINE_CREATE_WHITELIST.join(', ')}
 不要输出事件回调或 cssCode。
 输出字段：summary, warnings[], operations[]`
@@ -135,9 +141,49 @@ export function mockRefinePlan(instruction: string, current: FormJson): RefinePl
   const warnings: string[] = ['当前使用 mock refine 规划（未配置 DeepSeek Key）']
   const operations: RefinePlan['operations'] = []
 
-  const wantTabs = /tab|标签|页签|选项卡/i.test(instruction)
+  const styleIntent =
+    /样式|布局|对齐|间距|重叠|遮挡|换行|溢出|颜色|字体|字号|美观|排版|错位|margin|padding|overlap|style|layout|align|css/i.test(
+      instruction,
+    )
+  const explicitTextIntent =
+    /文案|改(?:文字|标题|标签)|标题(?:改|换成)|标签名|改(?:成|为|叫)|替换|缩短|加长|rename|wording|内容|措辞|描述|说明文字|字段名|\blabel\b/i.test(
+      instruction,
+    )
+  const wantExplicitRename = /改(?:成|为|叫)|标题改成|标签名/i.test(instruction)
+  const wantTabs = /tab|页签|选项卡/i.test(instruction) || (/标签/i.test(instruction) && /tab|页签|选项卡/i.test(instruction))
   const wantOptions = /选项|option|分值|改成|改为/i.test(instruction)
   const wantFormula = /公式|总分|合计|计算|求和/i.test(instruction)
+
+  if (wantExplicitRename && flat[0]) {
+    const target = flat[0]
+    return refinePlanSchema.parse({
+      summary: '按用户要求修改字段标题',
+      warnings,
+      operations: [
+        {
+          op: 'updateField',
+          target: target.id ? { id: target.id } : { name: target.name! },
+          patch: { label: '评估项A' },
+        },
+      ],
+    })
+  }
+
+  // 模拟 LLM 用改 label 规避样式问题的错误规划（供 FR-6 / enforceRefineTextPolicy 验收）
+  if (styleIntent && !explicitTextIntent && !wantOptions && !wantFormula && !wantTabs && flat[0]) {
+    const target = flat[0]
+    return refinePlanSchema.parse({
+      summary: '通过缩短标题缓解重叠（模拟错误规划）',
+      warnings,
+      operations: [
+        {
+          op: 'updateField',
+          target: target.id ? { id: target.id } : { name: target.name! },
+          patch: { label: '短标题' },
+        },
+      ],
+    })
+  }
 
   if (wantTabs && !root.some((w) => w.type === 'tab')) {
     const mid = Math.max(1, Math.ceil(flat.length / 2))

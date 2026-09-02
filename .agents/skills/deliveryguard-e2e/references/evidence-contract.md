@@ -19,3 +19,4 @@ Requirements:
 3. A screenshot supplements assertions and is not the only proof.
 4. Failed or skipped output must not be recorded as a passing Manifest case.
 5. Playwright output does not prove production deployment or release.
+6. agent-browser exploratory output under `docs/exploratory/` is not acceptance evidence and must not be used alone to mark a Manifest case `pass`.

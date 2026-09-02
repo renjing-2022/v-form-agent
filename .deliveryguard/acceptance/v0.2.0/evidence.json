@@ -1,0 +1,174 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.2.0",
+  "documents": [
+    {
+      "documentId": "ai-form-multiturn-refine-prd",
+      "requirementIds": [
+        "fr-1-dual-mode",
+        "fr-2-multiturn-session",
+        "fr-3-structure-options",
+        "fr-4-formula",
+        "fr-5-confirm-apply",
+        "fr-6-text-boundary"
+      ]
+    },
+    {
+      "documentId": "ai-form-multiturn-refine-design",
+      "requirementIds": [
+        "td-refine-endpoint",
+        "td-plan-merge-validate",
+        "td-session-current-json",
+        "td-generate-compat",
+        "td-security-boundary",
+        "td-refine-text-policy"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-dual-mode",
+      "description": "保留整表生成入口，并支持已有表优化模式",
+      "caseIds": ["text-generate-apply", "agent-smoke-refine"]
+    },
+    {
+      "id": "fr-2-multiturn-session",
+      "description": "前端内存多轮会话；每轮携带当前 formJson",
+      "caseIds": ["refine-multiturn-apply"]
+    },
+    {
+      "id": "fr-3-structure-options",
+      "description": "结构变更（含 tab）与字段 options 优化",
+      "caseIds": ["refine-structure-tab", "refine-options-formula"]
+    },
+    {
+      "id": "fr-4-formula",
+      "description": "适用字段 formula 优化，失败可 warnings 降级",
+      "caseIds": ["refine-options-formula"]
+    },
+    {
+      "id": "fr-5-confirm-apply",
+      "description": "确认后整表覆盖；校验失败/未确认不写画布",
+      "caseIds": ["refine-reject-keeps-canvas", "text-generate-apply"]
+    },
+    {
+      "id": "fr-6-text-boundary",
+      "description": "样式/布局诉求不得通过未授权的文案修改规避；明确改文案时允许",
+      "caseIds": ["refine-text-style-policy", "refine-explicit-text-apply"]
+    },
+    {
+      "id": "td-refine-endpoint",
+      "description": "POST /api/agent/v1/refine 契约落地且服务可启动",
+      "caseIds": ["agent-health", "agent-smoke-refine"]
+    },
+    {
+      "id": "td-refine-text-policy",
+      "description": "enforceRefineTextPolicy 在 refine 链路剔除/拒绝改字冒充样式",
+      "caseIds": ["refine-text-style-policy", "agent-smoke-refine"]
+    },
+    {
+      "id": "td-plan-merge-validate",
+      "description": "受限规划 + 合入 + 校验；禁止未校验自由 JSON 写画布",
+      "caseIds": ["refine-structure-tab", "agent-smoke-refine"]
+    },
+    {
+      "id": "td-session-current-json",
+      "description": "每轮以设计器最新 getFormJson 为真相源；会话前端内存",
+      "caseIds": ["refine-multiturn-apply"]
+    },
+    {
+      "id": "td-generate-compat",
+      "description": "generate 整表入口保持可用",
+      "caseIds": ["text-generate-apply", "agent-smoke-refine"]
+    },
+    {
+      "id": "td-security-boundary",
+      "description": "DeepSeek Key 仅服务端；前端走 /api/agent",
+      "caseIds": ["frontend-no-secret"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "agent-health",
+      "title": "Agent health 路由存在且注册 refine",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.2.0/agent-health.txt"]
+    },
+    {
+      "id": "agent-smoke-refine",
+      "title": "agent smoke/acceptance-cases 覆盖 generate 回归与 refine",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.2.0/agent-smoke-refine.txt"]
+    },
+    {
+      "id": "text-generate-apply",
+      "title": "整表生成经代理并显式应用到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.2.0/text-generate-apply.txt",
+        "docs/evidence/v0.2.0/text-generate-apply.png"
+      ]
+    },
+    {
+      "id": "refine-multiturn-apply",
+      "title": "已有表两轮 refine 后显式应用到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.2.0/refine-multiturn-apply.txt",
+        "docs/evidence/v0.2.0/refine-multiturn-apply.png"
+      ]
+    },
+    {
+      "id": "refine-structure-tab",
+      "title": "refine 增加 tab 并应用到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.2.0/refine-structure-tab.txt",
+        "docs/evidence/v0.2.0/refine-structure-tab.png"
+      ]
+    },
+    {
+      "id": "refine-options-formula",
+      "title": "refine 选项与公式并应用到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.2.0/refine-options-formula.txt",
+        "docs/evidence/v0.2.0/refine-options-formula.png"
+      ]
+    },
+    {
+      "id": "refine-reject-keeps-canvas",
+      "title": "refine 422 显示错误且不改写画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.2.0/refine-reject-keeps-canvas.txt",
+        "docs/evidence/v0.2.0/refine-reject-keeps-canvas.png"
+      ]
+    },
+    {
+      "id": "frontend-no-secret",
+      "title": "前端不含 DeepSeek Key / 硬编码 PAT，请求走 /api/agent",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.2.0/frontend-no-secret.txt"]
+    },
+    {
+      "id": "refine-text-style-policy",
+      "title": "样式诉求拒绝改 label 冒充修复；422 且画布不变",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.2.0/refine-text-style-policy.txt",
+        "docs/evidence/v0.2.0/refine-text-style-policy.png"
+      ]
+    },
+    {
+      "id": "refine-explicit-text-apply",
+      "title": "明确改标题时 refine 200 并应用到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.2.0/refine-explicit-text-apply.txt",
+        "docs/evidence/v0.2.0/refine-explicit-text-apply.png"
+      ]
+    }
+  ]
+}

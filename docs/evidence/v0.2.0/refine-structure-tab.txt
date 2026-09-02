@@ -1,7 +1,8 @@
 case: refine-structure-tab
 status: pass
-observed: wrapInTabs produced tab; string-target coerce path also produced tab; validate issues=0
-environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: working-tree-uncommitted
-capturedAt: 2026-09-01T09:13:46.934Z
-type: api+smoke
+observed: POST /api/agent/v1/refine returned 200; canvas shows one tab-container after explicit apply
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@7f87bde98bca (working tree has uncommitted changes)
+capturedAt: 2026-09-02T05:49:31.016Z
+durationMs: 3632
+screenshot: docs/evidence/v0.2.0/refine-structure-tab.png

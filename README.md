@@ -4,9 +4,12 @@
 
 ## 当前版本
 
-- DeliveryGuard 版本：`v0.2.0`（阶段：`specified` → 实现中）
+- DeliveryGuard 版本：`v0.2.0`（阶段：`specified`；OpenSpec `applied`；source=`local`；acceptance=`pending`）
 - OpenSpec change：`ai-form-multiturn-refine`
 - 已发布：`v0.1.0`（整表生成 MVP）
+- 验收报告：`docs/acceptance/v0.2.0.md`
+- 本地验证：`docs/verification/v0.2.0-local.md`
+- Evidence Manifest：`.deliveryguard/acceptance/v0.2.0/evidence.json`
 
 ## 项目结构
 
@@ -62,7 +65,7 @@ npm test
 
 - E2E 端口：`v-form:3130`、`agent:3140`
 - 默认 `AGENT_ALLOW_MOCK=1`
-- 证据输出：`docs/evidence/<version>/`
+- 证据输出：`docs/evidence/<version>/`（本版默认 `EVIDENCE_VERSION=v0.2.0`）
 - 规范见 `.agents/skills/deliveryguard-e2e/SKILL.md`
 
 ## 能力概览
@@ -70,7 +73,7 @@ npm test
 | 版本 | 能力 |
 |---|---|
 | v0.1.0 | 自然语言 / Excel 整表生成、校验后确认回填 |
-| v0.2.0（进行中） | 多轮优化当前表：结构（含 tab）、options、公式；会话前端内存 |
+| v0.2.0 | 多轮优化当前表：结构（含 tab）、options、公式；会话前端内存；Playwright 验收证据已落盘 |
 
 P0 **不做**：自由 CSS / 任意事件 JS 自动生成（后续阶段）。
 
@@ -78,4 +81,6 @@ P0 **不做**：自由 CSS / 任意事件 JS 自动生成（后续阶段）。
 
 - PRD：`docs/requirements/ai-form-multiturn-refine.md`
 - 技术设计：`docs/design/ai-form-multiturn-refine.md`
-- 历史 MVP：`docs/requirements/ai-form-agent-mvp.md`
+- 验收报告：`docs/acceptance/v0.2.0.md`
+- 本地验证：`docs/verification/v0.2.0-local.md`
+- 历史 MVP：`docs/requirements/ai-form-agent-mvp.md` / `docs/acceptance/v0.1.0.md`

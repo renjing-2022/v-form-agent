@@ -1,8 +1,8 @@
 case: text-generate-apply
 status: pass
-observed: mock generate widgetCount=7; AiChat requires explicit apply emit; setting-panel applyAiFormJson -> loadFormJson
-environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: working-tree-uncommitted
-capturedAt: 2026-09-01T09:13:46.929Z
-type: api+static
-note: Playwright deferred by request; confirmed via generate pipeline + source wiring
+observed: POST /api/agent/v1/generate returned 200 through the Vite proxy; 7 top-level widgets were visible after explicit apply
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@7f87bde98bca (working tree has uncommitted changes)
+capturedAt: 2026-09-02T05:49:20.319Z
+durationMs: 17480
+screenshot: docs/evidence/v0.2.0/text-generate-apply.png

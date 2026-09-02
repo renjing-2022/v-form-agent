@@ -33,3 +33,8 @@ agent/uploads/
 # Playwright local reports (stable acceptance evidence lives under docs/evidence/)
 e2e/playwright-report/
 e2e/test-results/
+
+# agent-browser exploratory local artifacts (promote notes via docs/e2e/promotion-log.md)
+docs/exploratory/screenshots/
+docs/exploratory/local-smoke/
+.gstack/

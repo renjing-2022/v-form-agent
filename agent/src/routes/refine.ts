@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import { refineRequestSchema } from '../schemas/refinePlan.js'
 import { planRefine } from '../services/refinePlanner.js'
 import { applyRefinePlan } from '../services/refineMerger.js'
+import { enforceRefineTextPolicy } from '../services/refineTextPolicy.js'
 import { collectWidgetIds, validateFormJson } from '../services/validator.js'
 
 export async function registerRefineRoutes(app: FastifyInstance) {
@@ -23,7 +24,19 @@ export async function registerRefineRoutes(app: FastifyInstance) {
       }
 
       const existingIds = collectWidgetIds(currentFormJson)
-      const { plan, usedMock } = await planRefine({ instruction, currentFormJson, messages })
+      const { plan: rawPlan, usedMock } = await planRefine({ instruction, currentFormJson, messages })
+      const {
+        plan,
+        warnings: policyWarnings,
+        reject,
+        rejectMessage,
+      } = enforceRefineTextPolicy(instruction, rawPlan)
+      if (reject) {
+        return reply.code(422).send({
+          message: rejectMessage || '样式类诉求无法通过修改文案规避',
+          warnings: policyWarnings,
+        })
+      }
       const { formJson, warnings } = applyRefinePlan(currentFormJson, plan)
       const issues = validateFormJson(formJson, { mode: 'refine', existingIds })
       if (issues.length) {
@@ -34,7 +47,7 @@ export async function registerRefineRoutes(app: FastifyInstance) {
         })
       }
 
-      const allWarnings = [...warnings]
+      const allWarnings = [...policyWarnings, ...warnings]
       if (usedMock && !allWarnings.some((w) => w.includes('mock'))) {
         allWarnings.push('当前使用 mock/本地规划（未配置 DeepSeek Key）')
       }

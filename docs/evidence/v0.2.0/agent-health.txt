@@ -3,4 +3,4 @@ status: pass
 observed: health route and refine registration present in agent/src/server.ts
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
 sourceRevision: working-tree-uncommitted
-capturedAt: 2026-09-01T09:13:46.921Z
+capturedAt: 2026-09-02T05:39:01.058Z

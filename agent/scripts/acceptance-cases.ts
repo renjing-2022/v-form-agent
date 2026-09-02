@@ -11,6 +11,7 @@ import { mockRefinePlan, normalizeRefinePlanRaw } from '../src/services/refinePl
 import { applyRefinePlan } from '../src/services/refineMerger.js'
 import { collectWidgetIds, validateFormJson } from '../src/services/validator.js'
 import { refinePlanSchema } from '../src/schemas/refinePlan.js'
+import { enforceRefineTextPolicy } from '../src/services/refineTextPolicy.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '../..')
@@ -134,6 +135,33 @@ async function main() {
     'refine-reject-keeps-canvas',
     `illegal new type rejected by refine validator; AiChat apply disabled without lastResult and only emits apply on explicit click`,
     { type: 'api+static', note: 'Playwright deferred; canvas preservation inferred from no auto-apply + 422/validate fail path' },
+  )
+
+  // refine-text-style-policy: style intent must not apply copy-only patches
+  const stylePlan = refinePlanSchema.parse({
+    summary: '缩短标题避免重叠',
+    warnings: [],
+    operations: [
+      {
+        op: 'updateField',
+        target: { name: 'score1' },
+        patch: { label: '短标题' },
+      },
+    ],
+  })
+  const styleBlocked = enforceRefineTextPolicy('标签和选项重叠了，优化样式', stylePlan)
+  assert(styleBlocked.reject === true, 'style-only copy patch should reject')
+  assert(
+    styleBlocked.warnings.some((w) => w.includes('样式') || w.includes('CSS')),
+    'expected style policy warning',
+  )
+  const explicitText = enforceRefineTextPolicy('把标题改成「评估项 A」', stylePlan)
+  assert(!explicitText.reject, 'explicit text change should allow label patch')
+  assert(explicitText.plan.operations.length === 1, 'label patch kept when user asks to rename')
+  writeCase(
+    'refine-text-style-policy',
+    'style overlap instruction rejects label-only patch; explicit rename keeps updateField',
+    { type: 'unit+policy', repair: 'REFINE-TEXT-STYLE-WORKAROUND' },
   )
 
   console.log('ACCEPTANCE_CASES_PASSED')
