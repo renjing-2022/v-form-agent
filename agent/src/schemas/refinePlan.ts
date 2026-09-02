@@ -54,12 +54,7 @@ export const refineOperationSchema = z.discriminatedUnion('op', [
     op: z.literal('updateField'),
     target: targetRefSchema,
     patch: z
-      .object({
-        label: z.string().min(1).max(200).optional(),
-        required: z.boolean().optional(),
-        optionItems: z.array(optionItemSchema).min(1).optional(),
-        textContent: z.string().optional(),
-      })
+      .record(z.unknown())
       .refine((p) => Object.keys(p).length > 0, { message: 'patch must not be empty' }),
   }),
   z.object({
@@ -87,6 +82,24 @@ export const refineOperationSchema = z.discriminatedUnion('op', [
       )
       .min(1)
       .max(12),
+  }),
+  z.object({
+    op: z.literal('patchFormConfig'),
+    patch: z
+      .record(z.unknown())
+      .refine((p) => Object.keys(p).length > 0, { message: 'form patch must not be empty' }),
+  }),
+  z.object({
+    op: z.literal('setCustomClass'),
+    target: targetRefSchema,
+    customClass: z.string().min(1).max(120),
+  }),
+  z.object({
+    op: z.literal('setCssCode'),
+    css: z.string().min(1).max(8000),
+    mode: z.enum(['append', 'replace']).default('append'),
+    target: targetRefSchema.optional(),
+    customClass: z.string().min(1).max(120).optional(),
   }),
 ])
 

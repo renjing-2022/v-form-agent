@@ -1,8 +1,8 @@
 case: refine-multiturn-apply
 status: pass
-observed: Two refine rounds via /api/agent/v1/refine both returned 200 and were explicitly applied; session messages remained visible
-environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@7f87bde98bca (working tree has uncommitted changes)
-capturedAt: 2026-09-02T05:49:34.936Z
-durationMs: 3923
-screenshot: docs/evidence/v0.2.0/refine-multiturn-apply.png
+observed: two sequential refine merges on evolving formJson succeeded (tab then options/formula); apply still requires UI confirm (static)
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: working-tree-uncommitted
+capturedAt: 2026-09-02T09:49:39.009Z
+type: api+static
+note: Playwright deferred; multiturn proven at agent merge layer

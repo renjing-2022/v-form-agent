@@ -5,6 +5,7 @@
   "description": "Playwright E2E acceptance tests for v-form-agent",
   "scripts": {
     "test": "playwright test",
+    "test:v030": "playwright test tests/ai-form-v030.spec.ts",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "typecheck": "tsc --noEmit",

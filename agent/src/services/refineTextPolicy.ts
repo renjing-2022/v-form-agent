@@ -69,18 +69,18 @@ export function enforceRefineTextPolicy(
 
   if (strippedAny) {
     warnings.push(
-      '检测到样式/布局类诉求：已拒绝通过修改字段 label、textContent 或选项文案来规避样式问题。P0 不支持自定义 CSS；请明确说明要改文案/选项，或等待后续版本的受控样式能力。',
+      '检测到样式/布局类诉求：已拒绝通过修改字段 label、textContent 或选项文案来规避样式问题。请通过可写属性或受控 cssCode 修复。',
     )
   }
 
   if (operations.length === 0) {
-    warnings.push('当前指令属于样式/布局优化，P0 仅支持结构、options 配置与公式；未产生可应用的变更。')
+    warnings.push('当前指令属于样式/布局优化，且未产生可应用的属性或 CSS 变更。')
     return {
       plan,
       warnings,
       reject: true,
       rejectMessage:
-        '样式/布局类诉求在 P0 不支持自动 CSS，且未允许通过修改表单文案规避。请手动调整样式，或改用明确的文案/结构/选项/公式指令。',
+        '样式/布局类诉求不得通过修改表单文案规避。请改用明确的属性、结构、选项/公式指令，或受控 cssCode。',
     }
   }
 

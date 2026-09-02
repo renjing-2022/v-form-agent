@@ -1,0 +1,36 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/version.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.3.0",
+  "title": "v-form AI 组件知识库 + 常见属性 / 受控 cssCode（厚 P1）",
+  "documents": [
+    {
+      "id": "ai-form-widget-catalog-refine-prd",
+      "type": "product-requirement",
+      "title": "v-form AI 组件知识库与厚 P1 优化（v0.3.0）产品需求",
+      "ref": "docs/requirements/ai-form-widget-catalog-refine.md",
+      "revision": 1,
+      "primary": true
+    },
+    {
+      "id": "ai-form-widget-catalog-refine-design",
+      "type": "technical-design",
+      "title": "v-form AI 组件知识库与厚 P1 优化（v0.3.0）技术设计",
+      "ref": "docs/design/ai-form-widget-catalog-refine.md",
+      "revision": 1
+    }
+  ],
+  "openSpec": {
+    "changeId": "ai-form-widget-catalog-refine",
+    "path": "openspec/changes/ai-form-widget-catalog-refine",
+    "status": "ready"
+  },
+  "sources": [],
+  "acceptance": {
+    "status": "pending"
+  },
+  "deployments": [],
+  "release": {
+    "status": "pending"
+  }
+}

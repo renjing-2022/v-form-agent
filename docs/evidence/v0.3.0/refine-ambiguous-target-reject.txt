@@ -1,0 +1,7 @@
+case: refine-ambiguous-target-reject
+status: pass
+observed: duplicate name in plan targets returns rejectMessage without applying merge
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: working-tree-uncommitted
+capturedAt: 2026-09-02T09:49:38.988Z
+type: agent

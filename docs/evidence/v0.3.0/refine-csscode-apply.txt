@@ -1,0 +1,8 @@
+case: refine-csscode-apply
+status: pass
+observed: POST /api/agent/v1/refine returned 200; cssCode appended; 时间定向 copy unchanged after apply
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@b1f75495abfd (working tree has uncommitted changes)
+capturedAt: 2026-09-02T09:53:34.952Z
+durationMs: 6686
+screenshot: docs/evidence/v0.3.0/refine-csscode-apply.png

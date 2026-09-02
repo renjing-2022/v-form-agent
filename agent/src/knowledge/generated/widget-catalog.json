@@ -1,0 +1,6838 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "widgetsConfig": "v-form/src/components/form-designer/widget-panel/widgetsConfig.js",
+    "formConfig": "v-form/src/utils/util.js",
+    "fingerprint": "df03f1d1748dae11043356c0c98bf2865a4392b1fcc8a2cd741f4d6a00cb2d78"
+  },
+  "generatedAt": "source-derived",
+  "widgets": [
+    {
+      "type": "button",
+      "category": "basic",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "button",
+          "defaultOptions": {
+            "name": "",
+            "label": "",
+            "columnWidth": "200px",
+            "size": "",
+            "displayStyle": "block",
+            "disabled": false,
+            "hidden": false,
+            "type": "",
+            "plain": false,
+            "round": false,
+            "circle": false,
+            "icon": null,
+            "customClass": "",
+            "onCreated": "",
+            "onMounted": "",
+            "onClick": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "circle",
+        "columnWidth",
+        "customClass",
+        "disabled",
+        "displayStyle",
+        "hidden",
+        "icon",
+        "label",
+        "name",
+        "plain",
+        "round",
+        "size",
+        "type"
+      ],
+      "forbiddenKeys": [
+        "onClick",
+        "onCreated",
+        "onMounted"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "displayStyle": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "inline",
+            "block"
+          ]
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "type": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "plain": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "round": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "circle": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "icon": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onClick": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "button-group",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "button-group",
+          "defaultOptions": {
+            "name": "",
+            "size": "default",
+            "hidden": false,
+            "disabled": false,
+            "customClass": "",
+            "buttons": [
+              {
+                "name": "detail",
+                "label": "详情",
+                "icon": "",
+                "type": "",
+                "round": false,
+                "hidden": true,
+                "disabled": false
+              },
+              {
+                "name": "edit",
+                "label": "编辑",
+                "icon": "",
+                "type": "",
+                "round": false,
+                "hidden": false,
+                "disabled": false
+              },
+              {
+                "name": "delete",
+                "label": "删除",
+                "icon": "",
+                "type": "",
+                "round": false,
+                "hidden": false,
+                "disabled": false
+              }
+            ],
+            "onCreated": "",
+            "onMounted": "",
+            "onButtonGroupClick": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "widgetList",
+                "shape": "list",
+                "allowedTypes": []
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "buttons",
+        "customClass",
+        "disabled",
+        "hidden",
+        "name",
+        "size"
+      ],
+      "forbiddenKeys": [
+        "onButtonGroupClick",
+        "onCreated",
+        "onMounted"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "buttons": {
+          "valueType": "array",
+          "nullable": false
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onButtonGroupClick": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "cascader",
+      "category": "advanced",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "cascader-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "defaultValue": null,
+            "placeholder": "",
+            "size": "",
+            "labelWidth": null,
+            "labelHidden": false,
+            "columnWidth": "200px",
+            "disabled": false,
+            "hidden": false,
+            "clearable": true,
+            "filterable": false,
+            "multiple": false,
+            "checkStrictly": false,
+            "showAllLevels": true,
+            "dsEnabled": false,
+            "dsName": "",
+            "dataSetName": "",
+            "firstOptionAsDefault": false,
+            "labelKey": "label",
+            "valueKey": "value",
+            "childrenKey": "children",
+            "areaDataEnabled": false,
+            "areaDataType": 0,
+            "optionItems": [
+              {
+                "label": "select 1",
+                "value": 1,
+                "children": [
+                  {
+                    "label": "child 1",
+                    "value": 11
+                  }
+                ]
+              },
+              {
+                "label": "select 2",
+                "value": 2
+              },
+              {
+                "label": "select 3",
+                "value": 3
+              }
+            ],
+            "required": false,
+            "requiredHint": "",
+            "customRule": "",
+            "customRuleHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onFocus": "",
+            "onBlur": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "areaDataEnabled",
+        "areaDataType",
+        "checkStrictly",
+        "childrenKey",
+        "clearable",
+        "columnWidth",
+        "customClass",
+        "customRuleHint",
+        "defaultValue",
+        "disabled",
+        "filterable",
+        "firstOptionAsDefault",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelKey",
+        "labelTooltip",
+        "labelWidth",
+        "multiple",
+        "name",
+        "optionItems",
+        "placeholder",
+        "required",
+        "requiredHint",
+        "showAllLevels",
+        "size",
+        "valueKey"
+      ],
+      "forbiddenKeys": [
+        "customRule",
+        "dataSetName",
+        "dsEnabled",
+        "dsName",
+        "onBlur",
+        "onChange",
+        "onCreated",
+        "onFocus",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "undefined",
+          "nullable": true
+        },
+        "placeholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "clearable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "filterable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "multiple": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "checkStrictly": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showAllLevels": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "dsEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "dsName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "dataSetName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "firstOptionAsDefault": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelKey": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "valueKey": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "childrenKey": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "areaDataEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "areaDataType": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "optionItems": {
+          "valueType": "array",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customRule": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customRuleHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onFocus": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onBlur": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "checkbox",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "checkbox-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "defaultValue": [],
+            "columnWidth": "200px",
+            "size": "",
+            "displayStyle": "inline",
+            "buttonStyle": false,
+            "border": false,
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "disabled": false,
+            "hidden": false,
+            "dsEnabled": false,
+            "dsName": "",
+            "dataSetName": "",
+            "firstOptionAsDefault": false,
+            "labelKey": "label",
+            "valueKey": "value",
+            "optionValueType": "",
+            "optionItems": [
+              {
+                "label": "check 1",
+                "value": 1
+              },
+              {
+                "label": "check 2",
+                "value": 2
+              },
+              {
+                "label": "check 3",
+                "value": 3
+              }
+            ],
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "border",
+        "buttonStyle",
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "displayStyle",
+        "firstOptionAsDefault",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelKey",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "name",
+        "optionItems",
+        "optionValueType",
+        "required",
+        "requiredHint",
+        "size",
+        "validation",
+        "validationHint",
+        "valueKey"
+      ],
+      "forbiddenKeys": [
+        "dataSetName",
+        "dsEnabled",
+        "dsName",
+        "onChange",
+        "onCreated",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "array",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "displayStyle": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "inline",
+            "block"
+          ]
+        },
+        "buttonStyle": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "border": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "dsEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "dsName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "dataSetName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "firstOptionAsDefault": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelKey": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "valueKey": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "optionValueType": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "optionItems": {
+          "valueType": "array",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "color",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "color-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "defaultValue": null,
+            "columnWidth": "200px",
+            "size": "",
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "disabled": false,
+            "hidden": false,
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "name",
+        "required",
+        "requiredHint",
+        "size",
+        "validation",
+        "validationHint"
+      ],
+      "forbiddenKeys": [
+        "onChange",
+        "onCreated",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "data-table",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "data-table",
+          "defaultOptions": {
+            "name": "",
+            "label": "data-table",
+            "hidden": false,
+            "rowSpacing": 8,
+            "tableHeight": "300px",
+            "tableWidth": "100%",
+            "customClass": "",
+            "stripe": true,
+            "showIndex": false,
+            "showCheckBox": true,
+            "showPagination": true,
+            "paginationAlign": "left",
+            "smallPagination": false,
+            "showSummary": false,
+            "border": true,
+            "tableSize": "default",
+            "autoColumnWidthDisabled": false,
+            "columnWordWrap": false,
+            "tableColumns": [
+              {
+                "columnId": 1,
+                "prop": "name",
+                "label": "姓名",
+                "width": "100",
+                "show": true,
+                "align": "left",
+                "fixed": "left",
+                "sortable": true
+              },
+              {
+                "columnId": 2,
+                "prop": "date",
+                "label": "日期1",
+                "width": "160",
+                "show": true,
+                "align": "left",
+                "formatS": "d1"
+              },
+              {
+                "columnId": 3,
+                "prop": "date2",
+                "label": "日期2",
+                "width": "160",
+                "show": true,
+                "align": "left",
+                "formatS": "d4"
+              },
+              {
+                "columnId": 4,
+                "prop": "date3",
+                "label": "日期3",
+                "width": "160",
+                "show": true,
+                "align": "left",
+                "formatS": "d5"
+              },
+              {
+                "columnId": 5,
+                "prop": "f1",
+                "label": "基金",
+                "width": "150",
+                "show": true,
+                "align": "right",
+                "sortable": true,
+                "formatS": "n1"
+              },
+              {
+                "columnId": 6,
+                "prop": "f2",
+                "label": "股票",
+                "width": "150",
+                "show": true,
+                "align": "right",
+                "sortable": true,
+                "formatS": "n2"
+              },
+              {
+                "columnId": 7,
+                "prop": "f3",
+                "label": "存款",
+                "width": "150",
+                "show": true,
+                "align": "right",
+                "sortable": true,
+                "formatS": "n3"
+              },
+              {
+                "columnId": 8,
+                "prop": "f4",
+                "label": "基金2",
+                "width": "150",
+                "show": true,
+                "align": "right",
+                "sortable": true,
+                "formatS": "n4"
+              },
+              {
+                "columnId": 9,
+                "prop": "f5",
+                "label": "股票2",
+                "width": "150",
+                "show": true,
+                "align": "right",
+                "sortable": true,
+                "formatS": "n5"
+              },
+              {
+                "columnId": 10,
+                "prop": "f6",
+                "label": "存款2",
+                "width": "150",
+                "show": true,
+                "align": "right",
+                "sortable": true,
+                "formatS": "n6"
+              },
+              {
+                "columnId": 11,
+                "prop": "f7",
+                "label": "成功率",
+                "width": "140",
+                "show": true,
+                "align": "right",
+                "sortable": true,
+                "formatS": "n7"
+              },
+              {
+                "columnId": 12,
+                "prop": "add",
+                "label": "地址",
+                "width": "250",
+                "show": true,
+                "render": ""
+              },
+              {
+                "columnId": 13,
+                "prop": "ss",
+                "label": "秘密",
+                "width": "100",
+                "show": false
+              },
+              {
+                "columnId": 14,
+                "prop": "~",
+                "headerFlag": true,
+                "label": "表头1",
+                "align": "center",
+                "children": [
+                  {
+                    "columnId": 15,
+                    "prop": "~",
+                    "headerFlag": true,
+                    "label": "表头2",
+                    "align": "center",
+                    "children": [
+                      {
+                        "columnId": 16,
+                        "prop": "~",
+                        "headerFlag": true,
+                        "label": "表头3",
+                        "align": "center",
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "showButtonsColumn": false,
+            "buttonsColumnFixed": "right",
+            "buttonsColumnTitle": "操作",
+            "buttonsColumnWidth": 120,
+            "operationButtons": [
+              {
+                "name": "detail",
+                "label": "详情",
+                "type": "text",
+                "size": "small",
+                "round": false,
+                "hidden": true,
+                "disabled": false
+              },
+              {
+                "name": "edit",
+                "label": "编辑",
+                "type": "text",
+                "size": "small",
+                "round": false,
+                "hidden": false,
+                "disabled": false
+              },
+              {
+                "name": "delete",
+                "label": "删除",
+                "type": "text",
+                "size": "small",
+                "round": false,
+                "hidden": false,
+                "disabled": false
+              }
+            ],
+            "pagination": {
+              "currentPage": 1,
+              "pageSizes": [
+                10,
+                15,
+                20,
+                30,
+                50,
+                100,
+                200
+              ],
+              "pageSize": 20,
+              "total": 366
+            },
+            "dsEnabled": false,
+            "dsName": "",
+            "dataSetName": "",
+            "treeDataEnabled": false,
+            "rowKey": "id",
+            "childrenKey": "children",
+            "tableData": [
+              {
+                "date": "2016-05-02",
+                "date2": "2016-05-02 23:12:12",
+                "date3": "2016-05-02 9:11:12",
+                "name": "小二",
+                "f1": 10001000.2,
+                "f2": 10001000.239567,
+                "f3": 10001000.239567,
+                "f4": 10001000.239567,
+                "f5": 10001000.239567,
+                "f6": 10001000.239567,
+                "f7": 0.25,
+                "add": "上海市普陀区金沙江路 1518 弄",
+                "ss": 100
+              },
+              {
+                "date": "2016-05-04",
+                "date2": "2016-05-02 11:12:12",
+                "date3": "2016-05-02 9:11:12",
+                "name": "王小虎2",
+                "f1": 10001000.23,
+                "f2": 10001000.23,
+                "f3": 10001000.239567,
+                "f4": 10001000.239567,
+                "f5": 10001000.239567,
+                "f6": 10001000.239567,
+                "f7": 0.256,
+                "add": "上海市普陀区金沙江路 1518 弄",
+                "ss": 100
+              },
+              {
+                "date": "2016-05-01",
+                "date2": "2016-05-02 12:12:12",
+                "date3": "2016-05-02 9:11:12",
+                "name": "王小虎3",
+                "f1": 10001000.239,
+                "f2": 10001000.239,
+                "f3": 10001000.239567,
+                "f4": 10001000.239567,
+                "f5": 10001000.239567,
+                "f6": 10001000.239567,
+                "f7": 0.2569,
+                "add": "上海市普陀区金沙江路 1518 弄",
+                "ss": 100
+              },
+              {
+                "date": "2016-05-03",
+                "date2": "2016-05-02 12:12:12",
+                "date3": "2016-05-02 9:11:12",
+                "name": "王小虎4",
+                "f1": 10001000.239567,
+                "f2": 10001000.239567,
+                "f3": 10001000.239567,
+                "f4": 10001000.239567,
+                "f5": 10001000.239567,
+                "f6": 10001000.239567,
+                "f7": 1.9527102,
+                "add": "上海市普陀区金沙江路 1518 弄",
+                "ss": 100
+              }
+            ],
+            "onCreated": "",
+            "onMounted": "",
+            "onPageSizeChange": "",
+            "onCurrentPageChange": "",
+            "onSortChange": "",
+            "onSelectionChange": "",
+            "onHideOperationButton": "",
+            "onDisableOperationButton": "",
+            "onGetOperationButtonLabel": "",
+            "onOperationButtonClick": "",
+            "onHeaderClick": "",
+            "onRowClick": "",
+            "onRowDoubleClick": "",
+            "onCellClick": "",
+            "onCellDoubleClick": "",
+            "onGetRowClassName": "",
+            "onGetSpanMethod": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "widgetList",
+                "shape": "list",
+                "allowedTypes": []
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "autoColumnWidthDisabled",
+        "border",
+        "buttonsColumnFixed",
+        "buttonsColumnTitle",
+        "buttonsColumnWidth",
+        "childrenKey",
+        "columnWordWrap",
+        "customClass",
+        "hidden",
+        "label",
+        "name",
+        "operationButtons",
+        "pagination",
+        "paginationAlign",
+        "rowKey",
+        "rowSpacing",
+        "showButtonsColumn",
+        "showCheckBox",
+        "showIndex",
+        "showPagination",
+        "showSummary",
+        "smallPagination",
+        "stripe",
+        "tableColumns",
+        "tableData",
+        "tableHeight",
+        "tableSize",
+        "tableWidth",
+        "treeDataEnabled"
+      ],
+      "forbiddenKeys": [
+        "dataSetName",
+        "dsEnabled",
+        "dsName",
+        "onCellClick",
+        "onCellDoubleClick",
+        "onCreated",
+        "onCurrentPageChange",
+        "onDisableOperationButton",
+        "onGetOperationButtonLabel",
+        "onGetRowClassName",
+        "onGetSpanMethod",
+        "onHeaderClick",
+        "onHideOperationButton",
+        "onMounted",
+        "onOperationButtonClick",
+        "onPageSizeChange",
+        "onRowClick",
+        "onRowDoubleClick",
+        "onSelectionChange",
+        "onSortChange"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "rowSpacing": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "tableHeight": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "tableWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "stripe": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showIndex": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showCheckBox": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showPagination": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "paginationAlign": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        "smallPagination": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showSummary": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "border": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "tableSize": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "large",
+            "default",
+            "small"
+          ]
+        },
+        "autoColumnWidthDisabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "columnWordWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "tableColumns": {
+          "valueType": "array",
+          "nullable": false
+        },
+        "showButtonsColumn": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "buttonsColumnFixed": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "buttonsColumnTitle": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "buttonsColumnWidth": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "operationButtons": {
+          "valueType": "array",
+          "nullable": false
+        },
+        "pagination": {
+          "valueType": "object",
+          "nullable": false
+        },
+        "dsEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "dsName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "dataSetName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "treeDataEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "rowKey": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "childrenKey": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "tableData": {
+          "valueType": "array",
+          "nullable": false
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onPageSizeChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCurrentPageChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onSortChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onSelectionChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onHideOperationButton": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onDisableOperationButton": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onGetOperationButtonLabel": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onOperationButtonClick": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onHeaderClick": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onRowClick": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onRowDoubleClick": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCellClick": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCellDoubleClick": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onGetRowClassName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onGetSpanMethod": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "date",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "date-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "type": "date",
+            "defaultValue": null,
+            "placeholder": "",
+            "columnWidth": "200px",
+            "size": "",
+            "autoFullWidth": true,
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "readonly": false,
+            "disabled": false,
+            "hidden": false,
+            "clearable": true,
+            "editable": false,
+            "format": "YYYY-MM-DD",
+            "valueFormat": "YYYY-MM-DD",
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onFocus": "",
+            "onBlur": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "autoFullWidth",
+        "clearable",
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "editable",
+        "format",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "name",
+        "placeholder",
+        "readonly",
+        "required",
+        "requiredHint",
+        "size",
+        "type",
+        "validation",
+        "validationHint",
+        "valueFormat"
+      ],
+      "forbiddenKeys": [
+        "onBlur",
+        "onChange",
+        "onCreated",
+        "onFocus",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "type": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "placeholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "autoFullWidth": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "readonly": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "clearable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "editable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "format": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "valueFormat": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onFocus": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onBlur": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "date-range",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "date-range-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "type": "daterange",
+            "defaultValue": null,
+            "startPlaceholder": "",
+            "endPlaceholder": "",
+            "columnWidth": "200px",
+            "size": "",
+            "autoFullWidth": true,
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "readonly": false,
+            "disabled": false,
+            "hidden": false,
+            "clearable": true,
+            "editable": false,
+            "format": "YYYY-MM-DD",
+            "valueFormat": "YYYY-MM-DD",
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onFocus": "",
+            "onBlur": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "autoFullWidth",
+        "clearable",
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "editable",
+        "endPlaceholder",
+        "format",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "name",
+        "readonly",
+        "required",
+        "requiredHint",
+        "size",
+        "startPlaceholder",
+        "type",
+        "validation",
+        "validationHint",
+        "valueFormat"
+      ],
+      "forbiddenKeys": [
+        "onBlur",
+        "onChange",
+        "onCreated",
+        "onFocus",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "type": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "startPlaceholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "endPlaceholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "autoFullWidth": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "readonly": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "clearable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "editable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "format": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "valueFormat": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onFocus": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onBlur": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "divider",
+      "category": "basic",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "divider",
+          "defaultOptions": {
+            "name": "",
+            "label": "",
+            "columnWidth": "200px",
+            "direction": "horizontal",
+            "contentPosition": "center",
+            "hidden": false,
+            "customClass": "",
+            "onCreated": "",
+            "onMounted": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "columnWidth",
+        "contentPosition",
+        "customClass",
+        "direction",
+        "hidden",
+        "label",
+        "name"
+      ],
+      "forbiddenKeys": [
+        "onCreated",
+        "onMounted"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "direction": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "horizontal",
+            "vertical"
+          ]
+        },
+        "contentPosition": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "file-upload",
+      "category": "advanced",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "file-upload-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "labelWidth": null,
+            "labelHidden": false,
+            "columnWidth": "200px",
+            "disabled": false,
+            "hidden": false,
+            "required": false,
+            "requiredHint": "",
+            "customRule": "",
+            "customRuleHint": "",
+            "uploadURL": "",
+            "uploadTip": "",
+            "withCredentials": false,
+            "multipleSelect": false,
+            "showFileList": true,
+            "limit": 3,
+            "fileMaxSize": 5,
+            "fileTypes": [
+              "doc",
+              "docx",
+              "xls",
+              "xlsx"
+            ],
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onBeforeUpload": "",
+            "onUploadSuccess": "",
+            "onUploadError": "",
+            "onFileRemove": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "columnWidth",
+        "customClass",
+        "customRuleHint",
+        "disabled",
+        "fileMaxSize",
+        "fileTypes",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "limit",
+        "multipleSelect",
+        "name",
+        "required",
+        "requiredHint",
+        "showFileList",
+        "uploadTip",
+        "uploadURL",
+        "withCredentials"
+      ],
+      "forbiddenKeys": [
+        "customRule",
+        "onBeforeUpload",
+        "onCreated",
+        "onFileRemove",
+        "onMounted",
+        "onUploadError",
+        "onUploadSuccess",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customRule": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customRuleHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "uploadURL": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "uploadTip": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "withCredentials": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "multipleSelect": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showFileList": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "limit": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "fileMaxSize": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "fileTypes": {
+          "valueType": "array",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onBeforeUpload": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onUploadSuccess": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onUploadError": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onFileRemove": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "grid",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": "column-1-grid",
+          "icon": "column-1-grid",
+          "defaultOptions": {
+            "name": "",
+            "hidden": false,
+            "gutter": 12,
+            "colHeight": null,
+            "customClass": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "cols",
+                "shape": "list",
+                "allowedTypes": [
+                  "grid-col"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "alias": "column-2-grid",
+          "icon": "column-2-grid",
+          "defaultOptions": {
+            "name": "",
+            "hidden": false,
+            "gutter": 12,
+            "colHeight": null,
+            "customClass": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "cols",
+                "shape": "list",
+                "allowedTypes": [
+                  "grid-col"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "alias": "column-3-grid",
+          "icon": "column-3-grid",
+          "defaultOptions": {
+            "name": "",
+            "hidden": false,
+            "gutter": 12,
+            "colHeight": null,
+            "customClass": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "cols",
+                "shape": "list",
+                "allowedTypes": [
+                  "grid-col"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "alias": "column-4-grid",
+          "icon": "column-4-grid",
+          "defaultOptions": {
+            "name": "",
+            "hidden": false,
+            "gutter": 12,
+            "colHeight": null,
+            "customClass": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "cols",
+                "shape": "list",
+                "allowedTypes": [
+                  "grid-col"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "colHeight",
+        "customClass",
+        "gutter",
+        "hidden",
+        "name"
+      ],
+      "forbiddenKeys": [],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "gutter": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "colHeight": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "supported"
+      }
+    },
+    {
+      "type": "grid-col",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "grid-col",
+          "defaultOptions": {
+            "name": "",
+            "hidden": false,
+            "span": 12,
+            "offset": 0,
+            "push": 0,
+            "pull": 0,
+            "responsive": false,
+            "md": 12,
+            "sm": 12,
+            "xs": 24,
+            "customClass": ""
+          },
+          "structure": {
+            "internal": true,
+            "childCollections": [
+              {
+                "key": "widgetList",
+                "shape": "list",
+                "allowedTypes": []
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "customClass",
+        "hidden",
+        "md",
+        "name",
+        "offset",
+        "pull",
+        "push",
+        "responsive",
+        "sm",
+        "span",
+        "xs"
+      ],
+      "forbiddenKeys": [],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "span": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "offset": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "push": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "pull": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "responsive": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "md": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "sm": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "xs": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "supported"
+      }
+    },
+    {
+      "type": "grid-sub-form",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "grid-sub-form",
+          "defaultOptions": {
+            "name": "",
+            "label": "",
+            "showBlankRow": true,
+            "showRowNumber": true,
+            "hidden": false,
+            "disabled": false,
+            "actionColumnPosition": "left",
+            "appendButtonAtBottom": false,
+            "deleteButtonHidden": false,
+            "customClass": "",
+            "onSubFormRowAdd": "",
+            "onSubFormRowInsert": "",
+            "onSubFormRowDelete": "",
+            "onSubFormRowChange": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "widgetList",
+                "shape": "list",
+                "allowedTypes": []
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "actionColumnPosition",
+        "appendButtonAtBottom",
+        "customClass",
+        "deleteButtonHidden",
+        "disabled",
+        "hidden",
+        "label",
+        "name",
+        "showBlankRow",
+        "showRowNumber"
+      ],
+      "forbiddenKeys": [
+        "onSubFormRowAdd",
+        "onSubFormRowChange",
+        "onSubFormRowDelete",
+        "onSubFormRowInsert"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "showBlankRow": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showRowNumber": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "actionColumnPosition": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "appendButtonAtBottom": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "deleteButtonHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onSubFormRowAdd": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onSubFormRowInsert": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onSubFormRowDelete": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onSubFormRowChange": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "html-text",
+      "category": "basic",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "html-text",
+          "defaultOptions": {
+            "name": "",
+            "columnWidth": "200px",
+            "hidden": false,
+            "htmlContent": "<b>html text</b>",
+            "customClass": "",
+            "onCreated": "",
+            "onMounted": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "columnWidth",
+        "customClass",
+        "hidden",
+        "htmlContent",
+        "name"
+      ],
+      "forbiddenKeys": [
+        "onCreated",
+        "onMounted"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "htmlContent": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "input",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "text-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "type": "text",
+            "defaultValue": "",
+            "placeholder": "",
+            "columnWidth": "200px",
+            "size": "",
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "readonly": false,
+            "disabled": false,
+            "hidden": false,
+            "clearable": true,
+            "showPassword": false,
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "minLength": null,
+            "maxLength": null,
+            "showWordLimit": false,
+            "prefixIcon": "",
+            "suffixIcon": "",
+            "appendButton": false,
+            "appendButtonDisabled": false,
+            "buttonIcon": "custom-search",
+            "appendText": false,
+            "textForAppend": "",
+            "onCreated": "",
+            "onMounted": "",
+            "onInput": "",
+            "onChange": "",
+            "onFocus": "",
+            "onBlur": "",
+            "onValidate": "",
+            "onAppendButtonClick": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "appendButton",
+        "appendButtonDisabled",
+        "appendText",
+        "buttonIcon",
+        "clearable",
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "maxLength",
+        "minLength",
+        "name",
+        "placeholder",
+        "prefixIcon",
+        "readonly",
+        "required",
+        "requiredHint",
+        "showPassword",
+        "showWordLimit",
+        "size",
+        "suffixIcon",
+        "textForAppend",
+        "type",
+        "validation",
+        "validationHint"
+      ],
+      "forbiddenKeys": [
+        "onAppendButtonClick",
+        "onBlur",
+        "onChange",
+        "onCreated",
+        "onFocus",
+        "onInput",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "type": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "placeholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "readonly": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "clearable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showPassword": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "minLength": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "maxLength": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "showWordLimit": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "prefixIcon": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "suffixIcon": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "appendButton": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "appendButtonDisabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "buttonIcon": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "appendText": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "textForAppend": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onInput": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onFocus": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onBlur": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onAppendButtonClick": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "number",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "number-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "defaultValue": 0,
+            "placeholder": "",
+            "columnWidth": "200px",
+            "size": "",
+            "controls": true,
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "disabled": false,
+            "hidden": false,
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "formulaEnabled": false,
+            "formula": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "min": -100000000000,
+            "max": 100000000000,
+            "precision": 0,
+            "step": 1,
+            "controlsPosition": "right",
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onFocus": "",
+            "onBlur": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "columnWidth",
+        "controls",
+        "controlsPosition",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "formula",
+        "formulaEnabled",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "max",
+        "min",
+        "name",
+        "placeholder",
+        "precision",
+        "required",
+        "requiredHint",
+        "size",
+        "step",
+        "validation",
+        "validationHint"
+      ],
+      "forbiddenKeys": [
+        "onBlur",
+        "onChange",
+        "onCreated",
+        "onFocus",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "placeholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "controls": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "formulaEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "formula": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "min": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "max": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "precision": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "step": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "controlsPosition": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "",
+            "right"
+          ]
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onFocus": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onBlur": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "object-group",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "object-group",
+          "defaultOptions": {
+            "name": "",
+            "objectName": "testObj",
+            "hidden": false,
+            "customClass": "",
+            "onCreated": "",
+            "onMounted": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "widgetList",
+                "shape": "list",
+                "allowedTypes": []
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "customClass",
+        "hidden",
+        "name",
+        "objectName"
+      ],
+      "forbiddenKeys": [
+        "onCreated",
+        "onMounted"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "objectName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "picture-upload",
+      "category": "advanced",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "picture-upload-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "labelWidth": null,
+            "labelHidden": false,
+            "columnWidth": "200px",
+            "disabled": false,
+            "hidden": false,
+            "required": false,
+            "requiredHint": "",
+            "customRule": "",
+            "customRuleHint": "",
+            "uploadURL": "",
+            "uploadTip": "",
+            "withCredentials": false,
+            "multipleSelect": false,
+            "showFileList": true,
+            "limit": 3,
+            "fileMaxSize": 5,
+            "fileTypes": [
+              "jpg",
+              "jpeg",
+              "png"
+            ],
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onBeforeUpload": "",
+            "onUploadSuccess": "",
+            "onUploadError": "",
+            "onFileRemove": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "columnWidth",
+        "customClass",
+        "customRuleHint",
+        "disabled",
+        "fileMaxSize",
+        "fileTypes",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "limit",
+        "multipleSelect",
+        "name",
+        "required",
+        "requiredHint",
+        "showFileList",
+        "uploadTip",
+        "uploadURL",
+        "withCredentials"
+      ],
+      "forbiddenKeys": [
+        "customRule",
+        "onBeforeUpload",
+        "onCreated",
+        "onFileRemove",
+        "onMounted",
+        "onUploadError",
+        "onUploadSuccess",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customRule": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customRuleHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "uploadURL": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "uploadTip": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "withCredentials": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "multipleSelect": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showFileList": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "limit": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "fileMaxSize": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "fileTypes": {
+          "valueType": "array",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onBeforeUpload": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onUploadSuccess": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onUploadError": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onFileRemove": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "radio",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "radio-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "defaultValue": null,
+            "columnWidth": "200px",
+            "size": "",
+            "displayStyle": "inline",
+            "buttonStyle": false,
+            "border": false,
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "disabled": false,
+            "hidden": false,
+            "dsEnabled": false,
+            "dsName": "",
+            "dataSetName": "",
+            "firstOptionAsDefault": false,
+            "labelKey": "label",
+            "valueKey": "value",
+            "optionValueType": "",
+            "optionItems": [
+              {
+                "label": "radio 1",
+                "value": 1
+              },
+              {
+                "label": "radio 2",
+                "value": 2
+              },
+              {
+                "label": "radio 3",
+                "value": 3
+              }
+            ],
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "border",
+        "buttonStyle",
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "displayStyle",
+        "firstOptionAsDefault",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelKey",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "name",
+        "optionItems",
+        "optionValueType",
+        "required",
+        "requiredHint",
+        "size",
+        "validation",
+        "validationHint",
+        "valueKey"
+      ],
+      "forbiddenKeys": [
+        "dataSetName",
+        "dsEnabled",
+        "dsName",
+        "onChange",
+        "onCreated",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "undefined",
+          "nullable": true
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "displayStyle": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "inline",
+            "block"
+          ]
+        },
+        "buttonStyle": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "border": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "dsEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "dsName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "dataSetName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "firstOptionAsDefault": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelKey": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "valueKey": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "optionValueType": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "optionItems": {
+          "valueType": "array",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "rate",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "rate-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "defaultValue": null,
+            "columnWidth": "200px",
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "disabled": false,
+            "hidden": false,
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "max": 5,
+            "lowThreshold": 2,
+            "highThreshold": 4,
+            "allowHalf": false,
+            "showText": false,
+            "showScore": false,
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "allowHalf",
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "hidden",
+        "highThreshold",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "lowThreshold",
+        "max",
+        "name",
+        "required",
+        "requiredHint",
+        "showScore",
+        "showText",
+        "validation",
+        "validationHint"
+      ],
+      "forbiddenKeys": [
+        "onChange",
+        "onCreated",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "max": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "lowThreshold": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "highThreshold": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "allowHalf": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showText": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showScore": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "rich-editor",
+      "category": "advanced",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "rich-editor-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "placeholder": "",
+            "labelWidth": null,
+            "labelHidden": false,
+            "columnWidth": "200px",
+            "contentHeight": "200px",
+            "disabled": false,
+            "hidden": false,
+            "required": false,
+            "requiredHint": "",
+            "customRule": "",
+            "customRuleHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "minLength": null,
+            "maxLength": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "columnWidth",
+        "contentHeight",
+        "customClass",
+        "customRuleHint",
+        "disabled",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "maxLength",
+        "minLength",
+        "name",
+        "placeholder",
+        "required",
+        "requiredHint"
+      ],
+      "forbiddenKeys": [
+        "customRule",
+        "onCreated",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "placeholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "contentHeight": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customRule": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customRuleHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "minLength": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "maxLength": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "select",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "select-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "defaultValue": null,
+            "placeholder": "",
+            "columnWidth": "200px",
+            "size": "",
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "disabled": false,
+            "hidden": false,
+            "clearable": true,
+            "filterable": false,
+            "allowCreate": false,
+            "remote": false,
+            "automaticDropdown": false,
+            "multiple": false,
+            "multipleLimit": 0,
+            "collapseTags": false,
+            "dsEnabled": false,
+            "dsName": "",
+            "dataSetName": "",
+            "firstOptionAsDefault": false,
+            "labelKey": "label",
+            "valueKey": "value",
+            "optionValueType": "",
+            "optionItems": [
+              {
+                "label": "select 1",
+                "value": 1
+              },
+              {
+                "label": "select 2",
+                "value": 2
+              },
+              {
+                "label": "select 3",
+                "value": 3
+              }
+            ],
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onRemoteQuery": "",
+            "onChange": "",
+            "onFocus": "",
+            "onBlur": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "allowCreate",
+        "automaticDropdown",
+        "clearable",
+        "collapseTags",
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "filterable",
+        "firstOptionAsDefault",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelKey",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "multiple",
+        "multipleLimit",
+        "name",
+        "optionItems",
+        "optionValueType",
+        "placeholder",
+        "required",
+        "requiredHint",
+        "size",
+        "validation",
+        "validationHint",
+        "valueKey"
+      ],
+      "forbiddenKeys": [
+        "dataSetName",
+        "dsEnabled",
+        "dsName",
+        "onBlur",
+        "onChange",
+        "onCreated",
+        "onFocus",
+        "onMounted",
+        "onRemoteQuery",
+        "onValidate",
+        "remote"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "undefined",
+          "nullable": true
+        },
+        "placeholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "clearable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "filterable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "allowCreate": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "remote": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "automaticDropdown": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "multiple": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "multipleLimit": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "collapseTags": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "dsEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "dsName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "dataSetName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "firstOptionAsDefault": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelKey": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "valueKey": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "optionValueType": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "optionItems": {
+          "valueType": "array",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onRemoteQuery": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onFocus": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onBlur": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "slider",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "slider-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "columnWidth": "200px",
+            "showStops": true,
+            "size": "",
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "disabled": false,
+            "hidden": false,
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "min": 0,
+            "max": 100,
+            "step": 10,
+            "range": false,
+            "height": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "columnWidth",
+        "customClass",
+        "disabled",
+        "height",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "max",
+        "min",
+        "name",
+        "range",
+        "required",
+        "requiredHint",
+        "showStops",
+        "size",
+        "step",
+        "validation",
+        "validationHint"
+      ],
+      "forbiddenKeys": [
+        "onChange",
+        "onCreated",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "showStops": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "min": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "max": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "step": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "range": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "height": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "slot",
+      "category": "advanced",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "slot-field",
+          "defaultOptions": {
+            "name": "",
+            "label": "",
+            "customClass": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "customClass",
+        "label",
+        "name"
+      ],
+      "forbiddenKeys": [],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "static-text",
+      "category": "basic",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "static-text",
+          "defaultOptions": {
+            "name": "",
+            "columnWidth": "200px",
+            "hidden": false,
+            "textContent": "static text",
+            "textAlign": "left",
+            "fontSize": "13px",
+            "preWrap": false,
+            "customClass": "",
+            "onCreated": "",
+            "onMounted": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "columnWidth",
+        "customClass",
+        "fontSize",
+        "hidden",
+        "name",
+        "preWrap",
+        "textAlign",
+        "textContent"
+      ],
+      "forbiddenKeys": [
+        "onCreated",
+        "onMounted"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "textContent": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "textAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "fontSize": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "preWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "sub-form",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "sub-form",
+          "defaultOptions": {
+            "name": "",
+            "label": "",
+            "showBlankRow": true,
+            "showRowNumber": true,
+            "labelAlign": "label-center-align",
+            "hidden": false,
+            "disabled": false,
+            "actionColumnPosition": "left",
+            "customClass": "",
+            "onSubFormRowAdd": "",
+            "onSubFormRowInsert": "",
+            "onSubFormRowDelete": "",
+            "onSubFormRowChange": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "widgetList",
+                "shape": "list",
+                "allowedTypes": []
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "actionColumnPosition",
+        "customClass",
+        "disabled",
+        "hidden",
+        "label",
+        "labelAlign",
+        "name",
+        "showBlankRow",
+        "showRowNumber"
+      ],
+      "forbiddenKeys": [
+        "onSubFormRowAdd",
+        "onSubFormRowChange",
+        "onSubFormRowDelete",
+        "onSubFormRowInsert"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "showBlankRow": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showRowNumber": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "actionColumnPosition": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onSubFormRowAdd": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onSubFormRowInsert": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onSubFormRowDelete": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onSubFormRowChange": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "switch",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "switch-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "defaultValue": null,
+            "columnWidth": "200px",
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "disabled": false,
+            "hidden": false,
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "switchWidth": 40,
+            "activeText": "",
+            "inactiveText": "",
+            "activeColor": null,
+            "inactiveColor": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "activeColor",
+        "activeText",
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "hidden",
+        "inactiveColor",
+        "inactiveText",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "name",
+        "switchWidth"
+      ],
+      "forbiddenKeys": [
+        "onChange",
+        "onCreated",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "switchWidth": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "activeText": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "inactiveText": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "activeColor": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "inactiveColor": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "tab",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "tab",
+          "defaultOptions": {
+            "name": "",
+            "tabType": "border-card",
+            "tabPosition": "top",
+            "hidden": false,
+            "customClass": "",
+            "onTabClick": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "tabs",
+                "shape": "list",
+                "allowedTypes": [
+                  "tab-pane"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "customClass",
+        "hidden",
+        "name",
+        "tabPosition",
+        "tabType"
+      ],
+      "forbiddenKeys": [
+        "onTabClick"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "tabType": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "card",
+            "border-card"
+          ]
+        },
+        "tabPosition": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "top",
+            "right",
+            "bottom",
+            "left"
+          ]
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onTabClick": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "supported"
+      }
+    },
+    {
+      "type": "tab-pane",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "tab-pane",
+          "defaultOptions": {
+            "name": "",
+            "label": "",
+            "hidden": false,
+            "active": false,
+            "disabled": false,
+            "customClass": ""
+          },
+          "structure": {
+            "internal": true,
+            "childCollections": [
+              {
+                "key": "widgetList",
+                "shape": "list",
+                "allowedTypes": []
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "active",
+        "customClass",
+        "disabled",
+        "hidden",
+        "label",
+        "name"
+      ],
+      "forbiddenKeys": [],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "active": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "supported"
+      }
+    },
+    {
+      "type": "table",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "table",
+          "defaultOptions": {
+            "name": "",
+            "hidden": false,
+            "customClass": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "rows",
+                "shape": "matrix",
+                "allowedTypes": [
+                  "table-cell"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "customClass",
+        "hidden",
+        "name"
+      ],
+      "forbiddenKeys": [],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "table-cell",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "table-cell",
+          "defaultOptions": {
+            "name": "",
+            "cellWidth": "",
+            "cellHeight": "",
+            "colspan": 1,
+            "rowspan": 1,
+            "wordBreak": false,
+            "customClass": ""
+          },
+          "structure": {
+            "internal": true,
+            "childCollections": [
+              {
+                "key": "widgetList",
+                "shape": "list",
+                "allowedTypes": []
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "cellHeight",
+        "cellWidth",
+        "colspan",
+        "customClass",
+        "name",
+        "rowspan",
+        "wordBreak"
+      ],
+      "forbiddenKeys": [],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "cellWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "cellHeight": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "colspan": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "rowspan": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "wordBreak": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "textarea",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "textarea-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "rows": 3,
+            "autosize": false,
+            "defaultValue": "",
+            "placeholder": "",
+            "columnWidth": "200px",
+            "size": "",
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "readonly": false,
+            "disabled": false,
+            "hidden": false,
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "minLength": null,
+            "maxLength": null,
+            "showWordLimit": false,
+            "onCreated": "",
+            "onMounted": "",
+            "onInput": "",
+            "onChange": "",
+            "onFocus": "",
+            "onBlur": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "autosize",
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "maxLength",
+        "minLength",
+        "name",
+        "placeholder",
+        "readonly",
+        "required",
+        "requiredHint",
+        "rows",
+        "showWordLimit",
+        "size",
+        "validation",
+        "validationHint"
+      ],
+      "forbiddenKeys": [
+        "onBlur",
+        "onChange",
+        "onCreated",
+        "onFocus",
+        "onInput",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "rows": {
+          "valueType": "number",
+          "nullable": false
+        },
+        "autosize": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "placeholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "readonly": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "minLength": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "maxLength": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "showWordLimit": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onInput": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onFocus": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onBlur": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "time",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "time-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "defaultValue": null,
+            "placeholder": "",
+            "columnWidth": "200px",
+            "size": "",
+            "autoFullWidth": true,
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "readonly": false,
+            "disabled": false,
+            "hidden": false,
+            "clearable": true,
+            "editable": false,
+            "format": "HH:mm:ss",
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onFocus": "",
+            "onBlur": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "autoFullWidth",
+        "clearable",
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "editable",
+        "format",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "name",
+        "placeholder",
+        "readonly",
+        "required",
+        "requiredHint",
+        "size",
+        "validation",
+        "validationHint"
+      ],
+      "forbiddenKeys": [
+        "onBlur",
+        "onChange",
+        "onCreated",
+        "onFocus",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "placeholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "autoFullWidth": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "readonly": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "clearable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "editable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "format": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onFocus": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onBlur": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "time-range",
+      "category": "basic",
+      "formItem": true,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "time-range-field",
+          "defaultOptions": {
+            "name": "",
+            "keyNameEnabled": false,
+            "keyName": "",
+            "label": "",
+            "labelAlign": "",
+            "defaultValue": null,
+            "startPlaceholder": "",
+            "endPlaceholder": "",
+            "columnWidth": "200px",
+            "size": "",
+            "autoFullWidth": true,
+            "labelWidth": null,
+            "labelHidden": false,
+            "labelWrap": false,
+            "readonly": false,
+            "disabled": false,
+            "hidden": false,
+            "clearable": true,
+            "editable": false,
+            "format": "HH:mm:ss",
+            "required": false,
+            "requiredHint": "",
+            "validation": "",
+            "validationHint": "",
+            "customClass": "",
+            "labelIconClass": null,
+            "labelIconPosition": "rear",
+            "labelTooltip": null,
+            "onCreated": "",
+            "onMounted": "",
+            "onChange": "",
+            "onFocus": "",
+            "onBlur": "",
+            "onValidate": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": []
+          }
+        }
+      ],
+      "writableKeys": [
+        "autoFullWidth",
+        "clearable",
+        "columnWidth",
+        "customClass",
+        "defaultValue",
+        "disabled",
+        "editable",
+        "endPlaceholder",
+        "format",
+        "hidden",
+        "keyName",
+        "keyNameEnabled",
+        "label",
+        "labelAlign",
+        "labelHidden",
+        "labelIconClass",
+        "labelIconPosition",
+        "labelTooltip",
+        "labelWidth",
+        "labelWrap",
+        "name",
+        "readonly",
+        "required",
+        "requiredHint",
+        "size",
+        "startPlaceholder",
+        "validation",
+        "validationHint"
+      ],
+      "forbiddenKeys": [
+        "onBlur",
+        "onChange",
+        "onCreated",
+        "onFocus",
+        "onMounted",
+        "onValidate"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "keyNameEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "keyName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelAlign": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "defaultValue": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "startPlaceholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "endPlaceholder": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "columnWidth": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "autoFullWidth": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWidth": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "labelWrap": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "readonly": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "clearable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "editable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "format": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "required": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "requiredHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validation": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "validationHint": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelIconClass": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "labelIconPosition": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "labelTooltip": {
+          "valueType": "null",
+          "nullable": true
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onFocus": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onBlur": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onValidate": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "tree",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "tree",
+          "defaultOptions": {
+            "name": "tree",
+            "label": "",
+            "filter": true,
+            "draggable": false,
+            "defaultExpandAllNode": true,
+            "selectClearAllNode": true,
+            "expandRetractAllNode": true,
+            "showCheckBox": true,
+            "expandOnClickNode": true,
+            "lazy": false,
+            "treeDataEdit": true,
+            "checkStrictly": false,
+            "nodeEdit": true,
+            "size": "default",
+            "disabled": false,
+            "hidden": false,
+            "dsEnabled": false,
+            "dsName": "",
+            "dataSetName": "",
+            "customClass": "",
+            "onCreated": "",
+            "onMounted": "",
+            "onNodeClick": "",
+            "onNodeCheck": "",
+            "onNodeContextmenu": "",
+            "onCheckChange": "",
+            "treeData": [
+              {
+                "label": "一级 1",
+                "children": [
+                  {
+                    "label": "二级 1-1",
+                    "children": [
+                      {
+                        "label": "三级 1-1-1"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "label": "一级 2",
+                "children": [
+                  {
+                    "label": "二级 2-1",
+                    "children": [
+                      {
+                        "label": "三级 2-1-1"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "二级 2-2",
+                    "children": [
+                      {
+                        "label": "三级 2-2-1"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "label": "一级 3",
+                "children": [
+                  {
+                    "label": "二级 3-1",
+                    "children": [
+                      {
+                        "label": "三级 3-1-1"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "二级 3-2",
+                    "children": [
+                      {
+                        "label": "三级 3-2-1"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "widgetList",
+                "shape": "list",
+                "allowedTypes": []
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "checkStrictly",
+        "customClass",
+        "defaultExpandAllNode",
+        "disabled",
+        "draggable",
+        "expandOnClickNode",
+        "expandRetractAllNode",
+        "filter",
+        "hidden",
+        "label",
+        "lazy",
+        "name",
+        "nodeEdit",
+        "selectClearAllNode",
+        "showCheckBox",
+        "size",
+        "treeData",
+        "treeDataEdit"
+      ],
+      "forbiddenKeys": [
+        "dataSetName",
+        "dsEnabled",
+        "dsName",
+        "onCheckChange",
+        "onCreated",
+        "onMounted",
+        "onNodeCheck",
+        "onNodeClick",
+        "onNodeContextmenu"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "label": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "filter": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "draggable": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "defaultExpandAllNode": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "selectClearAllNode": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "expandRetractAllNode": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showCheckBox": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "expandOnClickNode": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "lazy": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "treeDataEdit": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "checkStrictly": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "nodeEdit": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "disabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "hidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "dsEnabled": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "dsName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "dataSetName": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "customClass": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCreated": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onMounted": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onNodeClick": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onNodeCheck": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onNodeContextmenu": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCheckChange": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "treeData": {
+          "valueType": "array",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "vf-dialog",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "vf-dialog",
+          "defaultOptions": {
+            "name": "",
+            "title": "",
+            "width": "50%",
+            "fullscreen": false,
+            "showModal": true,
+            "showClose": true,
+            "closeOnClickModal": false,
+            "closeOnPressEscape": false,
+            "center": false,
+            "readMode": false,
+            "disabledMode": false,
+            "okButtonLabel": "",
+            "okButtonHidden": false,
+            "cancelButtonLabel": "",
+            "cancelButtonHidden": false,
+            "onOkButtonClick": "",
+            "onCancelButtonClick": "",
+            "onDialogOpened": "",
+            "onDialogBeforeClose": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "widgetList",
+                "shape": "list",
+                "allowedTypes": []
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "cancelButtonHidden",
+        "cancelButtonLabel",
+        "center",
+        "closeOnClickModal",
+        "closeOnPressEscape",
+        "disabledMode",
+        "fullscreen",
+        "name",
+        "okButtonHidden",
+        "okButtonLabel",
+        "readMode",
+        "showClose",
+        "showModal",
+        "title",
+        "width"
+      ],
+      "forbiddenKeys": [
+        "onCancelButtonClick",
+        "onDialogBeforeClose",
+        "onDialogOpened",
+        "onOkButtonClick"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "title": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "width": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "fullscreen": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showModal": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showClose": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "closeOnClickModal": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "closeOnPressEscape": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "center": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "readMode": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabledMode": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "okButtonLabel": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "okButtonHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "cancelButtonLabel": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "cancelButtonHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "onOkButtonClick": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCancelButtonClick": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onDialogOpened": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onDialogBeforeClose": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    },
+    {
+      "type": "vf-drawer",
+      "category": "container",
+      "formItem": false,
+      "variants": [
+        {
+          "alias": null,
+          "icon": "vf-drawer",
+          "defaultOptions": {
+            "name": "",
+            "title": "",
+            "size": "50%",
+            "showModal": true,
+            "showClose": true,
+            "closeOnClickModal": false,
+            "closeOnPressEscape": false,
+            "direction": "rtl",
+            "readMode": false,
+            "disabledMode": false,
+            "okButtonLabel": "",
+            "okButtonHidden": false,
+            "cancelButtonLabel": "",
+            "cancelButtonHidden": false,
+            "onOkButtonClick": "",
+            "onCancelButtonClick": "",
+            "onDrawerOpened": "",
+            "onDrawerBeforeClose": ""
+          },
+          "structure": {
+            "internal": false,
+            "childCollections": [
+              {
+                "key": "widgetList",
+                "shape": "list",
+                "allowedTypes": []
+              }
+            ]
+          }
+        }
+      ],
+      "writableKeys": [
+        "cancelButtonHidden",
+        "cancelButtonLabel",
+        "closeOnClickModal",
+        "closeOnPressEscape",
+        "direction",
+        "disabledMode",
+        "name",
+        "okButtonHidden",
+        "okButtonLabel",
+        "readMode",
+        "showClose",
+        "showModal",
+        "size",
+        "title"
+      ],
+      "forbiddenKeys": [
+        "onCancelButtonClick",
+        "onDrawerBeforeClose",
+        "onDrawerOpened",
+        "onOkButtonClick"
+      ],
+      "constraints": {
+        "name": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "title": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "size": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "showModal": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "showClose": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "closeOnClickModal": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "closeOnPressEscape": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "direction": {
+          "valueType": "string",
+          "nullable": false,
+          "enum": [
+            "ltr",
+            "rtl",
+            "ttb",
+            "btt"
+          ]
+        },
+        "readMode": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "disabledMode": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "okButtonLabel": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "okButtonHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "cancelButtonLabel": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "cancelButtonHidden": {
+          "valueType": "boolean",
+          "nullable": false
+        },
+        "onOkButtonClick": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onCancelButtonClick": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onDrawerOpened": {
+          "valueType": "string",
+          "nullable": false
+        },
+        "onDrawerBeforeClose": {
+          "valueType": "string",
+          "nullable": false
+        }
+      },
+      "notes": {
+        "structureSurgery": "unsupported"
+      }
+    }
+  ],
+  "form": {
+    "defaultConfig": {
+      "modelName": "formData",
+      "refName": "vForm",
+      "rulesName": "rules",
+      "labelWidth": 80,
+      "labelPosition": "left",
+      "h5LabelTop": true,
+      "gridResponsive": true,
+      "size": "",
+      "labelAlign": "label-left-align",
+      "cssCode": "",
+      "customClass": [],
+      "functions": "",
+      "layoutType": "PC",
+      "jsonVersion": 3,
+      "dataSources": [],
+      "onFormCreated": "",
+      "onFormMounted": "",
+      "onFormDataChange": "",
+      "onFormValidate": ""
+    },
+    "writableKeys": [
+      "cssCode",
+      "customClass",
+      "gridResponsive",
+      "h5LabelTop",
+      "labelAlign",
+      "labelPosition",
+      "labelWidth",
+      "layoutType",
+      "size"
+    ],
+    "forbiddenKeys": [
+      "dataSources",
+      "functions",
+      "jsonVersion",
+      "modelName",
+      "onFormCreated",
+      "onFormDataChange",
+      "onFormMounted",
+      "onFormValidate",
+      "refName",
+      "rulesName"
+    ],
+    "constraints": {
+      "modelName": {
+        "valueType": "string",
+        "nullable": false
+      },
+      "refName": {
+        "valueType": "string",
+        "nullable": false
+      },
+      "rulesName": {
+        "valueType": "string",
+        "nullable": false
+      },
+      "labelWidth": {
+        "valueType": "number",
+        "nullable": false
+      },
+      "labelPosition": {
+        "valueType": "string",
+        "nullable": false,
+        "enum": [
+          "left",
+          "right",
+          "top"
+        ]
+      },
+      "h5LabelTop": {
+        "valueType": "boolean",
+        "nullable": false
+      },
+      "gridResponsive": {
+        "valueType": "boolean",
+        "nullable": false
+      },
+      "size": {
+        "valueType": "string",
+        "nullable": false,
+        "enum": [
+          "",
+          "large",
+          "default",
+          "small"
+        ]
+      },
+      "labelAlign": {
+        "valueType": "string",
+        "nullable": false,
+        "enum": [
+          "label-left-align",
+          "label-center-align",
+          "label-right-align"
+        ]
+      },
+      "cssCode": {
+        "valueType": "string",
+        "nullable": false
+      },
+      "customClass": {
+        "valueType": "array",
+        "nullable": false
+      },
+      "functions": {
+        "valueType": "string",
+        "nullable": false
+      },
+      "layoutType": {
+        "valueType": "string",
+        "nullable": false,
+        "enum": [
+          "PC",
+          "H5",
+          "Pad"
+        ]
+      },
+      "jsonVersion": {
+        "valueType": "number",
+        "nullable": false
+      },
+      "dataSources": {
+        "valueType": "array",
+        "nullable": false
+      },
+      "onFormCreated": {
+        "valueType": "string",
+        "nullable": false
+      },
+      "onFormMounted": {
+        "valueType": "string",
+        "nullable": false
+      },
+      "onFormDataChange": {
+        "valueType": "string",
+        "nullable": false
+      },
+      "onFormValidate": {
+        "valueType": "string",
+        "nullable": false
+      }
+    }
+  }
+}

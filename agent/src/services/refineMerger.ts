@@ -1,6 +1,9 @@
 import { widgetTemplates, containerTemplates } from '../knowledge/widgetWhitelist.js'
 import type { RefineOperation, RefinePlan, TargetRef, FormJson } from '../schemas/refinePlan.js'
 import type { FieldType } from '../schemas/fieldPlan.js'
+import { sanitizeFormPatch, sanitizeWidgetPatch } from './refinePropertyPolicy.js'
+import { mergeCssCode, validateCssCode } from './cssGuard.js'
+import { isHeavyStructureType } from './catalogValidator.js'
 
 type WidgetNode = Record<string, unknown> & {
   type?: string
@@ -222,18 +225,75 @@ function applyUpdateField(root: WidgetNode[], op: Extract<RefineOperation, { op:
     return
   }
   widget.options = widget.options || {}
-  if (op.patch.label !== undefined) widget.options.label = op.patch.label
-  if (op.patch.required !== undefined) widget.options.required = op.patch.required
-  if (op.patch.textContent !== undefined) widget.options.textContent = op.patch.textContent
-  if (op.patch.optionItems) {
-    if (widget.type !== 'radio' && widget.type !== 'select') {
-      warnings.push(`目标 ${widget.options.name} 非 radio/select，已忽略 optionItems`)
-    } else {
-      widget.options.optionItems = op.patch.optionItems.map((o) => ({
-        label: o.label,
-        value: o.value,
-      }))
+  const type = String(widget.type || '')
+  const sanitized = sanitizeWidgetPatch(type, op.patch as Record<string, unknown>)
+  warnings.push(...sanitized.warnings)
+  if (Object.keys(sanitized.patch).length === 0) {
+    warnings.push(`updateField 无可应用属性: ${op.target.id || op.target.name}`)
+    return
+  }
+  if (sanitized.patch.optionItems) {
+    if (widget.type !== 'radio' && widget.type !== 'select' && widget.type !== 'checkbox' && widget.type !== 'cascader') {
+      warnings.push(`目标 ${widget.options.name} 不支持 optionItems，已忽略`)
+      delete sanitized.patch.optionItems
     }
+  }
+  Object.assign(widget.options, sanitized.patch)
+}
+
+function applyPatchFormConfig(formJson: FormJson, op: Extract<RefineOperation, { op: 'patchFormConfig' }>, warnings: string[]) {
+  const sanitized = sanitizeFormPatch(op.patch as Record<string, unknown>)
+  warnings.push(...sanitized.warnings)
+  if (sanitized.patch.cssCode !== undefined) {
+    const css = String(sanitized.patch.cssCode)
+    const guard = validateCssCode(css)
+    warnings.push(...guard.warnings)
+    if (!guard.ok) {
+      warnings.push(guard.message || 'cssCode 未通过护栏，已忽略')
+      delete sanitized.patch.cssCode
+    }
+  }
+  if (Object.keys(sanitized.patch).length === 0) {
+    warnings.push('patchFormConfig 无可应用属性')
+    return
+  }
+  formJson.formConfig = { ...(formJson.formConfig || {}), ...sanitized.patch }
+}
+
+function applySetCustomClass(root: WidgetNode[], op: Extract<RefineOperation, { op: 'setCustomClass' }>, warnings: string[]) {
+  const widget = findWidget(root, op.target)
+  if (!widget) {
+    warnings.push(`setCustomClass 未找到目标 ${op.target.id || op.target.name}`)
+    return
+  }
+  widget.options = widget.options || {}
+  const sanitized = sanitizeWidgetPatch(String(widget.type || ''), { customClass: op.customClass })
+  warnings.push(...sanitized.warnings)
+  if (sanitized.patch.customClass === undefined) {
+    warnings.push('setCustomClass 未写入：customClass 不可用')
+    return
+  }
+  widget.options.customClass = sanitized.patch.customClass
+}
+
+function applySetCssCode(formJson: FormJson, root: WidgetNode[], op: Extract<RefineOperation, { op: 'setCssCode' }>, warnings: string[]) {
+  const guard = validateCssCode(op.css)
+  warnings.push(...guard.warnings)
+  if (!guard.ok) {
+    warnings.push(guard.message || 'cssCode 未通过护栏，已忽略')
+    return
+  }
+  if (op.target && op.customClass) {
+    applySetCustomClass(root, { op: 'setCustomClass', target: op.target, customClass: op.customClass }, warnings)
+  } else if (op.customClass) {
+    const current = formJson.formConfig?.customClass
+    const next = Array.isArray(current) ? [...current] : typeof current === 'string' && current ? [current] : []
+    if (!next.includes(op.customClass)) next.push(op.customClass)
+    formJson.formConfig = { ...(formJson.formConfig || {}), customClass: next }
+  }
+  formJson.formConfig = {
+    ...(formJson.formConfig || {}),
+    cssCode: mergeCssCode(formJson.formConfig?.cssCode, op.css, op.mode),
   }
 }
 
@@ -268,6 +328,12 @@ function applyAddField(root: WidgetNode[], op: Extract<RefineOperation, { op: 'a
     const parent = findWidget(root, op.parent)
     if (!parent) {
       warnings.push(`addField parent 未找到，已追加到根节点`)
+      root.push(widget)
+      return
+    }
+    const parentType = String(parent.type || '')
+    if (isHeavyStructureType(parentType)) {
+      warnings.push(`父容器 ${parentType} 未纳入结构手术能力，字段已追加到根节点`)
       root.push(widget)
       return
     }
@@ -371,6 +437,15 @@ export function applyRefinePlan(current: FormJson, plan: RefinePlan): MergeResul
         break
       case 'wrapInTabs':
         applyWrapInTabs(root, op, warnings)
+        break
+      case 'patchFormConfig':
+        applyPatchFormConfig(formJson, op, warnings)
+        break
+      case 'setCustomClass':
+        applySetCustomClass(root, op, warnings)
+        break
+      case 'setCssCode':
+        applySetCssCode(formJson, root, op, warnings)
         break
       default:
         warnings.push(`未知操作已忽略`)

@@ -78,6 +78,34 @@ npm test
 
 P0 **不做**：自由 CSS / 任意事件 JS 自动生成（后续阶段）。
 
+## v0.3.0（进行中）：Widget Catalog + 厚 P1
+
+OpenSpec：`ai-form-widget-catalog-refine`（`specified`）
+
+### Widget Catalog
+
+- 真源：`v-form/src/components/form-designer/widget-panel/widgetsConfig.js` + `getDefaultFormConfig()`
+- 产物：`agent/src/knowledge/generated/widget-catalog.json`（37 个组件类型）
+- 同步：`cd agent && npm run catalog:sync`
+- 漂移检查：`cd agent && npm run catalog:check`
+
+### Refine 扩展（Agent）
+
+- `updateField.patch` 按 Catalog `writableKeys` 合入常见属性；事件键禁写
+- 受控样式：`setCssCode` / `patchFormConfig` / `setCustomClass`（长度与危险构造护栏）
+- 精准定位：formSummary 含 path/parent/writableSnapshot；重复 name 歧义 → 422
+- 按需注入：`catalogSnippets`（每轮最多 12 个 type）
+
+### 验证
+
+```bash
+cd agent
+npm run typecheck
+npm run catalog:check
+npm run acceptance:cases   # 输出 docs/evidence/v0.3.0/
+npm run smoke
+```
+
 ## 文档
 
 - PRD：`docs/requirements/ai-form-multiturn-refine.md`

@@ -4,6 +4,7 @@ import { planRefine } from '../services/refinePlanner.js'
 import { applyRefinePlan } from '../services/refineMerger.js'
 import { enforceRefineTextPolicy } from '../services/refineTextPolicy.js'
 import { collectWidgetIds, validateFormJson } from '../services/validator.js'
+import { validatePlanTargets } from '../services/targetResolver.js'
 
 export async function registerRefineRoutes(app: FastifyInstance) {
   app.post('/api/agent/v1/refine', async (request, reply) => {
@@ -35,6 +36,13 @@ export async function registerRefineRoutes(app: FastifyInstance) {
         return reply.code(422).send({
           message: rejectMessage || '样式类诉求无法通过修改文案规避',
           warnings: policyWarnings,
+        })
+      }
+      const targetCheck = validatePlanTargets(currentFormJson, plan.operations)
+      if (!targetCheck.ok) {
+        return reply.code(422).send({
+          message: targetCheck.rejectMessage || '规划目标存在歧义或无法唯一确定',
+          warnings: [...policyWarnings, ...targetCheck.warnings],
         })
       }
       const { formJson, warnings } = applyRefinePlan(currentFormJson, plan)

@@ -12,6 +12,14 @@
 | `fr-5-confirm-apply` | `refine-reject-keeps-canvas` | Forced refine 422 shows error; canvas widget count unchanged |
 | `fr-6-text-boundary`, `td-refine-text-policy` | `refine-text-style-policy` | Style-only refine 422; error visible; canvas copy/count unchanged |
 | `fr-6-text-boundary` | `refine-explicit-text-apply` | Explicit rename instruction refine 200; new label on canvas after apply |
+| `FR-1` (v0.3.0) | `widget-catalog-sync` | Agent/static: Catalog matches widgetsConfig; drift detectable (`npm run catalog:check`) |
+| `FR-2` (v0.3.0) | `refine-common-properties` | Refine placeholder via Catalog writable keys; visible on canvas after apply |
+| `FR-4` (v0.3.0) | `refine-precise-targeting` | Label-based hit on 时间定向; required=true in response and UI |
+| `FR-4` (v0.3.0) | `refine-ambiguous-target-reject` | Agent: duplicate name targets reject without merge |
+| `FR-3` `FR-5` (v0.3.0) | `refine-csscode-apply` | Scoped cssCode append; copy unchanged |
+| `FR-3` (v0.3.0) | `refine-csscode-reject` | Dangerous css blocked with warnings; canvas unchanged |
+| `FR-1` `FR-2` (v0.3.0) | `refine-property-policy` | Agent: unknown/forbidden/type errors stripped |
+| `FR-5` (v0.3.0) | `refine-p1-regression` | Generate + apply still works under v0.3.0 agent |
 
 Keep case IDs synchronized across the test annotation, `.deliveryguard/acceptance/<version>/evidence.json`, and `docs/evidence/<version>/<case-id>.txt`.
 

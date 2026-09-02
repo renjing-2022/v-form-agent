@@ -1,0 +1,8 @@
+case: refine-p1-regression
+status: pass
+observed: v0.3.0 regression: generate 200 and 7 widgets with 时间定向 after apply
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@b1f75495abfd (working tree has uncommitted changes)
+capturedAt: 2026-09-02T09:53:42.754Z
+durationMs: 3814
+screenshot: docs/evidence/v0.3.0/refine-p1-regression.png

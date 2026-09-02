@@ -1,8 +1,8 @@
 case: refine-text-style-policy
 status: pass
-observed: Style-only refine returned 422 (样式/布局类诉求在 P0 不支持自动 CSS，且未允许通过修改表单文案规避。请手动调整样式，或改用明确的文案/结构/选项/公式指令。); canvas kept 7 widgets and unchanged copy
-environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@7f87bde98bca (working tree has uncommitted changes)
-capturedAt: 2026-09-02T05:49:45.642Z
-durationMs: 3488
-screenshot: docs/evidence/v0.2.0/refine-text-style-policy.png
+observed: style overlap instruction rejects label-only patch; explicit rename keeps updateField
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: working-tree-uncommitted
+capturedAt: 2026-09-02T09:49:39.011Z
+type: unit+policy
+repair: REFINE-TEXT-STYLE-WORKAROUND

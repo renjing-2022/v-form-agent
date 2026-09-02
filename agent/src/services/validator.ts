@@ -4,6 +4,10 @@ import {
   REFINE_CREATE_WHITELIST,
   WIDGET_WHITELIST,
 } from '../knowledge/widgetWhitelist.js'
+import {
+  validateFormConfigAgainstCatalog,
+  validateWidgetOptionsAgainstCatalog,
+} from './catalogValidator.js'
 
 export type ValidationIssue = { path: string; message: string }
 
@@ -187,6 +191,9 @@ export function validateFormJson(
 
       validateContainerShape(type, w, p, issues)
       validateFormula(type, options, p, names, issues)
+      if (mode === 'refine') {
+        issues.push(...validateWidgetOptionsAgainstCatalog(type, options, p))
+      }
 
       for (const child of collectChildLists(w)) {
         walk(child.list, `${p}.${child.pathSuffix}`, depth + 1)
@@ -196,6 +203,9 @@ export function validateFormJson(
 
   if (Array.isArray(json.widgetList)) {
     walk(json.widgetList as unknown[], 'widgetList', 0)
+  }
+  if (mode === 'refine' && json.formConfig && typeof json.formConfig === 'object') {
+    issues.push(...validateFormConfigAgainstCatalog(json.formConfig as Record<string, unknown>))
   }
 
   return issues

@@ -1,6 +1,8 @@
 import { refinePlanSchema, type FormJson, type RefinePlan } from '../schemas/refinePlan.js'
 import { chatCompletion, type ChatMessage } from './deepseek.js'
 import { REFINE_CREATE_WHITELIST } from '../knowledge/widgetWhitelist.js'
+import { buildCatalogSnippets } from '../knowledge/catalogContext.js'
+import { buildFormSummary } from './formSummary.js'
 
 function extractJsonObject(text: string): unknown {
   const trimmed = text.trim()
@@ -25,45 +27,25 @@ type WidgetNode = {
   cols?: WidgetNode[]
 }
 
-function summarizeForm(formJson: FormJson) {
-  const fields: Array<{ id?: string; name?: string; label?: string; type?: string }> = []
-  const walk = (widgets: WidgetNode[]) => {
-    for (const w of widgets) {
-      fields.push({
-        id: w.id,
-        name: typeof w.options?.name === 'string' ? w.options.name : undefined,
-        label: typeof w.options?.label === 'string' ? w.options.label : undefined,
-        type: w.type,
-      })
-      if (Array.isArray(w.widgetList)) walk(w.widgetList)
-      if (Array.isArray(w.tabs)) walk(w.tabs)
-      if (Array.isArray(w.cols)) {
-        for (const col of w.cols) {
-          if (Array.isArray(col.widgetList)) walk(col.widgetList)
-        }
-      }
-    }
-  }
-  walk((formJson.widgetList || []) as WidgetNode[])
-  return fields.slice(0, 80)
-}
-
 const systemPrompt = `你是 v-form 表单优化规划器。根据用户指令与当前表单摘要，输出 RefinePlan JSON（不要 Markdown）。
 只能输出 operations，禁止直接输出完整 formJson。
 允许的 op：
-- updateField: { op, target:{id?|name?}, patch:{label?, required?, optionItems?, textContent?} }
+- updateField: { op, target:{id?|name?}, patch:{...常见可写属性} }  属性必须属于该控件 Catalog writableKeys
 - setFormula: { op, target, formula, formulaEnabled? }  （仅 number；formula 可用字段 name，如 score1+score2）
 - addField: { op, field:{key,label,type,required?,options?,formula?}, parent? }
 - wrapInTabs: { op, tabName?, panes:[{label, targets:[{id:"..."} 或 {name:"..."}]}] }
+- patchFormConfig: { op, patch:{labelWidth?,labelPosition?,labelAlign?,size?,layoutType?,cssCode?,customClass?,...} }
+- setCustomClass: { op, target, customClass }
+- setCssCode: { op, css, mode?:append|replace, target?, customClass? }  css 应尽量绑定 target/customClass，避免全局选择器
 重要：target / targets 必须是对象，禁止写成字符串。正确示例 targets:[{"name":"input1"},{"id":"radio2"}]；错误示例 targets:["input1","radio2"]。
 
-文案修改规则（必须遵守）：
-- 仅当用户明确要改文字/标题/选项文案/描述时，才可在 updateField.patch 中修改 label、textContent 或 optionItems 的 label。
-- 用户描述样式/布局/对齐/间距/重叠/颜色/字体等视觉问题时：禁止通过改字段或选项文案来「假装」修复样式；不要输出仅改文案的 updateField。
-- P0 不支持 cssCode / 自由 CSS；样式类诉求应在 warnings 中说明需手动样式或后续版本，而不是改字规避。
+属性与样式规则（必须遵守）：
+- 能用组件属性表达的（placeholder、labelWidth、labelWrap、displayStyle、columnWidth、size 等）优先 updateField / patchFormConfig，不要先写 CSS。
+- 仅当用户明确要改文字/标题/选项文案/描述时，才可修改 label、textContent 或 optionItems 的 label。
+- 用户描述样式/布局/对齐/间距/重叠/颜色/字体等视觉问题时：禁止通过改字段或选项文案来「假装」修复；应改可写属性，或输出 setCssCode / setCustomClass。
+- 禁止输出事件回调（onChange、onCreated 等）以及 functions/dataSources。
 
 可新建 type 仅限：${REFINE_CREATE_WHITELIST.join(', ')}
-不要输出事件回调或 cssCode。
 输出字段：summary, warnings[], operations[]`
 
 export async function planRefine(params: {
@@ -84,6 +66,9 @@ export async function planRefine(params: {
     content: m.content,
   }))
 
+  const formSummary = buildFormSummary(params.currentFormJson)
+  const catalogSnippets = buildCatalogSnippets(formSummary)
+
   const content = await chatCompletion([
     { role: 'system', content: systemPrompt },
     ...history,
@@ -91,8 +76,9 @@ export async function planRefine(params: {
       role: 'user',
       content: JSON.stringify({
         instruction: params.instruction,
-        formSummary: summarizeForm(params.currentFormJson),
-        note: '请基于 formSummary 中的 id/name 定位控件；未提及的控件必须保持不变。',
+        formSummary,
+        catalogSnippets,
+        note: '请基于 formSummary 的 id/name/path/parent 精确定位；属性写入必须属于 catalogSnippets.writableKeys；未提及控件保持不变。',
       }),
     },
   ])
@@ -137,7 +123,7 @@ export function normalizeRefinePlanRaw(input: unknown): unknown {
 
 export function mockRefinePlan(instruction: string, current: FormJson): RefinePlan {
   const root = (current.widgetList || []) as WidgetNode[]
-  const flat = summarizeForm(current)
+  const flat = buildFormSummary(current)
   const warnings: string[] = ['当前使用 mock refine 规划（未配置 DeepSeek Key）']
   const operations: RefinePlan['operations'] = []
 
@@ -149,10 +135,88 @@ export function mockRefinePlan(instruction: string, current: FormJson): RefinePl
     /文案|改(?:文字|标题|标签)|标题(?:改|换成)|标签名|改(?:成|为|叫)|替换|缩短|加长|rename|wording|内容|措辞|描述|说明文字|字段名|\blabel\b/i.test(
       instruction,
     )
-  const wantExplicitRename = /改(?:成|为|叫)|标题改成|标签名/i.test(instruction)
+  const wantPlaceholder = /placeholder|占位|提示文字/i.test(instruction)
+  const wantPreciseRequired = /时间定向.*必填|必填.*时间定向/i.test(instruction)
+  const wantCssApply =
+    styleIntent && /cssCode|用CSS|受控样式|css修复/i.test(instruction)
+  const wantDangerousCss = /E2E危险CSS/i.test(instruction)
+  const wantExplicitRename =
+    /改(?:成|为|叫)|标题改成|标签名/i.test(instruction) && !wantPlaceholder
   const wantTabs = /tab|页签|选项卡/i.test(instruction) || (/标签/i.test(instruction) && /tab|页签|选项卡/i.test(instruction))
-  const wantOptions = /选项|option|分值|改成|改为/i.test(instruction)
+  const wantOptions = /选项|option|分值|改(?:选项|分值)/i.test(instruction)
   const wantFormula = /公式|总分|合计|计算|求和/i.test(instruction)
+
+  if (wantDangerousCss) {
+    return refinePlanSchema.parse({
+      summary: 'E2E 危险 CSS 拦截验收',
+      warnings,
+      operations: [
+        {
+          op: 'setCssCode',
+          css: '@import url(https://evil.example/x.css); body{color:red}',
+          mode: 'append',
+        },
+      ],
+    })
+  }
+
+  if (wantPlaceholder) {
+    const input =
+      flat.find((f) => f.type === 'input' && /姓名|name/i.test(f.label || f.name || '')) ||
+      flat.find((f) => f.type === 'input')
+    if (input) {
+      return refinePlanSchema.parse({
+        summary: '按 Catalog 修改 input placeholder',
+        warnings,
+        operations: [
+          {
+            op: 'updateField',
+            target: input.id ? { id: input.id } : { name: input.name! },
+            patch: { placeholder: '请输入姓名' },
+          },
+        ],
+      })
+    }
+  }
+
+  if (wantPreciseRequired) {
+    const target = flat.find((f) => /时间定向/.test(f.label || ''))
+    if (target) {
+      return refinePlanSchema.parse({
+        summary: '精准命中时间定向字段并设为必填',
+        warnings,
+        operations: [
+          {
+            op: 'updateField',
+            target: target.id ? { id: target.id } : { name: target.name! },
+            patch: { required: true },
+          },
+        ],
+      })
+    }
+  }
+
+  if (wantCssApply) {
+    const radio =
+      flat.find((f) => f.type === 'radio' && /时间定向/.test(f.label || '')) ||
+      flat.find((f) => f.type === 'radio')
+    if (radio) {
+      const cls = `field-${radio.name || radio.id || 'radio'}`
+      return refinePlanSchema.parse({
+        summary: '受控 cssCode 修复布局重叠',
+        warnings,
+        operations: [
+          {
+            op: 'setCssCode',
+            css: `.${cls} { margin-top: 12px; display: block; }`,
+            mode: 'append',
+            target: radio.id ? { id: radio.id } : { name: radio.name! },
+            customClass: cls,
+          },
+        ],
+      })
+    }
+  }
 
   if (wantExplicitRename && flat[0]) {
     const target = flat[0]
@@ -170,7 +234,15 @@ export function mockRefinePlan(instruction: string, current: FormJson): RefinePl
   }
 
   // 模拟 LLM 用改 label 规避样式问题的错误规划（供 FR-6 / enforceRefineTextPolicy 验收）
-  if (styleIntent && !explicitTextIntent && !wantOptions && !wantFormula && !wantTabs && flat[0]) {
+  if (
+    styleIntent &&
+    !explicitTextIntent &&
+    !wantOptions &&
+    !wantFormula &&
+    !wantTabs &&
+    !wantCssApply &&
+    flat[0]
+  ) {
     const target = flat[0]
     return refinePlanSchema.parse({
       summary: '通过缩短标题缓解重叠（模拟错误规划）',
