@@ -25,7 +25,14 @@
     "path": "openspec/changes/ai-form-widget-catalog-refine",
     "status": "ready"
   },
-  "sources": [],
+  "sources": [
+    {
+      "repositoryId": "app",
+      "branch": "main",
+      "commit": "2c910d17c33a32f0200581c0e44e1352b99455eb",
+      "status": "merged"
+    }
+  ],
   "acceptance": {
     "status": "pending"
   },
