@@ -1,0 +1,6 @@
+case: agent-smoke-refine
+status: pass
+observed: npm run typecheck passed; npm run catalog:check -> WIDGET_CATALOG_SYNC widgetTypes=37 fingerprint=df03f1d1748dae11043356c0c98bf2865a4392b1fcc8a2cd741f4d6a00cb2d78; npm run smoke -> SMOKE_PASSED; npm run acceptance:cases -> ACCEPTANCE_CASES_PASSED
+environment: local-windows; node; agent package scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: main@6c9bb81669bc55c9e488aeba8d025c18c6e31d16 (working tree has uncommitted changes)
+capturedAt: 2026-09-03T02:07:45.000Z

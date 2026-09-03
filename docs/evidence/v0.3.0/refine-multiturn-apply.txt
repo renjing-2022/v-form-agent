@@ -1,0 +1,8 @@
+case: refine-multiturn-apply
+status: pass
+observed: Two refine rounds via /api/agent/v1/refine both returned 200 and were explicitly applied; session messages remained visible
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@6c9bb81669bc (working tree has uncommitted changes)
+capturedAt: 2026-09-03T02:39:32.003Z
+durationMs: 7774
+screenshot: docs/evidence/v0.3.0/refine-multiturn-apply.png

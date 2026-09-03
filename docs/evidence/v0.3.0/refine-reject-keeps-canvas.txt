@@ -1,0 +1,8 @@
+case: refine-reject-keeps-canvas
+status: pass
+observed: Forced refine 422 kept canvas at 7 top-level widgets with a visible error; no silent overwrite
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@6c9bb81669bc (working tree has uncommitted changes)
+capturedAt: 2026-09-03T02:39:46.029Z
+durationMs: 6756
+screenshot: docs/evidence/v0.3.0/refine-reject-keeps-canvas.png

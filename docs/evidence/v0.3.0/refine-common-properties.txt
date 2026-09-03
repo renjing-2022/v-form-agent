@@ -2,7 +2,7 @@ case: refine-common-properties
 status: pass
 observed: POST /api/agent/v1/refine returned 200; placeholder 请输入姓名 visible on canvas after apply
 environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@b1f75495abfd (working tree has uncommitted changes)
-capturedAt: 2026-09-02T09:53:24.399Z
-durationMs: 19033
+sourceRevision: main@6c9bb81669bc (working tree has uncommitted changes)
+capturedAt: 2026-09-03T02:40:05.936Z
+durationMs: 6358
 screenshot: docs/evidence/v0.3.0/refine-common-properties.png

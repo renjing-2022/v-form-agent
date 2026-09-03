@@ -1,0 +1,243 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.3.0",
+  "documents": [
+    {
+      "documentId": "ai-form-widget-catalog-refine-prd",
+      "requirementIds": [
+        "fr-1-catalog",
+        "fr-2-common-properties",
+        "fr-3-csscode",
+        "fr-4-targeting",
+        "fr-5-text-style-boundary"
+      ]
+    },
+    {
+      "documentId": "ai-form-widget-catalog-refine-design",
+      "requirementIds": [
+        "td-catalog-source",
+        "td-refine-plan-extend",
+        "td-css-guard",
+        "td-form-summary",
+        "td-api-compat",
+        "td-security-boundary"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-catalog",
+      "description": "Catalog 以 widgetsConfig.js 为真源，可写/禁写键可被校验引用",
+      "caseIds": ["widget-catalog-sync", "refine-property-policy"]
+    },
+    {
+      "id": "fr-2-common-properties",
+      "description": "Catalog 可写常见属性可通过自然语言 refine 并确认写回；非法键拦截",
+      "caseIds": ["refine-common-properties", "refine-property-policy"]
+    },
+    {
+      "id": "fr-3-csscode",
+      "description": "受控 cssCode/customClass 可应用；危险 CSS 拦截；校验失败或未确认不写画布",
+      "caseIds": ["refine-csscode-apply", "refine-csscode-reject", "refine-reject-keeps-canvas"]
+    },
+    {
+      "id": "fr-4-targeting",
+      "description": "摘要足以定位；同名歧义拒绝；多轮以最新 formJson 为准",
+      "caseIds": [
+        "refine-precise-targeting",
+        "refine-ambiguous-target-reject",
+        "refine-multiturn-apply"
+      ]
+    },
+    {
+      "id": "fr-5-text-style-boundary",
+      "description": "样式优先属性/cssCode；禁止改字冒充样式；P0 生成与 refine 主路径回归",
+      "caseIds": [
+        "refine-csscode-apply",
+        "refine-text-style-policy",
+        "refine-explicit-text-apply",
+        "refine-p1-regression",
+        "text-generate-apply",
+        "refine-structure-tab",
+        "refine-options-formula"
+      ]
+    },
+    {
+      "id": "td-catalog-source",
+      "description": "Catalog 生成/同步与漂移校验以 widgetsConfig.js 为组件事实源",
+      "caseIds": ["widget-catalog-sync"]
+    },
+    {
+      "id": "td-refine-plan-extend",
+      "description": "RefinePlan 扩展类型化 patch；Merger/Validator 按 writableKeys 合入",
+      "caseIds": ["refine-common-properties", "refine-property-policy"]
+    },
+    {
+      "id": "td-css-guard",
+      "description": "cssCode 长度/危险构造护栏；增量合并并绑定 customClass",
+      "caseIds": ["refine-csscode-apply", "refine-csscode-reject"]
+    },
+    {
+      "id": "td-form-summary",
+      "description": "定位摘要含 path/父级/writable snapshot；歧义拒绝",
+      "caseIds": ["refine-precise-targeting", "refine-ambiguous-target-reject"]
+    },
+    {
+      "id": "td-api-compat",
+      "description": "POST /api/agent/v1/refine 外壳兼容；generate/refine 服务可启动",
+      "caseIds": ["agent-health", "agent-smoke-refine", "text-generate-apply"]
+    },
+    {
+      "id": "td-security-boundary",
+      "description": "DeepSeek Key 仅服务端；前端走 /api/agent",
+      "caseIds": ["frontend-no-secret"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "widget-catalog-sync",
+      "title": "Catalog 与 widgetsConfig 类型/可写禁写键一致且无漂移",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.3.0/widget-catalog-sync.txt"]
+    },
+    {
+      "id": "refine-property-policy",
+      "title": "未知键、事件键、类型/枚举错误被 strip 或拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.3.0/refine-property-policy.txt"]
+    },
+    {
+      "id": "refine-common-properties",
+      "title": "自然语言修改 input placeholder 并确认写回画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/refine-common-properties.txt",
+        "docs/evidence/v0.3.0/refine-common-properties.png"
+      ]
+    },
+    {
+      "id": "refine-csscode-apply",
+      "title": "受控 cssCode 应用且文案不变",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/refine-csscode-apply.txt",
+        "docs/evidence/v0.3.0/refine-csscode-apply.png"
+      ]
+    },
+    {
+      "id": "refine-csscode-reject",
+      "title": "危险 CSS 被护栏拦截且画布保持不变",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/refine-csscode-reject.txt",
+        "docs/evidence/v0.3.0/refine-csscode-reject.png"
+      ]
+    },
+    {
+      "id": "refine-precise-targeting",
+      "title": "按标签命中时间定向并设为必填",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/refine-precise-targeting.txt",
+        "docs/evidence/v0.3.0/refine-precise-targeting.png"
+      ]
+    },
+    {
+      "id": "refine-ambiguous-target-reject",
+      "title": "同名目标歧义拒绝且不合入",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.3.0/refine-ambiguous-target-reject.txt"]
+    },
+    {
+      "id": "refine-multiturn-apply",
+      "title": "已有表两轮 refine 后显式应用到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/refine-multiturn-apply.txt",
+        "docs/evidence/v0.3.0/refine-multiturn-apply.png"
+      ]
+    },
+    {
+      "id": "refine-text-style-policy",
+      "title": "样式诉求拒绝改字冒充修复；422 且画布不变",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/refine-text-style-policy.txt",
+        "docs/evidence/v0.3.0/refine-text-style-policy.png"
+      ]
+    },
+    {
+      "id": "refine-explicit-text-apply",
+      "title": "明确改标题时 refine 200 并应用到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/refine-explicit-text-apply.txt",
+        "docs/evidence/v0.3.0/refine-explicit-text-apply.png"
+      ]
+    },
+    {
+      "id": "refine-p1-regression",
+      "title": "v0.3.0 下 generate 应用到画布回归",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/refine-p1-regression.txt",
+        "docs/evidence/v0.3.0/refine-p1-regression.png"
+      ]
+    },
+    {
+      "id": "text-generate-apply",
+      "title": "整表生成经代理并显式应用到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/text-generate-apply.txt",
+        "docs/evidence/v0.3.0/text-generate-apply.png"
+      ]
+    },
+    {
+      "id": "refine-structure-tab",
+      "title": "refine 增加 tab 并应用到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/refine-structure-tab.txt",
+        "docs/evidence/v0.3.0/refine-structure-tab.png"
+      ]
+    },
+    {
+      "id": "refine-options-formula",
+      "title": "refine 选项与公式并应用到画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/refine-options-formula.txt",
+        "docs/evidence/v0.3.0/refine-options-formula.png"
+      ]
+    },
+    {
+      "id": "refine-reject-keeps-canvas",
+      "title": "refine 422 显示错误且不改写画布",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.3.0/refine-reject-keeps-canvas.txt",
+        "docs/evidence/v0.3.0/refine-reject-keeps-canvas.png"
+      ]
+    },
+    {
+      "id": "agent-health",
+      "title": "Agent health 路由存在且注册 refine",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.3.0/agent-health.txt"]
+    },
+    {
+      "id": "agent-smoke-refine",
+      "title": "agent typecheck/catalog/smoke/acceptance-cases 通过",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.3.0/agent-smoke-refine.txt"]
+    },
+    {
+      "id": "frontend-no-secret",
+      "title": "前端不含 DeepSeek Key / 硬编码 PAT，请求走 /api/agent",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.3.0/frontend-no-secret.txt"]
+    }
+  ]
+}

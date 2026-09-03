@@ -1,0 +1,8 @@
+case: ui-invalid-upload-preserves-canvas
+status: pass
+observed: Empty workbook returned 400 with a visible error; canvas retained 7 top-level widgets
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@6c9bb81669bc (working tree has uncommitted changes)
+capturedAt: 2026-09-03T02:39:17.931Z
+durationMs: 6491
+screenshot: docs/evidence/v0.3.0/ui-invalid-upload-preserves-canvas.png

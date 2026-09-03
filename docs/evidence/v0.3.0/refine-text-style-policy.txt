@@ -1,0 +1,8 @@
+case: refine-text-style-policy
+status: pass
+observed: Style-only refine returned 422 (样式/布局类诉求不得通过修改表单文案规避。请改用明确的属性、结构、选项/公式指令，或受控 cssCode。); canvas kept 7 widgets and unchanged copy
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@6c9bb81669bc (working tree has uncommitted changes)
+capturedAt: 2026-09-03T02:39:52.678Z
+durationMs: 6693
+screenshot: docs/evidence/v0.3.0/refine-text-style-policy.png

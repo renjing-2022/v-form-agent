@@ -2,6 +2,7 @@
  * 非 Playwright Acceptance candidates 取证脚本（api / smoke / static）
  * 输出：docs/evidence/v0.2.0/<case-id>.txt
  */
+import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -35,6 +36,30 @@ function writeCase(caseId: string, observed: string, extra: Record<string, strin
   writeCaseTo(outDir, caseId, observed, extra)
 }
 
+function sourceRevision() {
+  try {
+    const branch = execFileSync('git', ['branch', '--show-current'], {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+    const revision = execFileSync('git', ['rev-parse', 'HEAD'], {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+    const dirty =
+      execFileSync('git', ['status', '--porcelain'], {
+        cwd: root,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim() !== ''
+    return `${branch || 'detached'}@${revision}${dirty ? ' (working tree has uncommitted changes)' : ''}`
+  } catch {
+    return 'unknown'
+  }
+}
+
 function writeCaseTo(
   dir: string,
   caseId: string,
@@ -46,7 +71,7 @@ function writeCaseTo(
     `status: pass`,
     `observed: ${observed}`,
     `environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1`,
-    `sourceRevision: working-tree-uncommitted`,
+    `sourceRevision: ${sourceRevision()}`,
     `capturedAt: ${new Date().toISOString()}`,
     ...Object.entries(extra).map(([k, v]) => `${k}: ${v}`),
   ]

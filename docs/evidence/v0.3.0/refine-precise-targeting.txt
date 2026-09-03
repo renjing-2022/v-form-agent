@@ -2,7 +2,7 @@ case: refine-precise-targeting
 status: pass
 observed: POST /api/agent/v1/refine returned 200; 时间定向 required=true in response and required marker visible after apply
 environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@b1f75495abfd (working tree has uncommitted changes)
-capturedAt: 2026-09-02T09:53:28.306Z
-durationMs: 3911
+sourceRevision: main@6c9bb81669bc (working tree has uncommitted changes)
+capturedAt: 2026-09-03T02:40:12.430Z
+durationMs: 6544
 screenshot: docs/evidence/v0.3.0/refine-precise-targeting.png

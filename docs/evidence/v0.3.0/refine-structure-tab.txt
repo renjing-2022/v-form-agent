@@ -1,0 +1,8 @@
+case: refine-structure-tab
+status: pass
+observed: POST /api/agent/v1/refine returned 200; canvas shows one tab-container after explicit apply
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@6c9bb81669bc (working tree has uncommitted changes)
+capturedAt: 2026-09-03T02:39:24.584Z
+durationMs: 6688
+screenshot: docs/evidence/v0.3.0/refine-structure-tab.png

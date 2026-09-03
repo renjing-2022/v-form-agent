@@ -58,7 +58,7 @@
 - [x] 按 DeliveryGuard E2E 约定新增/维护 Playwright 用例及 case-map，运行 v0.3.0 验收候选
 - [x] 复跑 v0.2.0 主路径回归：生成、tab/options/formula、显式文案、样式禁改文案
 - [x] 实现完成后仅从真实 revision 记录 source（`2c910d17` on `main`）
-- [ ] 建立 v0.3.0 Evidence Manifest 并验证后再更新 acceptance
+- [x] 建立 v0.3.0 Evidence Manifest 并验证后再更新 acceptance
 - [x] 运行 `deliveryguard check`，在无诊断且任务完成后再申请归档 OpenSpec
 
 ## Acceptance candidates
@@ -67,15 +67,15 @@
 
 | case-id | Requirement id(s) | Type | Verification notes | Exploratory? | Status |
 |---|---|---|---|---|---|
-| `widget-catalog-sync` | `FR-1` | agent/static | Catalog 与 widgetsConfig 类型/默认属性/策略一致；漂移可检测 | no | candidate |
-| `refine-common-properties` | `FR-2` | playwright | 多类型、多值类型常见属性自然语言修改并确认写回 | yes | candidate |
-| `refine-precise-targeting` | `FR-4` | playwright | 同名/同类/嵌套场景精准命中指定目标 | yes | candidate |
-| `refine-ambiguous-target-reject` | `FR-4` | agent/playwright | 歧义 warning/拒绝且画布保持不变 | no | candidate |
-| `refine-csscode-apply` | `FR-3` `FR-5` | playwright | scoped CSS/属性改善样式且文案不变 | yes | candidate |
-| `refine-csscode-reject` | `FR-3` | agent/playwright | 危险 CSS 被拦截且画布不变 | no | candidate |
-| `refine-property-policy` | `FR-1` `FR-2` | agent | 未知键、事件键、类型/枚举错误被拦截 | no | candidate |
-| `refine-p1-regression` | `FR-5` | playwright | generate、tab/options/formula、显式文案等 P0 回归 | no | reuse/extend |
-| `frontend-no-secret` | security boundary | static | 前端无 DeepSeek Key 或其他服务端凭证 | no | reuse |
+| `widget-catalog-sync` | `FR-1` | agent/static | Catalog 与 widgetsConfig 类型/默认属性/策略一致；漂移可检测 | no | verified |
+| `refine-common-properties` | `FR-2` | playwright | 多类型、多值类型常见属性自然语言修改并确认写回 | yes | verified |
+| `refine-precise-targeting` | `FR-4` | playwright | 同名/同类/嵌套场景精准命中指定目标 | yes | verified |
+| `refine-ambiguous-target-reject` | `FR-4` | agent/playwright | 歧义 warning/拒绝且画布保持不变 | no | verified |
+| `refine-csscode-apply` | `FR-3` `FR-5` | playwright | scoped CSS/属性改善样式且文案不变 | yes | verified |
+| `refine-csscode-reject` | `FR-3` | agent/playwright | 危险 CSS 被拦截且画布不变 | no | verified |
+| `refine-property-policy` | `FR-1` `FR-2` | agent | 未知键、事件键、类型/枚举错误被拦截 | no | verified |
+| `refine-p1-regression` | `FR-5` | playwright | generate、tab/options/formula、显式文案等 P0 回归 | no | verified |
+| `frontend-no-secret` | security boundary | static | 前端无 DeepSeek Key 或其他服务端凭证 | no | verified |
 
 ### Candidate rules
 

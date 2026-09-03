@@ -1,0 +1,8 @@
+case: refine-options-formula
+status: pass
+observed: POST /api/agent/v1/refine returned 200; after apply, option rewrite and/or total formula field visible (optionHits=1, totalHits=0)
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@6c9bb81669bc (working tree has uncommitted changes)
+capturedAt: 2026-09-03T02:39:39.557Z
+durationMs: 6934
+screenshot: docs/evidence/v0.3.0/refine-options-formula.png
