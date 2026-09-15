@@ -84,6 +84,26 @@ export function detectOptionValueType(value: unknown): OptionValueType {
   return 'object'
 }
 
+/**
+ * Catalog 出厂默认常为 null/undefined，仅表示「初始为空」，不表示运行时只能为空。
+ * 与 patch 消毒共用：允许常见标量；枚举仍按 constraint.enum 校验。
+ */
+export function valueMatchesConstraint(constraint: OptionConstraint | undefined, value: unknown): boolean {
+  if (!constraint) return false
+  if (value === null || value === undefined) {
+    return constraint.nullable || constraint.valueType === 'null' || constraint.valueType === 'undefined'
+  }
+  const actual = detectOptionValueType(value)
+  if (constraint.valueType === 'null' || constraint.valueType === 'undefined') {
+    return actual === 'string' || actual === 'number' || actual === 'boolean' || actual === 'null'
+  }
+  if (actual !== constraint.valueType) return false
+  if (constraint.enum && (actual === 'string' || actual === 'number' || actual === 'boolean')) {
+    return constraint.enum.includes(value as string | number | boolean)
+  }
+  return true
+}
+
 export function buildOptionConstraints(options: Record<string, unknown>): Record<string, OptionConstraint> {
   return Object.fromEntries(
     Object.entries(options).map(([key, value]) => [

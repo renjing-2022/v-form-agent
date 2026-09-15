@@ -1,0 +1,53 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/repair-case.schema.json",
+  "schemaVersion": 1,
+  "id": "REFINE-CATALOG-DEFAULTVALUE-FALSE-POSITIVE",
+  "title": "refine Catalog 不得因合法 defaultValue 误伤对齐类修改",
+  "stage": "diagnosed",
+  "status": "active",
+  "classification": "code",
+  "baseline": {
+    "repository": ".",
+    "commit": "a2d61dde11ed155e552c1c079bc603928553c9dc"
+  },
+  "symptom": {
+    "environment": "v0.3.0 refine；画布 radio 已有 defaultValue；用户仅要求标签/字段居中对齐",
+    "expected": "patchFormConfig/updateField 的 labelAlign 可合入并通过校验；未改动的合法 defaultValue 原样保留且不产生 Catalog 类型错误",
+    "actual": "整表 Catalog 校验以出厂 undefined/null 约束拒绝运行时 number/string defaultValue，导致对齐修改 422；体感需先清空默认选项"
+  },
+  "phases": {
+    "reproduction": [
+      {
+        "id": "align-with-radio-default-red",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/repair-catalog-defaultvalue.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 1,
+        "outputPattern": "CATALOG_FALSE_POSITIVE"
+      }
+    ],
+    "targeted": [
+      {
+        "id": "align-with-radio-default-green",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/repair-catalog-defaultvalue.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 0,
+        "outputPattern": "REPAIR_CATALOG_DEFAULTVALUE_PASSED"
+      }
+    ],
+    "regression": [
+      {
+        "id": "agent-acceptance-cases",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/acceptance-cases.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 0
+      },
+      {
+        "id": "agent-smoke",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/smoke.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 0,
+        "outputPattern": "SMOKE_PASSED"
+      }
+    ]
+  }
+}

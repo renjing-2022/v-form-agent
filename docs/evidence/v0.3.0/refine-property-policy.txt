@@ -2,6 +2,6 @@ case: refine-property-policy
 status: pass
 observed: unknown/forbidden/type-mismatch keys stripped; placeholder applied; events unchanged; css append keeps existing; dangerous css rejected; style+css does not fall back to copy
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: main@6c9bb81669bc55c9e488aeba8d025c18c6e31d16 (working tree has uncommitted changes)
-capturedAt: 2026-09-03T02:07:45.240Z
+sourceRevision: main@a2d61dde11ed155e552c1c079bc603928553c9dc (working tree has uncommitted changes)
+capturedAt: 2026-09-15T09:48:52.160Z
 type: agent

@@ -319,6 +319,55 @@ async function main() {
     { type: 'agent' },
   )
 
+  // Repair: 合法 radio defaultValue 不得阻断对齐类 refine
+  const alignWithDefaultForm = {
+    widgetList: [
+      {
+        type: 'radio',
+        id: 'radio_score',
+        options: {
+          name: 'score',
+          label: '评分项',
+          labelAlign: '',
+          defaultValue: 1,
+          displayStyle: 'block',
+          optionItems: [
+            { label: '差', value: 0 },
+            { label: '好', value: 1 },
+          ],
+          onChange: '',
+        },
+      },
+    ],
+    formConfig: { labelAlign: 'label-left-align', cssCode: '', customClass: [] },
+  }
+  const alignMerged = applyRefinePlan(
+    alignWithDefaultForm,
+    refinePlanSchema.parse({
+      summary: '标签居中',
+      warnings: [],
+      operations: [
+        { op: 'patchFormConfig', patch: { labelAlign: 'label-center-align' } },
+        { op: 'updateField', target: { id: 'radio_score' }, patch: { labelAlign: 'label-center-align' } },
+      ],
+    }),
+  )
+  const alignRadio = (alignMerged.formJson.widgetList[0] as { options: Record<string, unknown> }).options
+  assert(alignMerged.formJson.formConfig.labelAlign === 'label-center-align', 'form labelAlign applied')
+  assert(alignRadio.labelAlign === 'label-center-align', 'field labelAlign applied')
+  assert(alignRadio.defaultValue === 1, 'radio defaultValue preserved')
+  const alignIssues = validateFormJson(alignMerged.formJson, {
+    mode: 'refine',
+    existingIds: collectWidgetIds(alignWithDefaultForm),
+  })
+  assert(alignIssues.length === 0, `align with defaultValue must pass catalog: ${JSON.stringify(alignIssues)}`)
+  writeCaseTo(
+    outDirV030,
+    'refine-align-keeps-radio-default',
+    'labelAlign refine keeps legitimate radio defaultValue; catalog validator does not false-positive',
+    { type: 'agent' },
+  )
+
   const cssApply = applyRefinePlan(sampleForm, refinePlanSchema.parse({
     summary: 'scoped css',
     warnings: [],

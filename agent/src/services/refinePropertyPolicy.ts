@@ -1,23 +1,9 @@
-import { detectOptionValueType, type OptionConstraint, type WidgetCatalog } from '../knowledge/widgetCatalog.js'
+import { valueMatchesConstraint, type OptionConstraint, type WidgetCatalog } from '../knowledge/widgetCatalog.js'
 import { getWidgetCatalog } from '../knowledge/widgetCatalogStore.js'
 
 export type SanitizedPatch = {
   patch: Record<string, unknown>
   warnings: string[]
-}
-
-function constraintAllows(constraint: OptionConstraint | undefined, value: unknown): boolean {
-  if (!constraint) return false
-  if (value === null || value === undefined) return constraint.nullable || constraint.valueType === 'null' || constraint.valueType === 'undefined'
-  const actual = detectOptionValueType(value)
-  if (constraint.valueType === 'null' || constraint.valueType === 'undefined') {
-    return actual === 'string' || actual === 'number' || actual === 'boolean' || actual === 'null'
-  }
-  if (actual !== constraint.valueType) return false
-  if (constraint.enum && (actual === 'string' || actual === 'number' || actual === 'boolean')) {
-    return constraint.enum.includes(value as string | number | boolean)
-  }
-  return true
 }
 
 function sanitizeRecord(
@@ -38,7 +24,7 @@ function sanitizeRecord(
       warnings.push(`${scope} 未知键已忽略: ${key}`)
       continue
     }
-    if (!constraintAllows(constraints[key], value)) {
+    if (!valueMatchesConstraint(constraints[key], value)) {
       warnings.push(`${scope} 类型或枚举不匹配已忽略: ${key}`)
       continue
     }

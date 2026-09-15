@@ -2,7 +2,7 @@ case: refine-text-style-policy
 status: pass
 observed: style overlap instruction rejects label-only patch; explicit rename keeps updateField
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: working-tree-uncommitted
-capturedAt: 2026-09-02T09:49:39.011Z
+sourceRevision: main@a2d61dde11ed155e552c1c079bc603928553c9dc (working tree has uncommitted changes)
+capturedAt: 2026-09-15T09:48:52.765Z
 type: unit+policy
 repair: REFINE-TEXT-STYLE-WORKAROUND

@@ -2,7 +2,7 @@ case: refine-multiturn-apply
 status: pass
 observed: two sequential refine merges on evolving formJson succeeded (tab then options/formula); apply still requires UI confirm (static)
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: working-tree-uncommitted
-capturedAt: 2026-09-02T09:49:39.009Z
+sourceRevision: main@a2d61dde11ed155e552c1c079bc603928553c9dc (working tree has uncommitted changes)
+capturedAt: 2026-09-15T09:48:52.677Z
 type: api+static
 note: Playwright deferred; multiturn proven at agent merge layer

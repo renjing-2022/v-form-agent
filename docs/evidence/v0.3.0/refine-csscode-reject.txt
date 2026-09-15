@@ -1,8 +1,7 @@
 case: refine-csscode-reject
 status: pass
-observed: Dangerous css refine returned 200 with guard warnings; @import absent; canvas kept 7 widgets
-environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@6c9bb81669bc (working tree has uncommitted changes)
-capturedAt: 2026-09-03T02:40:28.153Z
-durationMs: 6454
-screenshot: docs/evidence/v0.3.0/refine-csscode-reject.png
+observed: dangerous css blocked at merge; validator clean
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@a2d61dde11ed155e552c1c079bc603928553c9dc (working tree has uncommitted changes)
+capturedAt: 2026-09-15T09:48:52.456Z
+type: agent

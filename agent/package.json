@@ -8,6 +8,7 @@
     "start": "tsx src/server.ts",
     "smoke": "tsx scripts/smoke.ts",
     "acceptance:cases": "tsx scripts/acceptance-cases.ts",
+    "repair:catalog-defaultvalue": "tsx scripts/repair-catalog-defaultvalue.ts",
     "catalog:sync": "tsx scripts/sync-widget-catalog.ts",
     "catalog:check": "tsx scripts/check-widget-catalog.ts",
     "typecheck": "tsc --noEmit"

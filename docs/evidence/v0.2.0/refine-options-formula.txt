@@ -2,6 +2,6 @@ case: refine-options-formula
 status: pass
 observed: second-round refine applied options/formula; formulaEnabled present=true; validate issues=0
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: working-tree-uncommitted
-capturedAt: 2026-09-02T09:49:39.008Z
+sourceRevision: main@a2d61dde11ed155e552c1c079bc603928553c9dc (working tree has uncommitted changes)
+capturedAt: 2026-09-15T09:48:52.636Z
 type: api+smoke

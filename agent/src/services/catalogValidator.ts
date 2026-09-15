@@ -1,21 +1,8 @@
 import { HEAVY_STRUCTURE_TYPES, isEventKey } from '../knowledge/catalogPolicy.js'
-import { detectOptionValueType, type OptionConstraint } from '../knowledge/widgetCatalog.js'
+import { valueMatchesConstraint } from '../knowledge/widgetCatalog.js'
 import { getWidgetCatalog } from '../knowledge/widgetCatalogStore.js'
 import { validateCssCode } from './cssGuard.js'
 import type { ValidationIssue } from './validator.js'
-
-function valueMatchesConstraint(constraint: OptionConstraint | undefined, value: unknown): boolean {
-  if (!constraint) return true
-  if (value === null || value === undefined) {
-    return constraint.nullable || constraint.valueType === 'null' || constraint.valueType === 'undefined'
-  }
-  const actual = detectOptionValueType(value)
-  if (actual !== constraint.valueType) return false
-  if (constraint.enum && (actual === 'string' || actual === 'number' || actual === 'boolean')) {
-    return constraint.enum.includes(value as string | number | boolean)
-  }
-  return true
-}
 
 export function validateWidgetOptionsAgainstCatalog(
   type: string,

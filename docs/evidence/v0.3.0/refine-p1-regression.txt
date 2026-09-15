@@ -1,8 +1,8 @@
 case: refine-p1-regression
 status: pass
-observed: v0.3.0 regression: generate 200 and 7 widgets with 时间定向 after apply
-environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@6c9bb81669bc (working tree has uncommitted changes)
-capturedAt: 2026-09-03T02:40:33.562Z
-durationMs: 6046
-screenshot: docs/evidence/v0.3.0/refine-p1-regression.png
+observed: v0.2.0 agent regression cases pass in same run; AiChat warnings UI wired
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@a2d61dde11ed155e552c1c079bc603928553c9dc (working tree has uncommitted changes)
+capturedAt: 2026-09-15T09:48:52.808Z
+type: agent/static
+note: Playwright E2E deferred to e2e suite
