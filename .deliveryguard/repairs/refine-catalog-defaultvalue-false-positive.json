@@ -3,12 +3,16 @@
   "schemaVersion": 1,
   "id": "REFINE-CATALOG-DEFAULTVALUE-FALSE-POSITIVE",
   "title": "refine Catalog 不得因合法 defaultValue 误伤对齐类修改",
-  "stage": "diagnosed",
-  "status": "active",
+  "stage": "verified",
+  "status": "done",
   "classification": "code",
   "baseline": {
     "repository": ".",
     "commit": "a2d61dde11ed155e552c1c079bc603928553c9dc"
+  },
+  "candidate": {
+    "repository": ".",
+    "commit": "8172509bbf8ef290f1b030a444484d429d799635"
   },
   "symptom": {
     "environment": "v0.3.0 refine；画布 radio 已有 defaultValue；用户仅要求标签/字段居中对齐",

@@ -2,7 +2,7 @@ case: refine-p1-regression
 status: pass
 observed: v0.2.0 agent regression cases pass in same run; AiChat warnings UI wired
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: main@a2d61dde11ed155e552c1c079bc603928553c9dc (working tree has uncommitted changes)
-capturedAt: 2026-09-15T09:48:52.808Z
+sourceRevision: main@8172509bbf8ef290f1b030a444484d429d799635 (working tree has uncommitted changes)
+capturedAt: 2026-09-15T09:49:50.228Z
 type: agent/static
 note: Playwright E2E deferred to e2e suite

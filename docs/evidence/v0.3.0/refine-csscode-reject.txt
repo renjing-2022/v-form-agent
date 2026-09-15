@@ -2,6 +2,6 @@ case: refine-csscode-reject
 status: pass
 observed: dangerous css blocked at merge; validator clean
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: main@a2d61dde11ed155e552c1c079bc603928553c9dc (working tree has uncommitted changes)
-capturedAt: 2026-09-15T09:48:52.456Z
+sourceRevision: main@8172509bbf8ef290f1b030a444484d429d799635 (working tree has uncommitted changes)
+capturedAt: 2026-09-15T09:49:49.868Z
 type: agent

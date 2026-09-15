@@ -2,6 +2,6 @@ case: refine-align-keeps-radio-default
 status: pass
 observed: labelAlign refine keeps legitimate radio defaultValue; catalog validator does not false-positive
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: main@a2d61dde11ed155e552c1c079bc603928553c9dc (working tree has uncommitted changes)
-capturedAt: 2026-09-15T09:48:52.360Z
+sourceRevision: main@8172509bbf8ef290f1b030a444484d429d799635 (working tree has uncommitted changes)
+capturedAt: 2026-09-15T09:49:49.784Z
 type: agent
