@@ -1,0 +1,1680 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "propertyEditorRoot": "v-form/src/components/form-designer/setting-panel/property-editor",
+    "editorFileCount": 219,
+    "registerEditorCount": 184,
+    "fingerprint": "30d5fff8915bd8fb03ad96c4a97eef5d1efa18a625d533ea4a148fbab67299a4"
+  },
+  "generatedAt": "source-derived",
+  "editors": {
+    "actionColumnPosition-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/actionColumnPosition-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "left",
+        "right"
+      ],
+      "source": "property-editor"
+    },
+    "allowCreate-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/allowCreate-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "appendButton-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/appendButton-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "appendButtonDisabled-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/appendButtonDisabled-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "autoFullWidth-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/autoFullWidth-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "automaticDropdown-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/automaticDropdown-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "border-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/border-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "buttonIcon-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/buttonIcon-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "buttonStyle-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/buttonStyle-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "clearable-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/clearable-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "columnWidth-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/columnWidth-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "button-group-customClass-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-button-group/button-group-customClass-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "button-group-size-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-button-group/button-group-size-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "",
+        "large",
+        "small"
+      ],
+      "source": "property-editor"
+    },
+    "data-table-customClass-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-data-table/data-table-customClass-editor.vue",
+      "valueKind": "boolean",
+      "linkageHiddenWhen": {
+        "key": "dsEnabled",
+        "equals": true
+      },
+      "source": "property-editor"
+    },
+    "data-table-showCheckBox-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-data-table/data-table-showCheckBox-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "grid-col-offset-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-col/grid-col-offset-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "grid-col-pull-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-col/grid-col-pull-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "grid-col-push-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-col/grid-col-push-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "grid-col-responsive-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-col/grid-col-responsive-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "grid-col-span-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-col/grid-col-span-editor.vue",
+      "valueKind": "number",
+      "linkageHiddenWhen": {
+        "key": "responsive",
+        "equals": true
+      },
+      "source": "property-editor"
+    },
+    "appendButtonAtBottom-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-sub-form/appendButtonAtBottom-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "deleteButtonHidden-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-sub-form/deleteButtonHidden-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "grid-sub-form-name-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-sub-form/grid-sub-form-name-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "colHeight-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid/colHeight-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "gutter-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid/gutter-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "objectName-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-object-group/objectName-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "showBlankRow-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-sub-form/showBlankRow-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "showRowNumber-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-sub-form/showRowNumber-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "sub-form-labelAlign-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-sub-form/sub-form-labelAlign-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "label-left-align",
+        "label-center-align",
+        "label-right-align"
+      ],
+      "source": "property-editor"
+    },
+    "sub-form-name-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-sub-form/sub-form-name-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "tab-customClass-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tab/tab-customClass-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "item"
+      ],
+      "source": "property-editor"
+    },
+    "tabPosition-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tab/tabPosition-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "top",
+        "right",
+        "bottom",
+        "left"
+      ],
+      "source": "property-editor"
+    },
+    "tabType-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tab/tabType-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "",
+        "card",
+        "border-card"
+      ],
+      "source": "property-editor"
+    },
+    "cellHeight-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-table-cell/cellHeight-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "cellWidth-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-table-cell/cellWidth-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "table-cell-wordBreak-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-table-cell/wordBreak-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "tree-checkStrictly-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/checkStrictly-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "show-checkbox-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/show-checkbox-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "show-filter-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/show-filter-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "tree-customClass-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/tree-customClass-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "tree-defaultExpandAllNode-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/tree-defaultExpandAllNode-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "tree-draggable-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/tree-draggable-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "tree-expandOnClickNode-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/tree-expandOnClickNode-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "tree-expandRetractAllNode-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/tree-expandRetractAllNode-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "tree-lazy-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/tree-lazy-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "tree-nodeEdit-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/tree-nodeEdit-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "tree-selectClearAllNode-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/tree-selectClearAllNode-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "treeData-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/treeData-editor.vue",
+      "valueKind": "array",
+      "source": "property-editor"
+    },
+    "cancelButtonHidden-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/cancelButtonHidden-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "cancelButtonLabel-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/cancelButtonLabel-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "center-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/center-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "closeOnClickModal-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/closeOnClickModal-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "closeOnPressEscape-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/closeOnPressEscape-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "disabledMode-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/disabledMode-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "fullscreen-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/fullscreen-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "okButtonHidden-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/okButtonHidden-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "okButtonLabel-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/okButtonLabel-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "readMode-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/readMode-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "showClose-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/showClose-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "showModal-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/showModal-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "title-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/title-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "width-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-dialog/width-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "vf-drawer-direction-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-drawer/vf-drawer-direction-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "rtl",
+        "ltr",
+        "ttb",
+        "btt"
+      ],
+      "source": "property-editor"
+    },
+    "vf-drawer-size-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-drawer/vf-drawer-size-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "customClass-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/customClass-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "item"
+      ],
+      "source": "property-editor"
+    },
+    "defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/defaultValue-editor.vue",
+      "valueKind": "array",
+      "source": "property-editor"
+    },
+    "disabled-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/disabled-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "displayStyle-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/displayStyle-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "inline",
+        "block"
+      ],
+      "source": "property-editor"
+    },
+    "editable-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/editable-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "endPlaceholder-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/endPlaceholder-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "onAppendButtonClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onAppendButtonClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onBeforeUpload-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onBeforeUpload-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onBlur-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onBlur-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onButtonGroupClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onButtonGroupClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onCancelButtonClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onCancelButtonClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onCellClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onCellClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onCellDoubleClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onCellDoubleClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onChange-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onChange-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onCheckChange-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onCheckChange-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onCreated-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onCreated-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onCurrentPageChange-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onCurrentPageChange-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onDialogBeforeClose-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onDialogBeforeClose-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onDialogOpened-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onDialogOpened-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onDisableOperationButton-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onDisableOperationButton-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onDrawerBeforeClose-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onDrawerBeforeClose-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onDrawerOpened-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onDrawerOpened-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onFileRemove-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onFileRemove.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onFocus-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onFocus-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onGetOperationButtonLabel-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onGetOperationButtonLabel-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onGetRowClassName-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onGetRowClassName-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onGetSpanMethod-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onGetSpanMethod-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onHeaderClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onHeaderClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onHideOperationButton-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onHideOperationButton-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onInput-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onInput-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onMounted-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onMounted-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onNodeCheck-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onNodeCheck-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onNodeClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onNodeClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onNodeContextmenu-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onNodeContextmenu-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onOkButtonClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onOkButtonClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onOperationButtonClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onOperationButtonClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onPageSizeChange-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onPageSizeChange-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onRemoteQuery-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onRemoteQuery-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onRowClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onRowClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onRowDoubleClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onRowDoubleClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onSelectionChange-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onSelectionChange-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onSortChange-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onSortChange-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onSubFormRowAdd-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onSubFormRowAdd-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onSubFormRowChange-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onSubFormRowChange-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onSubFormRowDelete-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onSubFormRowDelete-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onSubFormRowInsert-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onSubFormRowInsert-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onTabClick-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onTabClick-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onUploadError-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onUploadError-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onUploadSuccess-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onUploadSuccess-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "onValidate-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/event-handler/onValidate-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "button-type-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-button/button-type-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "",
+        "primary",
+        "success",
+        "warning",
+        "danger",
+        "info",
+        "text"
+      ],
+      "source": "property-editor"
+    },
+    "circle-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-button/circle-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "icon-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-button/icon-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "plain-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-button/plain-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "round-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-button/round-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "cascader-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-cascader/cascader-defaultValue-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "cascader-multiple-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-cascader/cascader-multiple-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "checkStrictly-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-cascader/checkStrictly-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "showAllLevels-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-cascader/showAllLevels-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "checkbox-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-checkbox/checkbox-defaultValue-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "color-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-color/color-defaultValue-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "keyName-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-common/keyName-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "keyNameEnabled-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-common/keyNameEnabled-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "date-range-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-date-range/date-range-defaultValue-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "date-range-format-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-date-range/date-range-format-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "YYYY-MM-DD",
+        "YYYY/MM/DD",
+        "YYYY年MM月DD日",
+        "YYYY-MM-DD HH:mm:ss",
+        "YYYY-MM-DD hh:mm:ss",
+        "YYYY-MM",
+        "YYYY"
+      ],
+      "source": "property-editor"
+    },
+    "date-range-type-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-date-range/date-range-type-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "daterange",
+        "datetimerange",
+        "monthrange"
+      ],
+      "source": "property-editor"
+    },
+    "date-range-valueFormat-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-date-range/date-range-valueFormat-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "YYYY-MM-DD",
+        "YYYY-MM-DD HH:mm:ss",
+        "YYYY-MM",
+        "YYYY"
+      ],
+      "source": "property-editor"
+    },
+    "date-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-date/date-defaultValue-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "date-format-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-date/date-format-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "YYYY-MM-DD",
+        "YYYY/MM/DD",
+        "YYYY年MM月DD日",
+        "YYYY-MM-DD HH:mm:ss",
+        "YYYY-MM-DD hh:mm:ss",
+        "YYYY-MM",
+        "YYYY"
+      ],
+      "source": "property-editor"
+    },
+    "date-type-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-date/date-type-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "datetime",
+        "date",
+        "dates",
+        "year",
+        "month",
+        "week"
+      ],
+      "source": "property-editor"
+    },
+    "date-valueFormat-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-date/date-valueFormat-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "YYYY-MM-DD",
+        "YYYY-MM-DD HH:mm:ss",
+        "YYYY-MM",
+        "YYYY"
+      ],
+      "source": "property-editor"
+    },
+    "contentPosition-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-divider/contentPosition-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "center",
+        "left",
+        "right"
+      ],
+      "source": "property-editor"
+    },
+    "divider-direction-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-divider/divider-direction-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "horizontal",
+        "vertical"
+      ],
+      "source": "property-editor"
+    },
+    "file-upload-fileTypes-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-file-upload/file-upload-fileTypes-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "htmlContent-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-html-text/htmlContent-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "appendText-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-input/appendText-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "input-buttonIcon-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-input/buttonIcon-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "textForAppend-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-input/textForAppend-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "controls-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-number/controls-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "controlsPosition-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-number/controlsPosition-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "",
+        "right"
+      ],
+      "source": "property-editor"
+    },
+    "number-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-number/number-defaultValue-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "picture-upload-fileTypes-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-picture-upload/picture-upload-fileTypes-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "radio-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-radio/radio-defaultValue-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "allowHalf-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-rate/allowHalf-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "highThreshold-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-rate/highThreshold-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "lowThreshold-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-rate/lowThreshold-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "rate-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-rate/rate-defaultValue-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "rate-max-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-rate/rate-max-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "showScore-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-rate/showScore-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "showText-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-rate/showText-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "rich-editor-contentHeight-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-rich-editor/rich-editor-contentHeight-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "collapseTags-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-select/collapseTags-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "select-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-select/select-defaultValue-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "range-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-slider/range-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "showStops-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-slider/showStops-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "vertical-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-slider/vertical-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "fontSize-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-static-text/fontSize-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "static-text-preWrap-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-static-text/preWrap-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "textContent-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-static-text/textContent-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "activeColor-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-switch/activeColor-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "activeText-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-switch/activeText-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "inactiveColor-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-switch/inactiveColor-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "inactiveText-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-switch/inactiveText-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "switch-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-switch/switch-defaultValue-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "switchWidth-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-switch/switchWidth-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "autosize-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-textarea/autosize-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "time-range-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-time-range/time-range-defaultValue-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "time-range-format-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-time-range/time-range-format-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "HH:mm:ss",
+        "HH时mm分ss秒",
+        "hh:mm:ss"
+      ],
+      "source": "property-editor"
+    },
+    "time-defaultValue-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-time/time-defaultValue-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "time-format-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-time/time-format-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "HH:mm:ss",
+        "HH时mm分ss秒",
+        "hh:mm:ss"
+      ],
+      "source": "property-editor"
+    },
+    "fileMaxSize-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/fileMaxSize-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "filterable-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/filterable-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "formula-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/formula-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "formulaEnabled-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/formulaEnabled-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "hidden-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/hidden-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "label-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/label-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "labelAlign-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/labelAlign-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "label-left-align",
+        "label-center-align",
+        "label-right-align"
+      ],
+      "source": "property-editor"
+    },
+    "labelHidden-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/labelHidden-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "labelIconClass-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/labelIconClass-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "labelIconPosition-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/labelIconPosition-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "front",
+        "rear"
+      ],
+      "source": "property-editor"
+    },
+    "labelTooltip-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/labelTooltip-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "labelWidth-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/labelWidth-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "labelWrap-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/labelWrap-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "limit-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/limit-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "max-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/max-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "maxLength-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/maxLength-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "min-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/min-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "minLength-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/minLength-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "multiple-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/multiple-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "multipleLimit-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/multipleLimit-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "multipleSelect-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/multipleSelect-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "name-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/name-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "optionItems-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/optionItems-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "placeholder-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/placeholder-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "precision-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/precision-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "prefixIcon-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/prefixIcon-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "readonly-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/readonly-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "remote-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/remote-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "required-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/required-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "requiredHint-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/requiredHint-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "rows-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/rows-editor.vue",
+      "valueKind": "number",
+      "linkageHiddenWhen": {
+        "key": "autosize",
+        "equals": true
+      },
+      "source": "property-editor"
+    },
+    "showFileList-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/showFileList-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "showPassword-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/showPassword-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "showWordLimit-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/showWordLimit-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "size-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/size-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "",
+        "large",
+        "small"
+      ],
+      "source": "property-editor"
+    },
+    "startPlaceholder-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/startPlaceholder-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "step-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/step-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "suffixIcon-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/suffixIcon-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "textAlign-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/textAlign-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "left",
+        "center",
+        "right"
+      ],
+      "source": "property-editor"
+    },
+    "type-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/type-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "text",
+        "number",
+        "password"
+      ],
+      "source": "property-editor"
+    },
+    "uploadTip-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/uploadTip-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "uploadURL-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/uploadURL-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "validation-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/validation-editor.vue",
+      "valueKind": "array",
+      "source": "property-editor"
+    },
+    "validationHint-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/validationHint-editor.vue",
+      "valueKind": "array",
+      "source": "property-editor"
+    },
+    "withCredentials-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/withCredentials-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "preWrap-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-static-text/preWrap-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "format-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-date-range/date-range-format-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "YYYY-MM-DD",
+        "YYYY/MM/DD",
+        "YYYY年MM月DD日",
+        "YYYY-MM-DD HH:mm:ss",
+        "YYYY-MM-DD hh:mm:ss",
+        "YYYY-MM",
+        "YYYY"
+      ],
+      "source": "property-editor"
+    },
+    "valueFormat-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-date-range/date-range-valueFormat-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "YYYY-MM-DD",
+        "YYYY-MM-DD HH:mm:ss",
+        "YYYY-MM",
+        "YYYY"
+      ],
+      "source": "property-editor"
+    },
+    "fileTypes-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-file-upload/file-upload-fileTypes-editor.vue",
+      "valueKind": "string",
+      "source": "property-editor"
+    },
+    "contentHeight-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/field-rich-editor/rich-editor-contentHeight-editor.vue",
+      "valueKind": "cssText",
+      "source": "property-editor"
+    },
+    "show-expandOnClickNode-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/tree-expandOnClickNode-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "show-draggable-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-tree/tree-draggable-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "wordBreak-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-table-cell/wordBreak-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "responsive-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-col/grid-col-responsive-editor.vue",
+      "valueKind": "boolean",
+      "source": "property-editor"
+    },
+    "span-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-col/grid-col-span-editor.vue",
+      "valueKind": "number",
+      "linkageHiddenWhen": {
+        "key": "responsive",
+        "equals": true
+      },
+      "source": "property-editor"
+    },
+    "offset-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-col/grid-col-offset-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "push-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-col/grid-col-push-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "pull-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-grid-col/grid-col-pull-editor.vue",
+      "valueKind": "number",
+      "source": "property-editor"
+    },
+    "direction-editor": {
+      "relPath": "v-form/src/components/form-designer/setting-panel/property-editor/container-vf-drawer/vf-drawer-direction-editor.vue",
+      "valueKind": "enum",
+      "enum": [
+        "rtl",
+        "ltr",
+        "ttb",
+        "btt"
+      ],
+      "source": "property-editor"
+    }
+  },
+  "typeOverrides": [
+    {
+      "widgetType": "button-group",
+      "prop": "customClass",
+      "editor": "button-group-customClass-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "button-group",
+      "prop": "size",
+      "editor": "button-group-size-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "button",
+      "prop": "type",
+      "editor": "button-type-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "cascader",
+      "prop": "defaultValue",
+      "editor": "cascader-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "cascader",
+      "prop": "multiple",
+      "editor": "cascader-multiple-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "checkbox",
+      "prop": "defaultValue",
+      "editor": "checkbox-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "color",
+      "prop": "defaultValue",
+      "editor": "color-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "data-table",
+      "prop": "customClass",
+      "editor": "data-table-customClass-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "data-table",
+      "prop": "showCheckBox",
+      "editor": "data-table-showCheckBox-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "date",
+      "prop": "defaultValue",
+      "editor": "date-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "date",
+      "prop": "format",
+      "editor": "date-format-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "date-range",
+      "prop": "defaultValue",
+      "editor": "date-range-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "date-range",
+      "prop": "format",
+      "editor": "date-range-format-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "date-range",
+      "prop": "type",
+      "editor": "date-range-type-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "date-range",
+      "prop": "valueFormat",
+      "editor": "date-range-valueFormat-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "date",
+      "prop": "type",
+      "editor": "date-type-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "date",
+      "prop": "valueFormat",
+      "editor": "date-valueFormat-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "divider",
+      "prop": "direction",
+      "editor": "divider-direction-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "file-upload",
+      "prop": "fileTypes",
+      "editor": "file-upload-fileTypes-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "grid-col",
+      "prop": "offset",
+      "editor": "grid-col-offset-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "grid-col",
+      "prop": "pull",
+      "editor": "grid-col-pull-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "grid-col",
+      "prop": "push",
+      "editor": "grid-col-push-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "grid-col",
+      "prop": "responsive",
+      "editor": "grid-col-responsive-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "grid-col",
+      "prop": "span",
+      "editor": "grid-col-span-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "grid-sub-form",
+      "prop": "name",
+      "editor": "grid-sub-form-name-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "input",
+      "prop": "buttonIcon",
+      "editor": "input-buttonIcon-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "number",
+      "prop": "defaultValue",
+      "editor": "number-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "picture-upload",
+      "prop": "fileTypes",
+      "editor": "picture-upload-fileTypes-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "radio",
+      "prop": "defaultValue",
+      "editor": "radio-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "rate",
+      "prop": "defaultValue",
+      "editor": "rate-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "rate",
+      "prop": "max",
+      "editor": "rate-max-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "rich-editor",
+      "prop": "contentHeight",
+      "editor": "rich-editor-contentHeight-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "select",
+      "prop": "defaultValue",
+      "editor": "select-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "static-text",
+      "prop": "preWrap",
+      "editor": "static-text-preWrap-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "sub-form",
+      "prop": "labelAlign",
+      "editor": "sub-form-labelAlign-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "sub-form",
+      "prop": "name",
+      "editor": "sub-form-name-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "switch",
+      "prop": "defaultValue",
+      "editor": "switch-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "tab",
+      "prop": "customClass",
+      "editor": "tab-customClass-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "table-cell",
+      "prop": "wordBreak",
+      "editor": "table-cell-wordBreak-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "time",
+      "prop": "defaultValue",
+      "editor": "time-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "time",
+      "prop": "format",
+      "editor": "time-format-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "time-range",
+      "prop": "defaultValue",
+      "editor": "time-range-defaultValue-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "time-range",
+      "prop": "format",
+      "editor": "time-range-format-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "tree",
+      "prop": "checkStrictly",
+      "editor": "tree-checkStrictly-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "tree",
+      "prop": "customClass",
+      "editor": "tree-customClass-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "tree",
+      "prop": "defaultExpandAllNode",
+      "editor": "tree-defaultExpandAllNode-editor"
+    },
+    {
+      "widgetType": "tree",
+      "prop": "draggable",
+      "editor": "tree-draggable-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "tree",
+      "prop": "expandOnClickNode",
+      "editor": "tree-expandOnClickNode-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "tree",
+      "prop": "expandRetractAllNode",
+      "editor": "tree-expandRetractAllNode-editor"
+    },
+    {
+      "widgetType": "tree",
+      "prop": "lazy",
+      "editor": "tree-lazy-editor"
+    },
+    {
+      "widgetType": "tree",
+      "prop": "nodeEdit",
+      "editor": "tree-nodeEdit-editor"
+    },
+    {
+      "widgetType": "tree",
+      "prop": "selectClearAllNode",
+      "editor": "tree-selectClearAllNode-editor"
+    },
+    {
+      "widgetType": "vf-drawer",
+      "prop": "direction",
+      "editor": "vf-drawer-direction-editor",
+      "skipsGenericEditor": true
+    },
+    {
+      "widgetType": "vf-drawer",
+      "prop": "size",
+      "editor": "vf-drawer-size-editor",
+      "skipsGenericEditor": true
+    }
+  ]
+}

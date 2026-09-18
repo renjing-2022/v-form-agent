@@ -1,7 +1,15 @@
 import fs from 'node:fs'
 import { CATALOG_JSON_REL } from './catalogPolicy.js'
-import { catalogJsonPath, generateWidgetCatalog } from './generateWidgetCatalog.js'
+import {
+  catalogJsonPath,
+  generateTruthArtifacts,
+} from './generateWidgetCatalog.js'
 import { diffWidgetCatalog, parseWidgetCatalog, type WidgetCatalog } from './widgetCatalog.js'
+import {
+  designTruthGraphPath,
+  loadCommittedDesignTruthGraph,
+} from './compileDesignTruthGraph.js'
+import { diffDesignTruthGraph, type DesignTruthGraph } from './designTruthGraph.js'
 
 export function loadCommittedWidgetCatalog(root: string): WidgetCatalog {
   const raw = fs.readFileSync(catalogJsonPath(root), 'utf8')
@@ -10,13 +18,18 @@ export function loadCommittedWidgetCatalog(root: string): WidgetCatalog {
 
 export async function checkWidgetCatalogSync(root: string): Promise<{
   catalog: WidgetCatalog
-  diffs: string[]
+  editorGraph: DesignTruthGraph
+  catalogDiffs: string[]
+  graphDiffs: string[]
 }> {
-  const generated = await generateWidgetCatalog(root)
-  const committed = loadCommittedWidgetCatalog(root)
+  const { catalog, editorGraph } = await generateTruthArtifacts(root)
+  const committedCatalog = loadCommittedWidgetCatalog(root)
+  const committedGraph = loadCommittedDesignTruthGraph(root)
   return {
-    catalog: generated,
-    diffs: diffWidgetCatalog(generated, committed),
+    catalog,
+    editorGraph,
+    catalogDiffs: diffWidgetCatalog(catalog, committedCatalog),
+    graphDiffs: diffDesignTruthGraph(editorGraph, committedGraph),
   }
 }
 
@@ -31,3 +44,5 @@ export function getWidgetCatalog(): WidgetCatalog {
   if (!cached) cached = loadRuntimeWidgetCatalog()
   return cached
 }
+
+export { CATALOG_JSON_REL, designTruthGraphPath }

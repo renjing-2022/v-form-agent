@@ -2,7 +2,7 @@ case: refine-reject-keeps-canvas
 status: pass
 observed: illegal new type rejected by refine validator; AiChat apply disabled without lastResult and only emits apply on explicit click
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: main@8172509bbf8ef290f1b030a444484d429d799635 (working tree has uncommitted changes)
-capturedAt: 2026-09-15T09:49:50.136Z
+sourceRevision: main@68f91c81cd0bd067843ef5dcfd35be79f9c2d0a3 (working tree has uncommitted changes)
+capturedAt: 2026-09-18T09:15:53.307Z
 type: api+static
 note: Playwright deferred; canvas preservation inferred from no auto-apply + 422/validate fail path

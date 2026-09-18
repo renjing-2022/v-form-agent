@@ -1,0 +1,346 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.4.0",
+  "documents": [
+    {
+      "documentId": "ai-form-design-truth-catalog-prd",
+      "requirementIds": ["fr-1-design-truth", "fr-2-inject-plan", "fr-3-summary", "fr-4-merge-precision", "fr-5-equivalence"]
+    },
+    {
+      "documentId": "ai-form-design-truth-catalog-design",
+      "requirementIds": [
+        "td-truth-compiler",
+        "td-validator-intentgate",
+        "td-nl-targeting",
+        "td-three-path-unify",
+        "td-loadformjson-contract"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-design-truth",
+      "description": "DesignTruthGraph/Catalog 多真源编译；applicable/valueKind/enum/联动/禁写可见",
+      "caseIds": [
+        "design-truth-catalog-sync",
+        "design-truth-editor-valuekind-parity",
+        "catalog-hasconfig-parity",
+        "property-register-editor-parity",
+        "composite-schema-parity",
+        "container-level-properties-parity",
+        "form-field-dual-track-parity",
+        "identity-forbidden-parity",
+        "render-convention-parity",
+        "extension-boundary-policy-parity",
+        "catalog-sample-parity",
+        "create-whitelist-catalog-parity"
+      ]
+    },
+    {
+      "id": "fr-2-inject-plan",
+      "description": "catalogSnippets 含 valueKind/enum/inherit；NL 归一到合法字面量",
+      "caseIds": ["catalog-snippet-includes-enums", "nl-synonym-normalize-parity"]
+    },
+    {
+      "id": "fr-3-summary",
+      "description": "formSummary snapshot 含高精度布局键",
+      "caseIds": ["refine-summary-has-labelalign"]
+    },
+    {
+      "id": "fr-4-merge-precision",
+      "description": "非法 enum/形态 strip 或 422；label/scope 定位；容器属性 refine",
+      "caseIds": [
+        "refine-labelalign-reject-right",
+        "refine-labelwidth-number-parity",
+        "refine-size-enum-parity",
+        "refine-honest-summary",
+        "refine-target-by-label",
+        "refine-parent-scope-parse",
+        "refine-parent-scope-batch",
+        "refine-container-tabpane-label-active",
+        "refine-container-gridcol-span",
+        "refine-container-non-goal-reject",
+        "container-refine-policy-parity",
+        "refine-linkage-autosize-rows",
+        "refine-linkage-multiple-defaultvalue",
+        "refine-linkage-remote-filterable",
+        "loadformjson-preapply-contract"
+      ]
+    },
+    {
+      "id": "fr-5-equivalence",
+      "description": "generate/refine/Excel 同源 Validator；v0.3 回归",
+      "caseIds": [
+        "generate-catalog-validator-parity",
+        "addfield-catalog-defaults-parity",
+        "refine-labelalign-nl-parity",
+        "refine-tab-batch-labelwidth",
+        "refine-layout-overlap-properties",
+        "refine-layout-css-fallback",
+        "refine-v03-regression"
+      ]
+    },
+    {
+      "id": "td-truth-compiler",
+      "description": "Truth Compiler 产出 catalog + graph；catalog:check 漂移阻断",
+      "caseIds": ["design-truth-catalog-sync", "catalog-sample-parity"]
+    },
+    {
+      "id": "td-validator-intentgate",
+      "description": "同源 valueMatchesConstraint + IntentGate 诚实 summary",
+      "caseIds": ["refine-honest-summary", "refine-labelalign-reject-right", "generate-catalog-validator-parity"]
+    },
+    {
+      "id": "td-nl-targeting",
+      "description": "label/parentScope 定位与批量",
+      "caseIds": ["refine-target-by-label", "refine-parent-scope-batch", "refine-tab-batch-labelwidth"]
+    },
+    {
+      "id": "td-three-path-unify",
+      "description": "generate/refine/addField 共用 Catalog",
+      "caseIds": ["addfield-catalog-defaults-parity", "generate-catalog-validator-parity"]
+    },
+    {
+      "id": "td-loadformjson-contract",
+      "description": "loadFormJson 前 preApplyFormJsonGate 结构门闩",
+      "caseIds": ["loadformjson-preapply-contract"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "design-truth-catalog-sync",
+      "title": "多真源 Catalog 编译与漂移检查",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/design-truth-catalog-sync.txt"]
+    },
+    {
+      "id": "design-truth-editor-valuekind-parity",
+      "title": "219 editor valueKind + typeOverrides",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/design-truth-editor-valuekind-parity.txt"]
+    },
+    {
+      "id": "catalog-hasconfig-parity",
+      "title": "applicableKeys 与 canonical variant 一致",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/catalog-hasconfig-parity.txt"]
+    },
+    {
+      "id": "catalog-snippet-includes-enums",
+      "title": "snippets 含 valueKind/enum/inherit",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/catalog-snippet-includes-enums.txt"]
+    },
+    {
+      "id": "property-register-editor-parity",
+      "title": "propertyRegister → catalog.editor",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/property-register-editor-parity.txt"]
+    },
+    {
+      "id": "catalog-sample-parity",
+      "title": "50×(type,prop) 抽样 valueKind/enum 与 graph 一致",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/catalog-sample-parity.txt"]
+    },
+    {
+      "id": "composite-schema-parity",
+      "title": "compositeSchema 登记",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/composite-schema-parity.txt"]
+    },
+    {
+      "id": "container-level-properties-parity",
+      "title": "containerLevelKeys + propertyScope",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/container-level-properties-parity.txt"]
+    },
+    {
+      "id": "form-field-dual-track-parity",
+      "title": "form vs field 双轨",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/form-field-dual-track-parity.txt"]
+    },
+    {
+      "id": "identity-forbidden-parity",
+      "title": "identity + forbidden 可见禁写",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/identity-forbidden-parity.txt"]
+    },
+    {
+      "id": "render-convention-parity",
+      "title": "form-item-wrapper 渲染约定",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/render-convention-parity.txt"]
+    },
+    {
+      "id": "extension-boundary-policy-parity",
+      "title": "customFields/runtime register 扩展边界",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/extension-boundary-policy-parity.txt"]
+    },
+    {
+      "id": "create-whitelist-catalog-parity",
+      "title": "CREATE whitelist + NON_GOAL",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/create-whitelist-catalog-parity.txt"]
+    },
+    {
+      "id": "refine-summary-has-labelalign",
+      "title": "snapshot 含 labelAlign/displayStyle",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-summary-has-labelalign.txt"]
+    },
+    {
+      "id": "refine-labelalign-reject-right",
+      "title": "非法 labelAlign 拦截",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-labelalign-reject-right.txt"]
+    },
+    {
+      "id": "refine-labelalign-nl-parity",
+      "title": "NL 右对齐 → 合法 enum",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.4.0/refine-labelalign-nl-parity.txt",
+        "docs/evidence/v0.4.0/refine-labelalign-nl-parity.png"
+      ]
+    },
+    {
+      "id": "refine-labelwidth-number-parity",
+      "title": "labelWidth number；拒绝 px 字符串",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-labelwidth-number-parity.txt"]
+    },
+    {
+      "id": "refine-size-enum-parity",
+      "title": "禁止 size=default",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-size-enum-parity.txt"]
+    },
+    {
+      "id": "refine-honest-summary",
+      "title": "未落地不得成功 summary",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-honest-summary.txt"]
+    },
+    {
+      "id": "refine-target-by-label",
+      "title": "按 label 定位",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-target-by-label.txt"]
+    },
+    {
+      "id": "refine-tab-batch-labelwidth",
+      "title": "tab 下批量布局属性",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-tab-batch-labelwidth.txt"]
+    },
+    {
+      "id": "refine-parent-scope-parse",
+      "title": "parentScope 语法",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-parent-scope-parse.txt"]
+    },
+    {
+      "id": "refine-parent-scope-batch",
+      "title": "parentScope 批量 patch",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-parent-scope-batch.txt"]
+    },
+    {
+      "id": "refine-container-tabpane-label-active",
+      "title": "tab-pane label/active",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-container-tabpane-label-active.txt"]
+    },
+    {
+      "id": "refine-container-gridcol-span",
+      "title": "grid-col span",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-container-gridcol-span.txt"]
+    },
+    {
+      "id": "refine-container-non-goal-reject",
+      "title": "容器 NON_GOAL 拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-container-non-goal-reject.txt"]
+    },
+    {
+      "id": "container-refine-policy-parity",
+      "title": "container refine policy",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/container-refine-policy-parity.txt"]
+    },
+    {
+      "id": "refine-linkage-autosize-rows",
+      "title": "autosize↔rows 联动",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-linkage-autosize-rows.txt"]
+    },
+    {
+      "id": "refine-linkage-multiple-defaultvalue",
+      "title": "multiple↔defaultValue",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-linkage-multiple-defaultvalue.txt"]
+    },
+    {
+      "id": "refine-linkage-remote-filterable",
+      "title": "remote→filterable 联动",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-linkage-remote-filterable.txt"]
+    },
+    {
+      "id": "refine-layout-overlap-properties",
+      "title": "重叠→属性优先",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.4.0/refine-layout-overlap-properties.txt",
+        "docs/evidence/v0.4.0/refine-layout-overlap-properties.png"
+      ]
+    },
+    {
+      "id": "refine-layout-css-fallback",
+      "title": "cssCode+customClass 兜底",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-layout-css-fallback.txt"]
+    },
+    {
+      "id": "nl-synonym-normalize-parity",
+      "title": "NL 口语归一",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/nl-synonym-normalize-parity.txt"]
+    },
+    {
+      "id": "generate-catalog-validator-parity",
+      "title": "generate 同源 Validator",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/generate-catalog-validator-parity.txt"]
+    },
+    {
+      "id": "addfield-catalog-defaults-parity",
+      "title": "addField 从 Catalog 克隆",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/addfield-catalog-defaults-parity.txt"]
+    },
+    {
+      "id": "refine-v03-regression",
+      "title": "v0.3 主路径回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/refine-v03-regression.txt"]
+    },
+    {
+      "id": "loadformjson-preapply-contract",
+      "title": "loadFormJson 前 preApplyFormJsonGate",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/loadformjson-preapply-contract.txt"]
+    },
+    {
+      "id": "frontend-no-secret",
+      "title": "前端无服务端密钥",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.4.0/frontend-no-secret.txt"]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+case: container-refine-policy-parity
+status: pass
+observed: supported=4 nonGoal=9 container types partitioned
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@68f91c81cd0bd067843ef5dcfd35be79f9c2d0a3 (working tree has uncommitted changes)
+capturedAt: 2026-09-18T09:15:50.382Z
+type: agent/static

@@ -1,9 +1,15 @@
-import { widgetTemplates, containerTemplates } from '../knowledge/widgetWhitelist.js'
+import { buildWidgetFromCatalogDefaults, getWidgetDefaultSchema } from '../knowledge/widgetDefaults.js'
 import type { RefineOperation, RefinePlan, TargetRef, FormJson } from '../schemas/refinePlan.js'
 import type { FieldType } from '../schemas/fieldPlan.js'
-import { sanitizeFormPatch, sanitizeWidgetPatch } from './refinePropertyPolicy.js'
+import { sanitizeFormPatch, sanitizeWidgetPatch, reconcileMultipleDefaultValue } from './refinePropertyPolicy.js'
 import { mergeCssCode, validateCssCode } from './cssGuard.js'
 import { isHeavyStructureType } from './catalogValidator.js'
+import { resolveScopeFields } from './targetResolver.js'
+import {
+  findWidgetByTarget,
+  preSanitizeContainerPatch,
+  reconcileTabPaneActive,
+} from './containerRefine.js'
 
 type WidgetNode = Record<string, unknown> & {
   type?: string
@@ -36,6 +42,7 @@ function childCollections(widget: WidgetNode): WidgetNode[][] {
   const lists: WidgetNode[][] = []
   if (Array.isArray(widget.widgetList)) lists.push(widget.widgetList)
   if (Array.isArray(widget.tabs)) lists.push(widget.tabs)
+  if (Array.isArray(widget.cols)) lists.push(widget.cols)
   if (Array.isArray(widget.cols)) {
     for (const col of widget.cols) {
       if (Array.isArray(col.widgetList)) lists.push(col.widgetList)
@@ -45,21 +52,18 @@ function childCollections(widget: WidgetNode): WidgetNode[][] {
 }
 
 function matchesTarget(widget: WidgetNode, target: TargetRef): boolean {
+  if (target.containerType && widget.type !== target.containerType) return false
   if (target.id && widget.id === target.id) return true
-  const name = typeof widget.options?.name === 'string' ? widget.options.name : ''
+  const options = widget.options || {}
+  const name = typeof options.name === 'string' ? options.name : ''
   if (target.name && name === target.name) return true
+  const label = typeof options.label === 'string' ? options.label : ''
+  if (target.label && label === target.label) return true
   return false
 }
 
 function findWidget(root: WidgetNode[], target: TargetRef): WidgetNode | null {
-  for (const w of root) {
-    if (matchesTarget(w, target)) return w
-    for (const list of childCollections(w)) {
-      const found = findWidget(list, target)
-      if (found) return found
-    }
-  }
-  return null
+  return findWidgetByTarget(root, target)
 }
 
 function collectAllNames(root: WidgetNode[], into = new Set<string>()) {
@@ -190,32 +194,31 @@ function createFieldWidget(
   usedNames: Set<string>,
   usedIds: Set<string>,
 ): WidgetNode {
-  const tpl = widgetTemplates[field.type]
+  const schema = getWidgetDefaultSchema(field.type)
+  if (!schema) {
+    throw new Error(`addField 无法克隆 widgetsConfig 默认项: type="${field.type}" 不在 Catalog`)
+  }
   const name = uniqueName(slugify(field.key || field.label, 'field'), usedNames)
-  const options: Record<string, unknown> = {
-    ...deepClone(tpl.options),
-    name,
+  const optionOverrides: Record<string, unknown> = {
     label: field.label,
     required: Boolean(field.required),
   }
   if (field.type === 'radio' || field.type === 'select') {
-    options.optionItems = (field.options || []).map((o) => ({ label: o.label, value: o.value }))
+    optionOverrides.optionItems = (field.options || []).map((o) => ({ label: o.label, value: o.value }))
   }
   if (field.type === 'static-text') {
-    options.textContent = field.textContent || field.label
+    optionOverrides.textContent = field.textContent || field.label
   }
   if (field.type === 'number' && (field.formula || field.formulaEnabled)) {
-    options.formulaEnabled = field.formulaEnabled !== false
-    options.formula = field.formula || ''
+    optionOverrides.formulaEnabled = field.formulaEnabled !== false
+    optionOverrides.formula = field.formula || ''
   }
   const idPrefix = field.type.replace(/-/g, '')
-  return {
-    type: tpl.type,
-    icon: tpl.icon,
-    formItemFlag: tpl.formItemFlag ?? false,
-    options,
+  return buildWidgetFromCatalogDefaults(field.type, {
     id: nextId(idPrefix, usedIds),
-  }
+    name,
+    optionOverrides,
+  }) as WidgetNode
 }
 
 function applyUpdateField(root: WidgetNode[], op: Extract<RefineOperation, { op: 'updateField' }>, warnings: string[]) {
@@ -226,7 +229,17 @@ function applyUpdateField(root: WidgetNode[], op: Extract<RefineOperation, { op:
   }
   widget.options = widget.options || {}
   const type = String(widget.type || '')
-  const sanitized = sanitizeWidgetPatch(type, op.patch as Record<string, unknown>)
+  const containerPre = preSanitizeContainerPatch(type, op.patch as Record<string, unknown>)
+  warnings.push(...containerPre.warnings)
+  if (containerPre.blocked || Object.keys(containerPre.patch).length === 0) {
+    if (!containerPre.blocked && Object.keys(op.patch as object).length > 0) {
+      warnings.push(`updateField 无可应用属性: ${op.target.id || op.target.name || op.target.label}`)
+    } else if (containerPre.blocked) {
+      warnings.push(`updateField 无可应用属性: ${op.target.id || op.target.name || op.target.label}`)
+    }
+    return
+  }
+  const sanitized = sanitizeWidgetPatch(type, containerPre.patch, undefined, widget.options)
   warnings.push(...sanitized.warnings)
   if (Object.keys(sanitized.patch).length === 0) {
     warnings.push(`updateField 无可应用属性: ${op.target.id || op.target.name}`)
@@ -239,6 +252,8 @@ function applyUpdateField(root: WidgetNode[], op: Extract<RefineOperation, { op:
     }
   }
   Object.assign(widget.options, sanitized.patch)
+  warnings.push(...reconcileMultipleDefaultValue(widget.options, type))
+  reconcileTabPaneActive(root, widget, warnings)
 }
 
 function applyPatchFormConfig(formJson: FormJson, op: Extract<RefineOperation, { op: 'patchFormConfig' }>, warnings: string[]) {
@@ -267,7 +282,12 @@ function applySetCustomClass(root: WidgetNode[], op: Extract<RefineOperation, { 
     return
   }
   widget.options = widget.options || {}
-  const sanitized = sanitizeWidgetPatch(String(widget.type || ''), { customClass: op.customClass })
+  const sanitized = sanitizeWidgetPatch(
+    String(widget.type || ''),
+    { customClass: op.customClass },
+    undefined,
+    widget.options,
+  )
   warnings.push(...sanitized.warnings)
   if (sanitized.patch.customClass === undefined) {
     warnings.push('setCustomClass 未写入：customClass 不可用')
@@ -363,19 +383,15 @@ function applyWrapInTabs(root: WidgetNode[], op: Extract<RefineOperation, { op: 
       }
     }
     const paneName = uniqueName(slugify(paneSpec.label, 'pane'), usedNames)
-    panes.push({
-      type: 'tab-pane',
-      category: 'container',
-      icon: containerTemplates['tab-pane'].icon,
-      options: {
-        ...deepClone(containerTemplates['tab-pane'].options),
+    panes.push(
+      buildWidgetFromCatalogDefaults('tab-pane', {
+        id: nextId('tabpane', usedIds),
         name: paneName,
         label: paneSpec.label,
-        active: panes.length === 0,
-      },
-      id: nextId('tabpane', usedIds),
-      widgetList: moved,
-    })
+        optionOverrides: { active: panes.length === 0 },
+        widgetList: moved,
+      }) as WidgetNode,
+    )
   }
 
   // 未指定 targets 的 pane：把剩余顶层塞进第一个空 pane；否则新建「其他」
@@ -390,33 +406,44 @@ function applyWrapInTabs(root: WidgetNode[], op: Extract<RefineOperation, { op: 
       warnings.push('未匹配到空 pane，剩余控件已放入第一个 tab')
     } else {
       const otherName = uniqueName('other_pane', usedNames)
-      panes.push({
-        type: 'tab-pane',
-        category: 'container',
-        icon: containerTemplates['tab-pane'].icon,
-        options: {
-          ...deepClone(containerTemplates['tab-pane'].options),
+      panes.push(
+        buildWidgetFromCatalogDefaults('tab-pane', {
+          id: nextId('tabpane', usedIds),
           name: otherName,
           label: '其他',
-        },
-        id: nextId('tabpane', usedIds),
-        widgetList: leftovers,
-      })
+          widgetList: leftovers,
+        }) as WidgetNode,
+      )
     }
   }
 
   const tabName = uniqueName(slugify(op.tabName || 'main_tabs', 'tabs'), usedNames)
-  root.push({
-    type: 'tab',
-    category: 'container',
-    icon: containerTemplates.tab.icon,
-    options: {
-      ...deepClone(containerTemplates.tab.options),
+  root.push(
+    buildWidgetFromCatalogDefaults('tab', {
+      id: nextId('tab', usedIds),
       name: tabName,
-    },
-    id: nextId('tab', usedIds),
-    tabs: panes,
-  })
+      tabs: panes,
+    }) as WidgetNode,
+  )
+}
+
+function applyUpdateFieldsInScope(
+  formJson: FormJson,
+  root: WidgetNode[],
+  op: Extract<RefineOperation, { op: 'updateFieldsInScope' }>,
+  warnings: string[],
+) {
+  const scopeFields = resolveScopeFields(formJson, op.parent, op.filterType)
+  if (scopeFields.length === 0) {
+    warnings.push(
+      `updateFieldsInScope 未找到 scope 内字段: parent=${op.parent.id || op.parent.name || op.parent.label}${op.filterType ? ` type=${op.filterType}` : ''}`,
+    )
+    return
+  }
+  for (const field of scopeFields) {
+    const target: TargetRef = field.id ? { id: field.id } : field.name ? { name: field.name } : { label: field.label! }
+    applyUpdateField(root, { op: 'updateField', target, patch: op.patch }, warnings)
+  }
 }
 
 export function applyRefinePlan(current: FormJson, plan: RefinePlan): MergeResult {
@@ -428,6 +455,9 @@ export function applyRefinePlan(current: FormJson, plan: RefinePlan): MergeResul
     switch (op.op) {
       case 'updateField':
         applyUpdateField(root, op, warnings)
+        break
+      case 'updateFieldsInScope':
+        applyUpdateFieldsInScope(formJson, root, op, warnings)
         break
       case 'setFormula':
         applySetFormula(root, op, warnings)

@@ -78,9 +78,9 @@ npm test
 
 P0 **不做**：自由 CSS / 任意事件 JS 自动生成（后续阶段）。
 
-## v0.3.0（进行中）：Widget Catalog + 厚 P1
+## v0.3.0：Widget Catalog + 厚 P1
 
-OpenSpec：`ai-form-widget-catalog-refine`（`specified`）
+OpenSpec：`ai-form-widget-catalog-refine`（已验收；release 视部署事实）
 
 ### Widget Catalog
 
@@ -102,14 +102,47 @@ OpenSpec：`ai-form-widget-catalog-refine`（`specified`）
 cd agent
 npm run typecheck
 npm run catalog:check
-npm run acceptance:cases   # 输出 docs/evidence/v0.3.0/
+npm run acceptance:cases   # 输出 docs/evidence/v0.3.0/ 与 v0.4.0/
 npm run smoke
 ```
 
+## v0.4.0：设计真源 Catalog 2.0
+
+OpenSpec：`ai-form-design-truth-catalog`（`ready`；DeliveryGuard acceptance **passed**；**release pending**）
+
+**产品硬门槛：**
+
+1. 知识库对设计可配置面的覆盖 ≈ 查阅 v-form 设计源码（widgetsConfig + property-editor + 渲染约定 + policy）
+2. 自然语言结果与设计器手动操作高精确度一致（合法字面量与**值形态**；非法值不可静默成功）
+
+### Catalog 2.0
+
+- 多真源：widgetsConfig + formConfig + propertyRegister + **219** `*-editor.vue` → `design-truth-graph.json`
+- Policy 层：禁写/identity/渲染/联动/复合 schema/容器级/双轨/扩展边界；enum 主路径来自 graph
+- 50×(type,prop) 抽样：`catalog:check` + `catalog-sample-parity`
+- IntentGate + 同源 Validator（generate/refine/Excel）
+- loadFormJson 前：`preApplyFormJsonGate`（duplicate id 结构门闩）
+
+### 验证
+
+```bash
+cd agent
+npm run catalog:sync
+npm run catalog:check          # DESIGN_TRUTH_CATALOG_SYNC_OK
+npm run acceptance:cases       # docs/evidence/v0.4.0/*
+npm run smoke
+
+cd ../e2e
+npm test -- tests/ai-form-v040.spec.ts
+```
+
+- 验收报告：`docs/acceptance/v0.4.0.md`
+- Evidence Manifest：`.deliveryguard/acceptance/v0.4.0/evidence.json`
+
 ## 文档
 
-- PRD：`docs/requirements/ai-form-multiturn-refine.md`
-- 技术设计：`docs/design/ai-form-multiturn-refine.md`
-- 验收报告：`docs/acceptance/v0.2.0.md`
-- 本地验证：`docs/verification/v0.2.0-local.md`
+- PRD：`docs/requirements/ai-form-design-truth-catalog.md`（v0.4.0）
+- 技术设计：`docs/design/ai-form-design-truth-catalog.md`
+- 多轮优化：`docs/requirements/ai-form-multiturn-refine.md`
+- 验收报告：`docs/acceptance/v0.2.0.md` / `docs/acceptance/v0.3.0.md`
 - 历史 MVP：`docs/requirements/ai-form-agent-mvp.md` / `docs/acceptance/v0.1.0.md`

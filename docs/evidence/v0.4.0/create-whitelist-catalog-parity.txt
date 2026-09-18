@@ -1,0 +1,7 @@
+case: create-whitelist-catalog-parity
+status: pass
+observed: widgetsConfigTypes=37; catalogTypes=37; createAllowed=12; nonGoal=25; partition ok
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@68f91c81cd0bd067843ef5dcfd35be79f9c2d0a3 (working tree has uncommitted changes)
+capturedAt: 2026-09-18T09:15:52.393Z
+type: agent/static

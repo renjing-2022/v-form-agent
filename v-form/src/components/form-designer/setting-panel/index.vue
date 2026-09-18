@@ -470,6 +470,11 @@ export default {
         this.$message.error("设计器不可用，无法应用表单");
         return;
       }
+      const gate = this.preApplyFormJsonGate(formJson);
+      if (!gate.ok) {
+        this.$message.error(gate.message || "formJson 未通过应用前校验，未写入画布");
+        return;
+      }
       const ok = this.designer.loadFormJson(formJson);
       if (ok) {
         this.designer.emitHistoryChange();
@@ -477,6 +482,60 @@ export default {
       } else {
         this.$message.warning("应用未生效，请检查返回的表单结构");
       }
+    },
+
+    /**
+     * v0.4 loadFormJson 前客户端结构门闩（契约层）。
+     * Agent 侧 IntentGate + Catalog Validator 已在 POST 路径完成；此处不复跑全量 Catalog，
+     * 仅拦截 duplicate widget.id 等 loadFormJson 前必失败结构。
+     */
+    preApplyFormJsonGate(formJson) {
+      const ids = new Set();
+      const walk = (list) => {
+        for (const widget of list || []) {
+          if (!widget || typeof widget !== "object") continue;
+          const id = widget.id;
+          if (typeof id === "string" && id.length > 0) {
+            if (ids.has(id)) {
+              return { ok: false, message: `formJson 含重复 widget.id「${id}」，未写入画布` };
+            }
+            ids.add(id);
+          }
+          if (Array.isArray(widget.widgetList)) {
+            const nested = walk(widget.widgetList);
+            if (!nested.ok) return nested;
+          }
+          if (Array.isArray(widget.cols)) {
+            for (const col of widget.cols) {
+              if (Array.isArray(col?.widgetList)) {
+                const nested = walk(col.widgetList);
+                if (!nested.ok) return nested;
+              }
+            }
+          }
+          if (Array.isArray(widget.tabs)) {
+            for (const tab of widget.tabs) {
+              if (Array.isArray(tab?.widgetList)) {
+                const nested = walk(tab.widgetList);
+                if (!nested.ok) return nested;
+              }
+            }
+          }
+          if (Array.isArray(widget.rows)) {
+            for (const row of widget.rows) {
+              if (!Array.isArray(row)) continue;
+              for (const cell of row) {
+                if (Array.isArray(cell?.widgetList)) {
+                  const nested = walk(cell.widgetList);
+                  if (!nested.ok) return nested;
+                }
+              }
+            }
+          }
+        }
+        return { ok: true };
+      };
+      return walk(formJson.widgetList);
     },
 
     getCurrentFormJsonForAi() {

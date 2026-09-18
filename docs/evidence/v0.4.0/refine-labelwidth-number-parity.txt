@@ -1,0 +1,7 @@
+case: refine-labelwidth-number-parity
+status: pass
+observed: 450 ok; 450px stripped; form 120 ok; form 120px stripped
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@68f91c81cd0bd067843ef5dcfd35be79f9c2d0a3 (working tree has uncommitted changes)
+capturedAt: 2026-09-18T09:15:51.447Z
+type: agent

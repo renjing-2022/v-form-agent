@@ -119,7 +119,7 @@ async function main() {
   })
   const badIssues = validateFormJson(badJson, { mode: 'refine', existingIds })
   assert(
-    badIssues.some((i) => i.message.includes('refine create whitelist')),
+    badIssues.some((i) => i.message.includes('新建白名单') || i.message.includes('refine create whitelist')),
     'expected refine create whitelist failure',
   )
   console.log('[ok] refine reject illegal new type')

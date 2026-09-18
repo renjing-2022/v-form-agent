@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { generateResponseSchema, widgetTypeSchema } from './fieldPlan.js'
+import { normalizeTargetRef } from '../services/parentScopeParser.js'
 
 export const chatTurnSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -17,21 +18,20 @@ export const refineRequestSchema = z.object({
   messages: z.array(chatTurnSchema).max(40).default([]),
 })
 
-/** 模型常把 target 写成纯字符串（id 或 name），此处归一化为对象 */
-export const targetRefSchema = z.preprocess((val) => {
-  if (typeof val === 'string') {
-    const s = val.trim()
-    if (!s) return val
-    // 同时写入 id/name，合入时按任一命中即可
-    return { id: s, name: s }
-  }
-  return val
-}, z
+/** 模型常把 target 写成纯字符串（id/name/parentScope），此处归一化为对象 */
+export const targetRefSchema = z.preprocess((val) => normalizeTargetRef(val), z
   .object({
     id: z.string().min(1).optional(),
     name: z.string().min(1).optional(),
+    label: z.string().min(1).optional(),
+    /** parentScope 语法解析：容器 type 过滤（如 tab-pane） */
+    containerType: z.string().min(1).optional(),
+    /** parentScope path: 前缀，用于 scope 批量 */
+    pathPrefix: z.string().min(1).optional(),
   })
-  .refine((t) => Boolean(t.id || t.name), { message: 'target requires id or name' }))
+  .refine((t) => Boolean(t.id || t.name || t.label || t.pathPrefix), {
+    message: 'target requires id, name, label, or pathPrefix',
+  }))
 
 export const optionItemSchema = z.object({
   label: z.string().min(1),
@@ -53,6 +53,16 @@ export const refineOperationSchema = z.discriminatedUnion('op', [
   z.object({
     op: z.literal('updateField'),
     target: targetRefSchema,
+    patch: z
+      .record(z.unknown())
+      .refine((p) => Object.keys(p).length > 0, { message: 'patch must not be empty' }),
+  }),
+  z.object({
+    op: z.literal('updateFieldsInScope'),
+    /** 容器语境：tab-pane / grid-col 等 id|name|label */
+    parent: targetRefSchema,
+    /** 可选：仅更新该 type 的字段（如 radio） */
+    filterType: z.string().min(1).optional(),
     patch: z
       .record(z.unknown())
       .refine((p) => Object.keys(p).length > 0, { message: 'patch must not be empty' }),

@@ -1,33 +1,23 @@
 import type { FieldType } from '../schemas/fieldPlan.js'
+import type { ContainerCreateType } from './createWhitelistPolicy.js'
 
-/** 整表生成 / FieldPlan 可用字段类型 */
-export const FIELD_WHITELIST: FieldType[] = [
-  'input',
-  'textarea',
-  'radio',
-  'select',
-  'number',
-  'date',
-  'static-text',
-  'divider',
-]
-
-/** refine 可新建的容器类型（对齐 widgetsConfig.js） */
-export const CONTAINER_CREATE_WHITELIST = ['tab', 'tab-pane', 'grid', 'grid-col'] as const
-
-export type ContainerCreateType = (typeof CONTAINER_CREATE_WHITELIST)[number]
-
-/** 校验用：生成路径允许的类型 */
-export const WIDGET_WHITELIST: Array<FieldType | ContainerCreateType> = [
-  ...FIELD_WHITELIST,
-  ...CONTAINER_CREATE_WHITELIST,
-]
-
-/** refine 新建节点允许的类型 */
-export const REFINE_CREATE_WHITELIST: Array<FieldType | ContainerCreateType> = [
-  ...FIELD_WHITELIST,
-  ...CONTAINER_CREATE_WHITELIST,
-]
+export {
+  CONTAINER_CREATE_WHITELIST,
+  CREATE_NON_GOAL,
+  CREATE_NON_GOAL_REASON_LABEL,
+  FIELD_CREATE_WHITELIST,
+  FIELD_WHITELIST,
+  REFINE_CREATE_WHITELIST,
+  WIDGET_WHITELIST,
+  checkCreateWhitelistCatalogParity,
+  compareWidgetsConfigTypesWithCatalog,
+  createNonGoalReason,
+  createRejectMessageForType,
+  isCreateAllowedType,
+  type ContainerCreateType,
+  type CreateNonGoalReason,
+  type RefineCreateType,
+} from './createWhitelistPolicy.js'
 
 export const MAX_FIELDS = 120
 export const MAX_DEPTH_HINT = 4
@@ -70,6 +60,10 @@ const commonFieldOptions = {
   onValidate: '',
 }
 
+/**
+ * @deprecated 新建节点请使用 `widgetDefaults.ts`（Catalog/widgetsConfig 克隆）。
+ * 保留仅供历史对照；refine/assembler 已不再引用。
+ */
 export const widgetTemplates: Record<FieldType, FieldTemplate> = {
   input: {
     type: 'input',
@@ -246,6 +240,7 @@ export const widgetTemplates: Record<FieldType, FieldTemplate> = {
   },
 }
 
+/** @deprecated 新建容器请使用 `widgetDefaults.ts`（Catalog/widgetsConfig 克隆） */
 export const containerTemplates: Record<ContainerCreateType, ContainerTemplate> = {
   tab: {
     type: 'tab',

@@ -1,5 +1,6 @@
 import type { FormJson } from '../schemas/refinePlan.js'
 import { getWidgetCatalog } from '../knowledge/widgetCatalogStore.js'
+import { MAX_FIELDS } from '../knowledge/widgetWhitelist.js'
 
 export type FormFieldSummary = {
   id?: string
@@ -26,6 +27,7 @@ const SNAPSHOT_KEYS = [
   'labelWidth',
   'labelWrap',
   'labelHidden',
+  'labelAlign',
   'displayStyle',
   'columnWidth',
   'required',
@@ -34,8 +36,20 @@ const SNAPSHOT_KEYS = [
   'size',
 ]
 
-const MAX_FIELDS = 80
+const ON_DEMAND_SNAPSHOT_KEYS = ['optionItems', 'defaultValue', 'validation']
+
 const MAX_DEPTH = 8
+
+export { MAX_FIELDS as FORM_SUMMARY_MAX_FIELDS }
+
+function inferOnDemandSnapshotKeys(instruction?: string): string[] {
+  if (!instruction) return []
+  const keys: string[] = []
+  if (/选项|optionItems|分值|单选|多选/.test(instruction)) keys.push('optionItems')
+  if (/默认|defaultValue|默认值/.test(instruction)) keys.push('defaultValue')
+  if (/校验|validation/.test(instruction)) keys.push('validation')
+  return keys
+}
 
 function parentHint(widget: WidgetNode | undefined): FormFieldSummary['parent'] {
   if (!widget) return undefined
@@ -47,12 +61,17 @@ function parentHint(widget: WidgetNode | undefined): FormFieldSummary['parent'] 
   }
 }
 
-function snapshotFor(type: string, options: Record<string, unknown>): Record<string, unknown> {
+function snapshotFor(
+  type: string,
+  options: Record<string, unknown>,
+  instruction?: string,
+): Record<string, unknown> {
   const catalog = getWidgetCatalog()
   const entry = catalog.widgets.find((w) => w.type === type)
   const allowed = new Set(entry?.writableKeys || SNAPSHOT_KEYS)
+  const keys = [...SNAPSHOT_KEYS, ...inferOnDemandSnapshotKeys(instruction).filter((k) => ON_DEMAND_SNAPSHOT_KEYS.includes(k))]
   const out: Record<string, unknown> = {}
-  for (const key of SNAPSHOT_KEYS) {
+  for (const key of keys) {
     if (!allowed.has(key)) continue
     if (options[key] !== undefined) out[key] = options[key]
   }
@@ -65,6 +84,7 @@ function walk(
   parent: WidgetNode | undefined,
   out: FormFieldSummary[],
   depth: number,
+  instruction?: string,
 ) {
   if (depth > MAX_DEPTH || out.length >= MAX_FIELDS) return
   for (let i = 0; i < widgets.length; i++) {
@@ -74,7 +94,7 @@ function walk(
     const path = `${pathPrefix}[${i}]`
     const options = w.options || {}
     const type = typeof w.type === 'string' ? w.type : undefined
-    const snap = type ? snapshotFor(type, options) : {}
+    const snap = type ? snapshotFor(type, options, instruction) : {}
     out.push({
       id: typeof w.id === 'string' ? w.id : undefined,
       name: typeof options.name === 'string' ? options.name : undefined,
@@ -85,12 +105,12 @@ function walk(
       writableSnapshot: Object.keys(snap).length ? snap : undefined,
     })
     const childParent = w
-    if (Array.isArray(w.widgetList)) walk(w.widgetList, `${path}.widgetList`, childParent, out, depth + 1)
-    if (Array.isArray(w.tabs)) walk(w.tabs, `${path}.tabs`, childParent, out, depth + 1)
+    if (Array.isArray(w.widgetList)) walk(w.widgetList, `${path}.widgetList`, childParent, out, depth + 1, instruction)
+    if (Array.isArray(w.tabs)) walk(w.tabs, `${path}.tabs`, childParent, out, depth + 1, instruction)
     if (Array.isArray(w.cols)) {
       w.cols.forEach((col, c) => {
         if (Array.isArray(col?.widgetList)) {
-          walk(col.widgetList, `${path}.cols[${c}].widgetList`, childParent, out, depth + 1)
+          walk(col.widgetList, `${path}.cols[${c}].widgetList`, childParent, out, depth + 1, instruction)
         }
       })
     }
@@ -99,7 +119,7 @@ function walk(
         const cells = (row?.cols || row?.cells || []) as WidgetNode[]
         cells.forEach((cell, c) => {
           if (Array.isArray(cell?.widgetList)) {
-            walk(cell.widgetList, `${path}.rows[${r}].cols[${c}].widgetList`, childParent, out, depth + 1)
+            walk(cell.widgetList, `${path}.rows[${r}].cols[${c}].widgetList`, childParent, out, depth + 1, instruction)
           }
         })
       })
@@ -107,9 +127,9 @@ function walk(
   }
 }
 
-export function buildFormSummary(formJson: FormJson): FormFieldSummary[] {
+export function buildFormSummary(formJson: FormJson, instruction?: string): FormFieldSummary[] {
   const out: FormFieldSummary[] = []
-  walk((formJson.widgetList || []) as WidgetNode[], 'widgetList', undefined, out, 0)
+  walk((formJson.widgetList || []) as WidgetNode[], 'widgetList', undefined, out, 0, instruction)
   return out
 }
 

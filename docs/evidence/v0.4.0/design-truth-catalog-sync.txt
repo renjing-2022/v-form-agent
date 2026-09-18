@@ -1,0 +1,7 @@
+case: design-truth-catalog-sync
+status: pass
+observed: multi-source catalog ok; radio labelAlign enum=["","label-left-align","label-center-align","label-right-align"]; form labelAlign enum=["label-left-align","label-center-align","label-right-align"]; editors=219; graphFingerprint=30d5fff8915bd8fb03ad96c4a97eef5d1efa18a625d533ea4a148fbab67299a4; coverageIssues=0
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@68f91c81cd0bd067843ef5dcfd35be79f9c2d0a3 (working tree has uncommitted changes)
+capturedAt: 2026-09-18T09:15:49.598Z
+type: agent/static

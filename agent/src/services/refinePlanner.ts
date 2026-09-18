@@ -3,6 +3,13 @@ import { chatCompletion, type ChatMessage } from './deepseek.js'
 import { REFINE_CREATE_WHITELIST } from '../knowledge/widgetWhitelist.js'
 import { buildCatalogSnippets } from '../knowledge/catalogContext.js'
 import { buildFormSummary } from './formSummary.js'
+import {
+  buildOverlapPropertyPatch,
+  instructionHasOverlapIntent,
+  pickOverlapTargets,
+} from './refineLayoutPolicy.js'
+import { instructionHasAlignIntent } from './refineAlignPolicy.js'
+import { normalizeTargetRef } from './parentScopeParser.js'
 
 function extractJsonObject(text: string): unknown {
   const trimmed = text.trim()
@@ -30,7 +37,8 @@ type WidgetNode = {
 const systemPrompt = `你是 v-form 表单优化规划器。根据用户指令与当前表单摘要，输出 RefinePlan JSON（不要 Markdown）。
 只能输出 operations，禁止直接输出完整 formJson。
 允许的 op：
-- updateField: { op, target:{id?|name?}, patch:{...常见可写属性} }  属性必须属于该控件 Catalog writableKeys
+- updateField: { op, target:{id?|name?|label?|containerType?}, patch:{...} }  字段与 tab-pane/grid-col/tab/grid 容器属性；容器 target 建议带 containerType
+- updateFieldsInScope: { op, parent:{id?|name?|label?|parentScope?}, filterType?, patch:{...} }  批量更新 parent 容器下字段；parent 可用 parentScope 语法如 tab-pane/基本信息 或 path:widgetList[0].tabs[0]
 - setFormula: { op, target, formula, formulaEnabled? }  （仅 number；formula 可用字段 name，如 score1+score2）
 - addField: { op, field:{key,label,type,required?,options?,formula?}, parent? }
 - wrapInTabs: { op, tabName?, panes:[{label, targets:[{id:"..."} 或 {name:"..."}]}] }
@@ -39,8 +47,22 @@ const systemPrompt = `你是 v-form 表单优化规划器。根据用户指令�
 - setCssCode: { op, css, mode?:append|replace, target?, customClass? }  css 应尽量绑定 target/customClass，避免全局选择器
 重要：target / targets 必须是对象，禁止写成字符串。正确示例 targets:[{"name":"input1"},{"id":"radio2"}]；错误示例 targets:["input1","radio2"]。
 
+布局重叠修复顺序（必须完整执行，禁止半套）：
+1. 长题干与选项重叠：优先 updateField 设置 labelWrap=true、displayStyle=block、必要时 labelWidth 数字加宽
+2. 属性仍不足时：setCustomClass + setCssCode 绑定 scoped class
+3. 禁止改 label/optionItems 文案冒充修复
+
+枚举字面量（必须遵守，禁止用自然语言简称；合入前会经 NL 归一层自动转换）：
+- 字段/表单 labelAlign 只能是：""（字段级继承表单）、"label-left-align"、"label-center-align"、"label-right-align"
+- 禁止写 "right" / "left" / "center" / "右对齐" 等到 labelAlign
+- displayStyle 只能是 "inline" 或 "block"
+- labelWidth 必须是数字（如 450），禁止 "450px"
+- size 只能是 "" / "large" / "small"，禁止 "default"
+- columnWidth 为 css 文本（如 "200px"），不是 labelWidth 数字
+- 字段 customClass 为 string；formConfig.customClass 为 string 数组
+
 属性与样式规则（必须遵守）：
-- 能用组件属性表达的（placeholder、labelWidth、labelWrap、displayStyle、columnWidth、size 等）优先 updateField / patchFormConfig，不要先写 CSS。
+- 能用组件属性表达的（placeholder、labelWidth、labelWrap、displayStyle、columnWidth、size、labelAlign 等）优先 updateField / patchFormConfig，不要先写 CSS。
 - 仅当用户明确要改文字/标题/选项文案/描述时，才可修改 label、textContent 或 optionItems 的 label。
 - 用户描述样式/布局/对齐/间距/重叠/颜色/字体等视觉问题时：禁止通过改字段或选项文案来「假装」修复；应改可写属性，或输出 setCssCode / setCustomClass。
 - 禁止输出事件回调（onChange、onCreated 等）以及 functions/dataSources。
@@ -66,8 +88,8 @@ export async function planRefine(params: {
     content: m.content,
   }))
 
-  const formSummary = buildFormSummary(params.currentFormJson)
-  const catalogSnippets = buildCatalogSnippets(formSummary)
+  const formSummary = buildFormSummary(params.currentFormJson, params.instruction)
+  const catalogSnippets = buildCatalogSnippets(formSummary, undefined, params.instruction)
 
   const content = await chatCompletion([
     { role: 'system', content: systemPrompt },
@@ -78,7 +100,7 @@ export async function planRefine(params: {
         instruction: params.instruction,
         formSummary,
         catalogSnippets,
-        note: '请基于 formSummary 的 id/name/path/parent 精确定位；属性写入必须属于 catalogSnippets.writableKeys；未提及控件保持不变。',
+        note: '请基于 formSummary 的 id/name/path/parent 精确定位；parentScope 可用 tab-pane/标签名、tab-pane#name、path:widgetList[0].tabs[0]；属性写入必须属于 catalogSnippets.writableKeys；枚举值必须属于 catalogSnippets.constraints.*.enum；未提及控件保持不变。',
       }),
     },
   ])
@@ -95,13 +117,7 @@ export function normalizeRefinePlanRaw(input: unknown): unknown {
   const ops = plan.operations
   if (!Array.isArray(ops)) return plan
 
-  const coerceTarget = (t: unknown) => {
-    if (typeof t === 'string') {
-      const s = t.trim()
-      return s ? { id: s, name: s } : t
-    }
-    return t
-  }
+  const coerceTarget = (t: unknown) => normalizeTargetRef(t)
 
   plan.operations = ops.map((op) => {
     if (!op || typeof op !== 'object') return op
@@ -196,6 +212,26 @@ export function mockRefinePlan(instruction: string, current: FormJson): RefinePl
     }
   }
 
+  if (instructionHasAlignIntent(instruction)) {
+    const radios = flat.filter((f) => f.type === 'radio')
+    const labelAlign = /居中|center/i.test(instruction)
+      ? 'label-center-align'
+      : /左|left/i.test(instruction)
+        ? 'label-left-align'
+        : 'label-right-align'
+    if (radios.length > 0) {
+      return refinePlanSchema.parse({
+        summary: `批量设置 radio labelAlign=${labelAlign}`,
+        warnings,
+        operations: radios.map((r) => ({
+          op: 'updateField',
+          target: r.id ? { id: r.id } : { name: r.name! },
+          patch: { labelAlign },
+        })),
+      })
+    }
+  }
+
   if (wantCssApply) {
     const radio =
       flat.find((f) => f.type === 'radio' && /时间定向/.test(f.label || '')) ||
@@ -233,9 +269,35 @@ export function mockRefinePlan(instruction: string, current: FormJson): RefinePl
     })
   }
 
+  if (
+    styleIntent &&
+    instructionHasOverlapIntent(instruction) &&
+    !explicitTextIntent &&
+    !wantOptions &&
+    !wantFormula &&
+    !wantTabs &&
+    !wantCssApply
+  ) {
+    const targets = pickOverlapTargets(current, instruction)
+    const patch = buildOverlapPropertyPatch(instruction)
+    if (targets.length > 0 && Object.keys(patch).length > 0) {
+      return refinePlanSchema.parse({
+        summary: '属性修复标签与选项重叠（labelWrap + displayStyle:block + labelWidth）',
+        warnings,
+        operations: targets.map((t) => ({
+          op: 'updateField',
+          target: t.id ? { id: t.id } : { name: t.name! },
+          patch,
+        })),
+      })
+    }
+  }
+
   // 模拟 LLM 用改 label 规避样式问题的错误规划（供 FR-6 / enforceRefineTextPolicy 验收）
   if (
     styleIntent &&
+    !instructionHasOverlapIntent(instruction) &&
+    !instructionHasAlignIntent(instruction) &&
     !explicitTextIntent &&
     !wantOptions &&
     !wantFormula &&

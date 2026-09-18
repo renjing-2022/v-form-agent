@@ -238,7 +238,15 @@ async function runRefine(text: string) {
     messages.value.push({ role: 'user', content: text })
     messages.value.push({ role: 'assistant', content: data.summary })
     prompt.value = ''
-    ElMessage.success('优化成功，请确认后整表覆盖应用到设计器')
+    const hasWarnings = Array.isArray(data.warnings) && data.warnings.length > 0
+    const applied = data.applied !== false && !String(data.summary || '').startsWith('未写入画布变更')
+    if (!applied) {
+      ElMessage.warning(data.summary || '优化未产生可应用变更')
+    } else if (hasWarnings) {
+      ElMessage.warning('部分调整已写入，请查看说明与警告后再确认应用')
+    } else {
+      ElMessage.success('优化成功，请确认后整表覆盖应用到设计器')
+    }
   } catch (e: any) {
     error.value = e?.message || '优化失败'
     emit('AiError')

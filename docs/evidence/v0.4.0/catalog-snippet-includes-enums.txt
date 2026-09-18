@@ -1,0 +1,7 @@
+case: catalog-snippet-includes-enums
+status: pass
+observed: radio snippet labelAlign valueKind=enum enum=["","label-left-align","label-center-align","label-right-align"] inheritEmpty=true
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@68f91c81cd0bd067843ef5dcfd35be79f9c2d0a3 (working tree has uncommitted changes)
+capturedAt: 2026-09-18T09:15:49.738Z
+type: agent

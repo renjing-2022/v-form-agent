@@ -1,0 +1,8 @@
+case: refine-layout-overlap-properties
+status: pass
+observed: POST /api/agent/v1/refine overlap fix: 1/1 radios labelWrap+block; canvas shows label-wrap
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@68f91c81cd0b (working tree has uncommitted changes)
+capturedAt: 2026-09-18T09:16:28.205Z
+durationMs: 3371
+screenshot: docs/evidence/v0.4.0/refine-layout-overlap-properties.png

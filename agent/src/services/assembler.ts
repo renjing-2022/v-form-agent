@@ -1,5 +1,6 @@
 import type { FieldPlan } from '../schemas/fieldPlan.js'
-import { getDefaultFormConfig, widgetTemplates } from '../knowledge/widgetWhitelist.js'
+import { getDefaultFormConfig } from '../knowledge/widgetWhitelist.js'
+import { buildWidgetFromCatalogDefaults, getWidgetDefaultSchema } from '../knowledge/widgetDefaults.js'
 
 function slugify(input: string, fallback: string) {
   const raw = input
@@ -31,52 +32,47 @@ export function assembleFormJson(plan: FieldPlan) {
 
   for (const section of plan.sections) {
     if (plan.layout === 'sectioned') {
-      const dividerTpl = widgetTemplates.divider
+      const dividerSchema = getWidgetDefaultSchema('divider')
+      if (!dividerSchema) throw new Error('Catalog 缺少 divider 默认项')
       const dividerName = uniqueName(slugify(section.title, 'section') + '_div')
-      widgetList.push({
-        type: dividerTpl.type,
-        icon: dividerTpl.icon,
-        formItemFlag: false,
-        options: {
-          ...structuredClone(dividerTpl.options),
+      widgetList.push(
+        buildWidgetFromCatalogDefaults('divider', {
+          id: nextId('divider', seq++),
           name: dividerName,
           label: section.title,
-        },
-        id: nextId('divider', seq++),
-      })
+        }),
+      )
     }
 
     for (const field of section.fields) {
-      const tpl = widgetTemplates[field.type]
-      if (!tpl) continue
+      const schema = getWidgetDefaultSchema(field.type)
+      if (!schema) continue
       const name = uniqueName(slugify(field.key || field.label, `field_${seq}`))
-      const options: Record<string, unknown> = {
-        ...structuredClone(tpl.options),
-        name,
+      const optionOverrides: Record<string, unknown> = {
         label: field.label,
         required: Boolean(field.required),
       }
 
       if (field.type === 'radio' || field.type === 'select') {
-        options.optionItems = (field.options || []).map((o) => ({
+        optionOverrides.optionItems = (field.options || []).map((o) => ({
           label: o.label,
           value: o.value,
         }))
       }
       if (field.type === 'static-text') {
-        options.textContent = field.textContent || field.label
+        optionOverrides.textContent = field.textContent || field.label
       }
       if (field.type === 'divider') {
-        options.label = field.label
+        optionOverrides.label = field.label
       }
 
-      widgetList.push({
-        type: tpl.type,
-        icon: tpl.icon,
-        formItemFlag: tpl.formItemFlag ?? false,
-        options,
-        id: nextId(field.type.replace('-', ''), seq++),
-      })
+      widgetList.push(
+        buildWidgetFromCatalogDefaults(field.type, {
+          id: nextId(field.type.replace('-', ''), seq++),
+          name,
+          optionOverrides,
+        }),
+      )
     }
   }
 

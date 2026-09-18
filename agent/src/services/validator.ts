@@ -3,6 +3,7 @@ import {
   MAX_FIELDS,
   REFINE_CREATE_WHITELIST,
   WIDGET_WHITELIST,
+  createRejectMessageForType,
 } from '../knowledge/widgetWhitelist.js'
 import {
   validateFormConfigAgainstCatalog,
@@ -17,6 +18,8 @@ export type ValidateFormJsonOptions = {
   /** refine 时传入优化前已存在的 widget id */
   existingIds?: Set<string>
 }
+
+/** generate / excel / refine 共用 Catalog 校验（widget options + formConfig） */
 
 type WidgetNode = Record<string, unknown>
 
@@ -142,6 +145,7 @@ export function validateFormJson(
   }
 
   const names = new Set<string>()
+  const widgetIds = new Set<string>()
   let fieldCount = 0
 
   const walk = (widgets: unknown[], path: string, depth: number) => {
@@ -158,13 +162,19 @@ export function validateFormJson(
       }
       const type = String(w.type || '')
       const id = typeof w.id === 'string' ? w.id : undefined
+      if (id) {
+        if (widgetIds.has(id)) {
+          issues.push({ path: `${p}.id`, message: `duplicate widget id "${id}"` })
+        }
+        widgetIds.add(id)
+      }
       if (!isAllowedType(type, id, mode, opts.existingIds)) {
         issues.push({
           path: `${p}.type`,
           message:
             mode === 'refine'
-              ? `new type "${type}" is not in refine create whitelist`
-              : `type "${type}" is not in whitelist`,
+              ? createRejectMessageForType(type)
+              : `type "${type}" is not in generate whitelist`,
         })
       }
       fieldCount += 1
@@ -191,9 +201,7 @@ export function validateFormJson(
 
       validateContainerShape(type, w, p, issues)
       validateFormula(type, options, p, names, issues)
-      if (mode === 'refine') {
-        issues.push(...validateWidgetOptionsAgainstCatalog(type, options, p))
-      }
+      issues.push(...validateWidgetOptionsAgainstCatalog(type, options, p))
 
       for (const child of collectChildLists(w)) {
         walk(child.list, `${p}.${child.pathSuffix}`, depth + 1)
@@ -204,7 +212,7 @@ export function validateFormJson(
   if (Array.isArray(json.widgetList)) {
     walk(json.widgetList as unknown[], 'widgetList', 0)
   }
-  if (mode === 'refine' && json.formConfig && typeof json.formConfig === 'object') {
+  if (json.formConfig && typeof json.formConfig === 'object') {
     issues.push(...validateFormConfigAgainstCatalog(json.formConfig as Record<string, unknown>))
   }
 

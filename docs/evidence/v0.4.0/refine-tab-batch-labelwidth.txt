@@ -1,0 +1,7 @@
+case: refine-tab-batch-labelwidth
+status: pass
+observed: scope radios=2 via parentScope tab-pane/基本信息; paneA labelWidth=180; paneB unchanged
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@68f91c81cd0bd067843ef5dcfd35be79f9c2d0a3 (working tree has uncommitted changes)
+capturedAt: 2026-09-18T09:15:51.769Z
+type: agent

@@ -1,0 +1,7 @@
+case: container-level-properties-parity
+status: pass
+observed: containers=14 matrix=14
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@68f91c81cd0bd067843ef5dcfd35be79f9c2d0a3 (working tree has uncommitted changes)
+capturedAt: 2026-09-18T09:15:50.528Z
+type: agent/static
