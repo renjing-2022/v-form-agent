@@ -2,7 +2,7 @@ case: text-generate-apply
 status: pass
 observed: mock generate widgetCount=7; AiChat requires explicit apply emit; setting-panel applyAiFormJson -> loadFormJson
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: main@68f91c81cd0bd067843ef5dcfd35be79f9c2d0a3 (working tree has uncommitted changes)
-capturedAt: 2026-09-18T09:15:53.017Z
+sourceRevision: main@d422465e0fdac8a2dd9c9b28fd9d62b7032eab9f (working tree has uncommitted changes)
+capturedAt: 2026-09-21T02:40:01.555Z
 type: api+static
 note: Playwright deferred by request; confirmed via generate pipeline + source wiring
