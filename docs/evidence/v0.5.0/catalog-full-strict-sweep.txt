@@ -1,0 +1,8 @@
+case: catalog-full-strict-sweep
+status: pass
+observed: full applicable strict sweep pass; editorGaps=86 (non-blocking report)
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@d422465e0fdac8a2dd9c9b28fd9d62b7032eab9f (working tree has uncommitted changes)
+capturedAt: 2026-09-21T02:40:02.128Z
+type: agent/static
+editorGaps: 86

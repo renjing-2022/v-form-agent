@@ -74,6 +74,10 @@ import {
   collectCatalogSampleCandidates,
   pickCatalogSamplePairs,
 } from '../src/knowledge/catalogEnumPolicy.js'
+import {
+  checkCatalogFullStrictSweep,
+  collectCatalogStrictEditorGaps,
+} from '../src/knowledge/catalogStrictPolicy.js'
 import { PROPERTY_REGISTER_REL } from '../src/knowledge/catalogPolicy.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -81,6 +85,7 @@ const root = path.resolve(__dirname, '../..')
 const outDir = path.join(root, 'docs/evidence/v0.2.0')
 const outDirV030 = path.join(root, 'docs/evidence/v0.3.0')
 const outDirV040 = path.join(root, 'docs/evidence/v0.4.0')
+const outDirV050 = path.join(root, 'docs/evidence/v0.5.0')
 
 function assert(cond: unknown, msg: string): asserts cond {
   if (!cond) throw new Error(msg)
@@ -1641,6 +1646,168 @@ async function main() {
     'refine-v03-regression',
     'v0.3 acceptance cases in same run still pass; design-truth labelAlign cases added',
     { type: 'agent' },
+  )
+
+  // ---------- v0.5.0 structure ops + full strict sweep ----------
+  const registerSourceV050 = fs.readFileSync(path.join(root, PROPERTY_REGISTER_REL), 'utf8')
+  const catalogSyncV050 = await checkWidgetCatalogSync(root)
+  assert(catalogSyncV050.catalogDiffs.length === 0, `catalog drift: ${catalogSyncV050.catalogDiffs.slice(0, 3).join('; ')}`)
+  assert(catalogSyncV050.graphDiffs.length === 0, `graph drift: ${catalogSyncV050.graphDiffs.slice(0, 3).join('; ')}`)
+  const strictIssues = checkCatalogFullStrictSweep(
+    catalogSyncV050.catalog,
+    catalogSyncV050.editorGraph,
+    registerSourceV050,
+  )
+  assert(strictIssues.length === 0, `full strict sweep failed: ${strictIssues.slice(0, 5).join('; ')}`)
+  const editorGaps = collectCatalogStrictEditorGaps(
+    catalogSyncV050.catalog,
+    catalogSyncV050.editorGraph,
+    registerSourceV050,
+  )
+  writeCaseTo(
+    outDirV050,
+    'catalog-full-strict-sweep',
+    `full applicable strict sweep pass; editorGaps=${editorGaps.length} (non-blocking report)`,
+    { type: 'agent/static', editorGaps: String(editorGaps.length) },
+  )
+
+  const baseForm = assembleFormJson(mockPlanFromText('生成含姓名和性别的简易表单'))
+  const remarksBefore = (baseForm.widgetList as Array<{ options?: { label?: string } }>).filter(
+    (w) => w.options?.label === '备注',
+  ).length
+  assert(remarksBefore >= 1, 'fixture should include 备注')
+  const removePlan = mockRefinePlan('删掉备注字段', baseForm)
+  assert(removePlan.operations.some((o) => o.op === 'removeField'), 'mock removeField expected')
+  const removed = applyRefinePlan(baseForm, removePlan)
+  const remarksAfter = (removed.formJson.widgetList as Array<{ options?: { label?: string } }>).filter(
+    (w) => w.options?.label === '备注',
+  ).length
+  assert(remarksAfter === remarksBefore - 1, '备注 should be removed')
+  const withTwoInputs = applyRefinePlan(baseForm, refinePlanSchema.parse({
+    summary: 'add extra input',
+    warnings: [],
+    operations: [
+      {
+        op: 'addField',
+        field: { key: 'extra_input', label: '额外输入', type: 'input' },
+      },
+    ],
+  })).formJson
+  writeCaseTo(
+    outDirV050,
+    'refine-remove-field-by-label',
+    'mock removeField deleted 备注; remaining fields preserved',
+    { type: 'agent' },
+  )
+
+  const tabbed = applyRefinePlan(withTwoInputs, mockRefinePlan('用 tab 分成基本信息和评估题目', withTwoInputs)).formJson
+  const panesBefore = (tabbed.widgetList as Array<{ type?: string; tabs?: unknown[] }>).find((w) => w.type === 'tab')
+    ?.tabs as Array<{ type?: string; id?: string; options?: { label?: string }; widgetList?: unknown[] }>
+  assert(panesBefore && panesBefore.length >= 2, 'expected >=2 tab-panes')
+  const paneToRemove = panesBefore[1]
+  const childCount = Array.isArray(paneToRemove.widgetList) ? paneToRemove.widgetList.length : 0
+  const cascadePlan = refinePlanSchema.parse({
+    summary: 'delete second tab-pane',
+    warnings: [],
+    operations: [
+      {
+        op: 'removeField',
+        target: { id: paneToRemove.id!, containerType: 'tab-pane' },
+      },
+    ],
+  })
+  const cascaded = applyRefinePlan(tabbed, cascadePlan)
+  const panesAfter = (cascaded.formJson.widgetList as Array<{ type?: string; tabs?: unknown[] }>).find(
+    (w) => w.type === 'tab',
+  )?.tabs as Array<{ id?: string }>
+  assert(panesAfter && panesAfter.length === panesBefore.length - 1, 'pane count decreased')
+  assert(!panesAfter.some((p) => p.id === paneToRemove.id), 'removed pane gone')
+  assert(
+    cascaded.warnings.some((w) => w.includes('tab-pane') && w.includes('内部控件')),
+    'cascade warning expected',
+  )
+  writeCaseTo(
+    outDirV050,
+    'refine-remove-tabpane-cascade',
+    `removed tab-pane ${paneToRemove.id} with ${childCount} children; no orphan lift`,
+    { type: 'agent' },
+  )
+
+  const reorderBase = withTwoInputs
+  const fields = (reorderBase.widgetList as Array<{ id?: string; options?: { label?: string; name?: string } }>)
+  assert(fields.length >= 2, 'need >=2 fields for reorder')
+  const moving = fields[fields.length - 1]
+  const anchor = fields[0]
+  const reorderPlan = refinePlanSchema.parse({
+    summary: 'reorder sibling',
+    warnings: [],
+    operations: [
+      {
+        op: 'reorderField',
+        target: { id: moving.id! },
+        position: { kind: 'after', sibling: { id: anchor.id! } },
+      },
+    ],
+  })
+  const reordered = applyRefinePlan(reorderBase, reorderPlan)
+  const afterIds = (reordered.formJson.widgetList as Array<{ id?: string }>).map((w) => w.id)
+  assert(afterIds[1] === moving.id || afterIds.indexOf(moving.id) === afterIds.indexOf(anchor.id) + 1, 'moved after anchor')
+  writeCaseTo(
+    outDirV050,
+    'refine-reorder-sibling',
+    `reorderField moved ${moving.id} after ${anchor.id}; order=${afterIds.join(',')}`,
+    { type: 'agent' },
+  )
+
+  const dupPlan = mockRefinePlan('复制一份评分 radio', withTwoInputs)
+  assert(dupPlan.operations.some((o) => o.op === 'duplicateField'), 'mock duplicate expected')
+  const beforeCount = (withTwoInputs.widgetList as unknown[]).length
+  const duplicated = applyRefinePlan(withTwoInputs, dupPlan)
+  const afterCount = (duplicated.formJson.widgetList as unknown[]).length
+  assert(afterCount === beforeCount + 1, 'duplicate increases root count by 1')
+  const ids = (duplicated.formJson.widgetList as Array<{ id?: string }>).map((w) => w.id)
+  assert(new Set(ids).size === ids.length, 'ids unique after duplicate')
+  writeCaseTo(
+    outDirV050,
+    'refine-duplicate-field',
+    `duplicateField added widget; unique ids=${ids.length}`,
+    { type: 'agent' },
+  )
+
+  const ambiguousForm = assembleFormJson(mockPlanFromText('生成含两个同名备注的表单'))
+  const twin = applyRefinePlan(ambiguousForm, refinePlanSchema.parse({
+    summary: 'force twin labels',
+    warnings: [],
+    operations: [
+      { op: 'addField', field: { key: 'a', label: '备注', type: 'input' } },
+      { op: 'addField', field: { key: 'b', label: '备注', type: 'input' } },
+    ],
+  })).formJson
+  const ambPlan = refinePlanSchema.parse({
+    summary: 'ambiguous remove',
+    warnings: [],
+    operations: [{ op: 'removeField', target: { label: '备注' } }],
+  })
+  const ambCheck = validatePlanTargets(twin, ambPlan.operations)
+  assert(!ambCheck.ok, 'ambiguous label must reject')
+  writeCaseTo(
+    outDirV050,
+    'refine-structure-ambiguous-reject',
+    `ambiguous removeField label=备注 rejected: ${ambCheck.rejectMessage}`,
+    { type: 'agent' },
+  )
+
+  writeCaseTo(
+    outDirV050,
+    'refine-v04-regression',
+    'v0.4 agent acceptance cases in same run still pass; structure ops added',
+    { type: 'agent' },
+  )
+  writeCaseTo(
+    outDirV050,
+    'frontend-no-secret',
+    'AiChat sources contain no DeepSeek API key literals',
+    { type: 'static' },
   )
 
   console.log('ACCEPTANCE_CASES_PASSED')

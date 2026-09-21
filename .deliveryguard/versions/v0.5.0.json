@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/version.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.5.0",
+  "title": "Truth Strict 全量收敛 + Refine 删/排/复制",
+  "documents": [
+    {
+      "id": "ai-form-truth-strict-refine-structure-prd",
+      "type": "product-requirement",
+      "title": "Truth Strict 全量收敛 + Refine 删/排/复制（v0.5.0）产品需求",
+      "ref": "docs/requirements/ai-form-truth-strict-refine-structure.md",
+      "revision": 1,
+      "primary": true
+    },
+    {
+      "id": "ai-form-truth-strict-refine-structure-design",
+      "type": "technical-design",
+      "title": "Truth Strict 全量收敛 + Refine 删/排/复制（v0.5.0）技术设计",
+      "ref": "docs/design/ai-form-truth-strict-refine-structure.md",
+      "revision": 1
+    }
+  ],
+  "openSpec": {
+    "changeId": "ai-form-truth-strict-refine-structure",
+    "path": "openspec/changes/ai-form-truth-strict-refine-structure",
+    "status": "proposed"
+  },
+  "sources": [],
+  "acceptance": {
+    "status": "pending",
+    "evidence": ".deliveryguard/acceptance/v0.5.0/evidence.json",
+    "report": "docs/acceptance/v0.5.0.md"
+  },
+  "deployments": [],
+  "release": {
+    "status": "pending"
+  }
+}

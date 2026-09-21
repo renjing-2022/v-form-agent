@@ -1,0 +1,8 @@
+case: refine-v04-regression
+status: pass
+observed: v0.4 regression: 1 radio(s) labelAlign=label-right-align
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@d422465e0fda (working tree has uncommitted changes)
+capturedAt: 2026-09-21T02:47:05.319Z
+durationMs: 2840
+screenshot: docs/evidence/v0.5.0/refine-v04-regression.png

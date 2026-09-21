@@ -13,6 +13,7 @@ import {
   checkExtensionBoundaryParity,
   checkCatalogSampleParity,
   checkPolicyEnumConvergence,
+  checkCatalogFullStrictSweep,
   checkPropertyRegisterParity,
   checkWidgetsConfigCatalogTypeParity,
   listWidgetsConfigUniqueTypes,
@@ -149,6 +150,13 @@ const catalogSample = checkCatalogSampleParity(catalog, editorGraph, registerSou
 if (catalogSample.length) {
   console.error('CATALOG_SAMPLE_PARITY_FAILED')
   for (const issue of catalogSample) console.error(`- ${issue}`)
+  process.exit(1)
+}
+
+const strictSweep = checkCatalogFullStrictSweep(catalog, editorGraph, registerSource)
+if (strictSweep.length) {
+  console.error('CATALOG_FULL_STRICT_SWEEP_FAILED')
+  for (const issue of strictSweep) console.error(`- ${issue}`)
   process.exit(1)
 }
 

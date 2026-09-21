@@ -49,6 +49,19 @@ export const refineFieldDraftSchema = z.object({
   formulaEnabled: z.boolean().optional(),
 })
 
+export const reorderPositionSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('first') }),
+  z.object({ kind: z.literal('last') }),
+  z.object({
+    kind: z.literal('before'),
+    sibling: targetRefSchema,
+  }),
+  z.object({
+    kind: z.literal('after'),
+    sibling: targetRefSchema,
+  }),
+])
+
 export const refineOperationSchema = z.discriminatedUnion('op', [
   z.object({
     op: z.literal('updateField'),
@@ -110,6 +123,25 @@ export const refineOperationSchema = z.discriminatedUnion('op', [
     mode: z.enum(['append', 'replace']).default('append'),
     target: targetRefSchema.optional(),
     customClass: z.string().min(1).max(120).optional(),
+  }),
+  z.object({
+    op: z.literal('removeField'),
+    target: targetRefSchema,
+  }),
+  z.object({
+    op: z.literal('removeFieldsInScope'),
+    parent: targetRefSchema,
+    filterType: z.string().min(1).optional(),
+  }),
+  z.object({
+    op: z.literal('reorderField'),
+    target: targetRefSchema,
+    position: reorderPositionSchema,
+  }),
+  z.object({
+    op: z.literal('duplicateField'),
+    target: targetRefSchema,
+    position: reorderPositionSchema.optional(),
   }),
 ])
 

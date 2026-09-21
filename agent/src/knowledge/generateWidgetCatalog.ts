@@ -77,6 +77,11 @@ import {
   pickCatalogSamplePairs,
   collectCatalogSampleCandidates,
 } from './catalogEnumPolicy.js'
+import {
+  applyA2StrictFormConstraints,
+  applyA2StrictWidgetConstraints,
+  checkCatalogFullStrictSweep,
+} from './catalogStrictPolicy.js'
 
 type WidgetSchema = Record<string, unknown> & {
   type?: string
@@ -291,23 +296,28 @@ function buildEntry(
   const keys = Object.keys(options)
   const applicableKeys = applicableKeysFromSchemas(schemas)
   const { writable, forbidden } = classifyKeys(keys, 'widget')
-  const constraints = applyRenderConventionConstraints(
-    'field',
-    applyIdentityForbiddenConstraints(
-      'widget',
-      enrichAllConstraints(
-        applyWidgetTruthOverrides(
-          withEnumsAndSources(type, buildOptionConstraints(options), editorGraph, editorMap),
-          applicableKeys,
+  const constraints = applyA2StrictWidgetConstraints(
+    type,
+    applyRenderConventionConstraints(
+      'field',
+      applyIdentityForbiddenConstraints(
+        'widget',
+        enrichAllConstraints(
+          applyWidgetTruthOverrides(
+            withEnumsAndSources(type, buildOptionConstraints(options), editorGraph, editorMap),
+            applicableKeys,
+          ),
+          editorMap,
+          editorGraph,
+          type,
+          category,
         ),
-        editorMap,
-        editorGraph,
-        type,
-        category,
+        forbidden,
+        writable,
       ),
-      forbidden,
-      writable,
     ),
+    editorGraph,
+    editorMap,
   )
   return applyExtensionBoundaryWidgetNotes({
     type,
@@ -425,23 +435,27 @@ export async function generateTruthArtifacts(root: string): Promise<{
     }
   }
   Object.assign(formConstraints, applyFormTruthOverrides(formConstraints))
-  const enrichedFormConstraints = applyRenderConventionConstraints(
-    'form',
-    applyIdentityForbiddenConstraints(
+  const enrichedFormConstraints = applyA2StrictFormConstraints(
+    applyRenderConventionConstraints(
       'form',
-      Object.fromEntries(
-        Object.entries(formConstraints).map(([key, constraint]) => {
-          const enriched = enrichDesignTruthConstraint(key, constraint, editorMap, editorGraph, undefined, 'form')
-          const withComposite = applyCompositeSchemaToConstraint(key, enriched)
-          const withDual = FORM_FIELD_DUAL_TRACK_REGISTRY[key]
-            ? applyFormFieldDualTrack('form', key, withComposite)
-            : withComposite
-          return [key, { ...withDual, propertyScope: 'form' as const }]
-        }),
+      applyIdentityForbiddenConstraints(
+        'form',
+        Object.fromEntries(
+          Object.entries(formConstraints).map(([key, constraint]) => {
+            const enriched = enrichDesignTruthConstraint(key, constraint, editorMap, editorGraph, undefined, 'form')
+            const withComposite = applyCompositeSchemaToConstraint(key, enriched)
+            const withDual = FORM_FIELD_DUAL_TRACK_REGISTRY[key]
+              ? applyFormFieldDualTrack('form', key, withComposite)
+              : withComposite
+            return [key, { ...withDual, propertyScope: 'form' as const }]
+          }),
+        ),
+        formClassified.forbidden,
+        formClassified.writable,
       ),
-      formClassified.forbidden,
-      formClassified.writable,
     ),
+    editorGraph,
+    editorMap,
   )
 
   for (const key of HIGH_PRECISION_MATRIX.formKeys) {
@@ -591,6 +605,7 @@ export {
   collectCatalogSampleCandidates,
   pickCatalogSamplePairs,
 } from './catalogEnumPolicy.js'
+export { checkCatalogFullStrictSweep, formatCatalogStrictGapReport } from './catalogStrictPolicy.js'
 
 /** propertyRegister 106+33 键映射 editor，且 HIGH_PRECISION 键在 Catalog 中带 editor 字段 */
 export function checkPropertyRegisterParity(root: string, catalog: WidgetCatalog): string[] {

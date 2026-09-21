@@ -10,6 +10,14 @@ import {
   preSanitizeContainerPatch,
   reconcileTabPaneActive,
 } from './containerRefine.js'
+import {
+  cloneWidgetWithNewIdentity,
+  findWidgetLocation,
+  removeWidgetFromTree,
+  structureOpNonGoalMessage,
+  type ReorderPosition,
+  type WidgetNode as StructureWidgetNode,
+} from './structureRefine.js'
 
 type WidgetNode = Record<string, unknown> & {
   type?: string
@@ -446,6 +454,150 @@ function applyUpdateFieldsInScope(
   }
 }
 
+function computeSiblingInsertIndex(
+  parentList: WidgetNode[],
+  fromIndex: number,
+  position: ReorderPosition,
+  root: WidgetNode[],
+): number | null {
+  if (position.kind === 'first') return 0
+  if (position.kind === 'last') return parentList.length - 1
+  const siblingLoc = findWidgetLocation(root as StructureWidgetNode[], position.sibling)
+  if (!siblingLoc || siblingLoc.parentList !== parentList) return null
+  return position.kind === 'before' ? siblingLoc.index : siblingLoc.index + 1
+}
+
+function collectSubtreeIds(widget: WidgetNode, into = new Set<string>()) {
+  if (typeof widget.id === 'string' && widget.id) into.add(widget.id)
+  for (const list of childCollections(widget)) {
+    for (const child of list) collectSubtreeIds(child, into)
+  }
+  return into
+}
+
+function warnDanglingFormulaRefs(root: WidgetNode[], removedIds: Set<string>, warnings: string[]) {
+  if (removedIds.size === 0) return
+  for (const w of root) {
+    const formula = typeof w.options?.formula === 'string' ? w.options.formula : ''
+    if (formula) {
+      for (const id of removedIds) {
+        if (formula.includes(`{{${id}.`) || formula.includes(id)) {
+          warnings.push(`公式引用可能悬空：字段 ${w.options?.name || w.id} 仍引用已删除 id ${id}`)
+        }
+      }
+    }
+    for (const list of childCollections(w)) {
+      warnDanglingFormulaRefs(list, removedIds, warnings)
+    }
+  }
+}
+
+function applyRemoveField(root: WidgetNode[], op: Extract<RefineOperation, { op: 'removeField' }>, warnings: string[]) {
+  const loc = findWidgetLocation(root as StructureWidgetNode[], op.target)
+  if (!loc) {
+    warnings.push(`removeField 未找到目标 ${op.target.id || op.target.name || op.target.label || ''}`)
+    return
+  }
+  const type = String(loc.widget.type || '')
+  const blocked = structureOpNonGoalMessage(type)
+  if (blocked) {
+    warnings.push(blocked)
+    return
+  }
+  const removedIds = collectSubtreeIds(loc.widget)
+  loc.parentList.splice(loc.index, 1)
+  if (type === 'tab-pane') {
+    warnings.push(`已删除 tab-pane 及其内部控件（${loc.widget.id || op.target.label || ''}）`)
+  }
+  warnDanglingFormulaRefs(root, removedIds, warnings)
+}
+
+function applyRemoveFieldsInScope(
+  formJson: FormJson,
+  root: WidgetNode[],
+  op: Extract<RefineOperation, { op: 'removeFieldsInScope' }>,
+  warnings: string[],
+) {
+  const scopeFields = resolveScopeFields(formJson, op.parent, op.filterType)
+  if (scopeFields.length === 0) {
+    warnings.push(
+      `removeFieldsInScope 未找到 scope 内字段: parent=${op.parent.id || op.parent.name || op.parent.label || ''}`,
+    )
+    return
+  }
+  let removed = 0
+  const removedIds = new Set<string>()
+  for (const field of scopeFields) {
+    const target: TargetRef = field.id ? { id: field.id } : field.name ? { name: field.name } : { label: field.label! }
+    const before = findWidgetLocation(root as StructureWidgetNode[], target)
+    if (!before) continue
+    const type = String(before.widget.type || '')
+    if (structureOpNonGoalMessage(type)) continue
+    collectSubtreeIds(before.widget, removedIds)
+    if (removeWidgetFromTree(root as StructureWidgetNode[], target)) removed += 1
+  }
+  if (removed === 0) {
+    warnings.push('removeFieldsInScope 未删除任何控件')
+  } else {
+    warnings.push(`removeFieldsInScope 已删除 ${removed} 个控件`)
+    warnDanglingFormulaRefs(root, removedIds, warnings)
+  }
+}
+
+function applyReorderField(root: WidgetNode[], op: Extract<RefineOperation, { op: 'reorderField' }>, warnings: string[]) {
+  const loc = findWidgetLocation(root as StructureWidgetNode[], op.target)
+  if (!loc) {
+    warnings.push(`reorderField 未找到目标 ${op.target.id || op.target.name || op.target.label || ''}`)
+    return
+  }
+  const type = String(loc.widget.type || '')
+  const blocked = structureOpNonGoalMessage(type)
+  if (blocked) {
+    warnings.push(blocked)
+    return
+  }
+  let toIndex = computeSiblingInsertIndex(loc.parentList, loc.index, op.position, root as StructureWidgetNode[])
+  if (toIndex === null) {
+    warnings.push('reorderField 目标与 sibling 不在同一层级')
+    return
+  }
+  const fromIndex = loc.index
+  if (toIndex > fromIndex) toIndex -= 1
+  if (toIndex < 0 || toIndex >= loc.parentList.length) {
+    warnings.push('reorderField 目标位置越界')
+    return
+  }
+  const [item] = loc.parentList.splice(fromIndex, 1)
+  loc.parentList.splice(toIndex, 0, item)
+}
+
+function applyDuplicateField(root: WidgetNode[], op: Extract<RefineOperation, { op: 'duplicateField' }>, warnings: string[]) {
+  const loc = findWidgetLocation(root as StructureWidgetNode[], op.target)
+  if (!loc) {
+    warnings.push(`duplicateField 未找到目标 ${op.target.id || op.target.name || op.target.label || ''}`)
+    return
+  }
+  const type = String(loc.widget.type || '')
+  const blocked = structureOpNonGoalMessage(type)
+  if (blocked) {
+    warnings.push(blocked)
+    return
+  }
+  const clone = cloneWidgetWithNewIdentity(loc.widget as StructureWidgetNode, root as StructureWidgetNode[])
+  let insertAt = loc.index + 1
+  if (op.position) {
+    const resolved = computeSiblingInsertIndex(loc.parentList, loc.index, op.position, root as StructureWidgetNode[])
+    if (resolved === null) {
+      warnings.push('duplicateField 插入位置与 sibling 不在同一层级')
+      return
+    }
+    insertAt = resolved
+    if (insertAt > loc.index) insertAt -= 0 // duplicate inserts copy; source stays
+  }
+  loc.parentList.splice(Math.min(insertAt, loc.parentList.length), 0, clone as WidgetNode)
+  warnings.push(`duplicateField 已复制 ${type} → ${clone.id}`)
+}
+
 export function applyRefinePlan(current: FormJson, plan: RefinePlan): MergeResult {
   const formJson = deepClone(current)
   const warnings = [...(plan.warnings || [])]
@@ -476,6 +628,18 @@ export function applyRefinePlan(current: FormJson, plan: RefinePlan): MergeResul
         break
       case 'setCssCode':
         applySetCssCode(formJson, root, op, warnings)
+        break
+      case 'removeField':
+        applyRemoveField(root, op, warnings)
+        break
+      case 'removeFieldsInScope':
+        applyRemoveFieldsInScope(formJson, root, op, warnings)
+        break
+      case 'reorderField':
+        applyReorderField(root, op, warnings)
+        break
+      case 'duplicateField':
+        applyDuplicateField(root, op, warnings)
         break
       default:
         warnings.push(`未知操作已忽略`)

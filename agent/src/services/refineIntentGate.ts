@@ -1,5 +1,6 @@
 import type { FormJson, RefineOperation, RefinePlan, TargetRef } from '../schemas/refinePlan.js'
 import { sanitizeFormPatch, sanitizeWidgetPatch } from './refinePropertyPolicy.js'
+import { countWidgets } from './structureRefine.js'
 import {
   instructionHasAlignIntent,
   alignIntentUnfulfilled,
@@ -7,6 +8,9 @@ import {
 
 const LABEL_WIDTH_INTENT = /标签宽|labelWidth|标签.*宽度|宽度.*标签/i
 const SIZE_INTENT = /控件大小|组件大小|字号|尺寸|size/i
+const REMOVE_INTENT = /删除|删掉|去掉|移除|remove/i
+const REORDER_INTENT = /移到|排在|顺序|下面|上面|之前|之后|reorder|排序/i
+const DUPLICATE_INTENT = /复制|拷贝|再来一份|duplicate|copy/i
 
 type WidgetNode = {
   type?: string
@@ -74,6 +78,23 @@ export function instructionHasLabelWidthIntent(instruction: string): boolean {
 
 export function instructionHasSizeIntent(instruction: string): boolean {
   return SIZE_INTENT.test(instruction)
+}
+
+export function instructionHasRemoveIntent(instruction: string): boolean {
+  return REMOVE_INTENT.test(instruction)
+}
+
+export function instructionHasReorderIntent(instruction: string): boolean {
+  return REORDER_INTENT.test(instruction)
+}
+
+export function instructionHasDuplicateIntent(instruction: string): boolean {
+  return DUPLICATE_INTENT.test(instruction)
+}
+
+function structureOpFailed(warnings: string[], opName: string): boolean {
+  const failHints = ['未找到', '越界', '同一层级', '未删除', '插入位置', '不在本版 delete/reorder/duplicate']
+  return warnings.some((w) => w.includes(opName) && failHints.some((h) => w.includes(h)))
 }
 
 /** 规划阶段：某键 patch 是否全部非法（按目标 type 校验，不再硬编码 radio） */
@@ -156,6 +177,32 @@ export function highPrecisionIntentUnfulfilled(
   return { reject: false }
 }
 
+export function structureIntentUnfulfilled(
+  instruction: string,
+  plan: RefinePlan,
+  mergeWarnings: string[],
+): { reject: boolean; message?: string } {
+  const hasRemove = plan.operations.some((op) => op.op === 'removeField' || op.op === 'removeFieldsInScope')
+  const hasReorder = plan.operations.some((op) => op.op === 'reorderField')
+  const hasDuplicate = plan.operations.some((op) => op.op === 'duplicateField')
+
+  if (instructionHasRemoveIntent(instruction) && hasRemove) {
+    if (
+      mergeWarnings.some((w) => w.startsWith('removeField 未找到') || w.startsWith('removeFieldsInScope 未')) ||
+      mergeWarnings.some((w) => w.includes('未删除任何控件'))
+    ) {
+      return { reject: true, message: '删除诉求未落地：未找到目标或目标不可删除' }
+    }
+  }
+  if (instructionHasReorderIntent(instruction) && hasReorder && structureOpFailed(mergeWarnings, 'reorderField')) {
+    return { reject: true, message: '排序诉求未落地：目标未移动或不在同一层级' }
+  }
+  if (instructionHasDuplicateIntent(instruction) && hasDuplicate && structureOpFailed(mergeWarnings, 'duplicateField')) {
+    return { reject: true, message: '复制诉求未落地：未找到目标或目标不可复制' }
+  }
+  return { reject: false }
+}
+
 function readPatchValue(
   formJson: FormJson,
   op: Extract<RefineOperation, { op: 'updateField' } | { op: 'patchFormConfig' }>,
@@ -208,6 +255,53 @@ export function buildHonestSummary(
       if (JSON.stringify(beforeCls) !== JSON.stringify(afterCls)) {
         const target = op.target.id || op.target.name || 'field'
         changes.push(`${target}.customClass=${formatValue(afterCls)}`)
+      }
+      continue
+    }
+    if (op.op === 'removeField' || op.op === 'removeFieldsInScope') {
+      if (
+        mergeWarnings.some(
+          (w) => w.includes('已删除 tab-pane') || w.startsWith('removeFieldsInScope 已删除'),
+        )
+      ) {
+        changes.push('structure=removed')
+      } else if (
+        mergeWarnings.some(
+          (w) =>
+            w.startsWith('removeField 未找到') ||
+            w.startsWith('removeFieldsInScope 未') ||
+            w.includes('未删除任何控件'),
+        )
+      ) {
+        plannedButUnchanged = true
+      } else if (
+        countWidgets((before.widgetList || []) as WidgetNode[]) >
+        countWidgets((after.widgetList || []) as WidgetNode[])
+      ) {
+        changes.push('structure=removed')
+      }
+      continue
+    }
+    if (op.op === 'reorderField') {
+      const beforeIds = ((before.widgetList || []) as WidgetNode[]).map((w) => w.id).join(',')
+      const afterIds = ((after.widgetList || []) as WidgetNode[]).map((w) => w.id).join(',')
+      if (beforeIds !== afterIds) {
+        changes.push('structure=reordered')
+      } else if (mergeWarnings.some((w) => w.startsWith('reorderField'))) {
+        plannedButUnchanged = true
+      }
+      continue
+    }
+    if (op.op === 'duplicateField') {
+      if (mergeWarnings.some((w) => w.startsWith('duplicateField 已复制'))) {
+        changes.push('structure=duplicated')
+      } else if (mergeWarnings.some((w) => w.startsWith('duplicateField'))) {
+        plannedButUnchanged = true
+      } else if (
+        countWidgets((after.widgetList || []) as WidgetNode[]) >
+        countWidgets((before.widgetList || []) as WidgetNode[])
+      ) {
+        changes.push('structure=duplicated')
       }
       continue
     }

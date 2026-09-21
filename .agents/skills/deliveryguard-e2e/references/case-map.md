@@ -20,6 +20,11 @@
 | `FR-3` (v0.3.0) | `refine-csscode-reject` | Dangerous css blocked with warnings; canvas unchanged |
 | `FR-1` `FR-2` (v0.3.0) | `refine-property-policy` | Agent: unknown/forbidden/type errors stripped |
 | `FR-5` (v0.3.0) | `refine-p1-regression` | Generate + apply still works under v0.3.0 agent |
+| `fr-2-remove` (v0.5.0) | `refine-remove-field-by-label` | Refine removeField by label; 备注 absent; apply to canvas |
+| `fr-2-remove` (v0.5.0) | `refine-remove-tabpane-cascade` | Delete second tab pane; remaining panes=1 after apply |
+| `fr-3-reorder` (v0.5.0) | `refine-reorder-sibling` | Move 姓名 after 年龄; order observable in formJson |
+| `fr-4-duplicate` (v0.5.0) | `refine-duplicate-field` | Duplicate 时间定向; unique widget ids after apply |
+| `fr-6-regression` (v0.5.0) | `refine-v04-regression` | labelAlign=label-right-align on radios |
 
 Keep case IDs synchronized across the test annotation, `.deliveryguard/acceptance/<version>/evidence.json`, and `docs/evidence/<version>/<case-id>.txt`.
 

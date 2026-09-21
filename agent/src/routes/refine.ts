@@ -12,6 +12,7 @@ import {
   instructionHasLabelWidthIntent,
   instructionHasSizeIntent,
   planPatchesAllIllegalForKey,
+  structureIntentUnfulfilled,
 } from '../services/refineIntentGate.js'
 import { enrichLayoutPlan, layoutIntentUnfulfilled } from '../services/refineLayoutPolicy.js'
 import { normalizeRefinePlanSynonyms } from '../services/nlSynonymNormalize.js'
@@ -107,6 +108,13 @@ export async function registerRefineRoutes(app: FastifyInstance) {
       if (intentGate.reject) {
         return reply.code(422).send({
           message: intentGate.message,
+          warnings: [...policyWarnings, ...layoutEnrichWarnings, ...synonymWarnings, ...warnings],
+        })
+      }
+      const structureGate = structureIntentUnfulfilled(instruction, plan, warnings)
+      if (structureGate.reject) {
+        return reply.code(422).send({
+          message: structureGate.message,
           warnings: [...policyWarnings, ...layoutEnrichWarnings, ...synonymWarnings, ...warnings],
         })
       }

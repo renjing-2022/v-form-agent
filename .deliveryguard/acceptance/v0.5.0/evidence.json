@@ -1,0 +1,117 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.5.0",
+  "documents": [
+    {
+      "documentId": "ai-form-truth-strict-refine-structure-prd",
+      "requirementIds": ["fr-1-truth-strict", "fr-2-remove", "fr-3-reorder", "fr-4-duplicate", "fr-5-intentgate", "fr-6-regression"]
+    },
+    {
+      "documentId": "ai-form-truth-strict-refine-structure-design",
+      "requirementIds": ["td-strict-compiler", "td-structure-ops", "td-intentgate-structure"]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-truth-strict",
+      "description": "全 applicable 键 strict + valueKind；catalog:check full sweep",
+      "caseIds": ["catalog-full-strict-sweep"]
+    },
+    {
+      "id": "fr-2-remove",
+      "description": "removeField / tab-pane 级联删除",
+      "caseIds": ["refine-remove-field-by-label", "refine-remove-tabpane-cascade"]
+    },
+    {
+      "id": "fr-3-reorder",
+      "description": "同级 reorderField",
+      "caseIds": ["refine-reorder-sibling"]
+    },
+    {
+      "id": "fr-4-duplicate",
+      "description": "duplicateField 新 id/name",
+      "caseIds": ["refine-duplicate-field"]
+    },
+    {
+      "id": "fr-5-intentgate",
+      "description": "结构 op 歧义拒绝",
+      "caseIds": ["refine-structure-ambiguous-reject"]
+    },
+    {
+      "id": "fr-6-regression",
+      "description": "v0.4 回归 + 前端无密钥",
+      "caseIds": ["refine-v04-regression", "frontend-no-secret"]
+    },
+    {
+      "id": "td-strict-compiler",
+      "description": "A2 strict 编译与 sweep",
+      "caseIds": ["catalog-full-strict-sweep"]
+    },
+    {
+      "id": "td-structure-ops",
+      "description": "remove / reorder / duplicate merger",
+      "caseIds": [
+        "refine-remove-field-by-label",
+        "refine-remove-tabpane-cascade",
+        "refine-reorder-sibling",
+        "refine-duplicate-field"
+      ]
+    },
+    {
+      "id": "td-intentgate-structure",
+      "description": "结构歧义 422",
+      "caseIds": ["refine-structure-ambiguous-reject"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "catalog-full-strict-sweep",
+      "title": "全 applicable 键 strict sweep",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.5.0/catalog-full-strict-sweep.txt"]
+    },
+    {
+      "id": "refine-remove-field-by-label",
+      "title": "按 label 删除字段",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.5.0/refine-remove-field-by-label.txt"]
+    },
+    {
+      "id": "refine-remove-tabpane-cascade",
+      "title": "删除 tab-pane 子控件一并删除",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.5.0/refine-remove-tabpane-cascade.txt"]
+    },
+    {
+      "id": "refine-reorder-sibling",
+      "title": "同级 reorder",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.5.0/refine-reorder-sibling.txt"]
+    },
+    {
+      "id": "refine-duplicate-field",
+      "title": "复制控件新 id",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.5.0/refine-duplicate-field.txt"]
+    },
+    {
+      "id": "refine-structure-ambiguous-reject",
+      "title": "歧义删除拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.5.0/refine-structure-ambiguous-reject.txt"]
+    },
+    {
+      "id": "refine-v04-regression",
+      "title": "v0.4 labelAlign 回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.5.0/refine-v04-regression.txt"]
+    },
+    {
+      "id": "frontend-no-secret",
+      "title": "前端无 DeepSeek 密钥",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.5.0/frontend-no-secret.txt"]
+    }
+  ]
+}

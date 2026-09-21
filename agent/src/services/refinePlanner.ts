@@ -45,7 +45,12 @@ const systemPrompt = `你是 v-form 表单优化规划器。根据用户指令�
 - patchFormConfig: { op, patch:{labelWidth?,labelPosition?,labelAlign?,size?,layoutType?,cssCode?,customClass?,...} }
 - setCustomClass: { op, target, customClass }
 - setCssCode: { op, css, mode?:append|replace, target?, customClass? }  css 应尽量绑定 target/customClass，避免全局选择器
+- removeField: { op, target }  删除单个控件；删除 tab-pane 时其内部控件一并删除
+- removeFieldsInScope: { op, parent, filterType? }  批量删除 parent 容器下字段
+- reorderField: { op, target, position:{kind:first|last|before|after,sibling?} }  仅同级排序，禁止跨 tab/grid 移动
+- duplicateField: { op, target, position? }  复制控件（新 id/name），默认插入源后一位
 重要：target / targets 必须是对象，禁止写成字符串。正确示例 targets:[{"name":"input1"},{"id":"radio2"}]；错误示例 targets:["input1","radio2"]。
+重要：不支持 moveField / reparent；跨容器移动须用户手动操作。
 
 布局重叠修复顺序（必须完整执行，禁止半套）：
 1. 长题干与选项重叠：优先 updateField 设置 labelWrap=true、displayStyle=block、必要时 labelWidth 数字加宽
@@ -161,6 +166,115 @@ export function mockRefinePlan(instruction: string, current: FormJson): RefinePl
   const wantTabs = /tab|页签|选项卡/i.test(instruction) || (/标签/i.test(instruction) && /tab|页签|选项卡/i.test(instruction))
   const wantOptions = /选项|option|分值|改(?:选项|分值)/i.test(instruction)
   const wantFormula = /公式|总分|合计|计算|求和/i.test(instruction)
+  const wantRemove = /删除|删掉|去掉|移除/i.test(instruction)
+  const wantDuplicate = /复制|拷贝|再来一份|duplicate/i.test(instruction)
+  const wantReorder =
+    /移到.*下面|排到.*下面|移到.*上面|排到.*上面|放到.*后面|放到.*前面|同级排序|reorder/i.test(instruction)
+  const wantAddRemark = /新增.*备注|加一个备注|添加备注/i.test(instruction)
+
+  if (wantAddRemark && !wantRemove) {
+    return refinePlanSchema.parse({
+      summary: '新增备注输入框',
+      warnings,
+      operations: [
+        {
+          op: 'addField',
+          field: { key: 'remark', label: '备注', type: 'input' },
+        },
+      ],
+    })
+  }
+
+  if (wantRemove && /tab|页签|选项卡/i.test(instruction)) {
+    const panes = flat.filter((f) => f.type === 'tab-pane')
+    const pane =
+      panes.find((p) => /第二|2|评估/i.test(p.label || '')) ||
+      panes[1] ||
+      panes[0]
+    if (pane) {
+      return refinePlanSchema.parse({
+        summary: '删除 tab-pane 及其内部控件',
+        warnings,
+        operations: [
+          {
+            op: 'removeField',
+            target: pane.id
+              ? { id: pane.id, containerType: 'tab-pane' }
+              : { label: pane.label!, containerType: 'tab-pane' },
+          },
+        ],
+      })
+    }
+  }
+
+  if (wantRemove) {
+    const target =
+      flat.find((f) => /备注|说明|删除/.test(f.label || '')) ||
+      flat.find((f) => f.type === 'input' || f.type === 'textarea' || f.type === 'static-text') ||
+      flat[0]
+    if (target && target.type !== 'tab' && target.type !== 'grid') {
+      return refinePlanSchema.parse({
+        summary: `删除字段 ${target.label || target.name || target.id}`,
+        warnings,
+        operations: [
+          {
+            op: 'removeField',
+            target: target.id ? { id: target.id } : target.name ? { name: target.name } : { label: target.label! },
+          },
+        ],
+      })
+    }
+  }
+
+  if (wantDuplicate) {
+    const target =
+      flat.find((f) => (f.label || '') && instruction.includes(f.label || '')) ||
+      flat.find((f) => f.type === 'radio') ||
+      flat.find((f) => f.type === 'input') ||
+      flat[0]
+    if (target) {
+      return refinePlanSchema.parse({
+        summary: `复制控件 ${target.label || target.name || target.id}`,
+        warnings,
+        operations: [
+          {
+            op: 'duplicateField',
+            target: target.id ? { id: target.id } : target.name ? { name: target.name } : { label: target.label! },
+          },
+        ],
+      })
+    }
+  }
+
+  if (wantReorder && flat.length >= 2) {
+    const moveMatch = instruction.match(/把(.+?)移到(.+?)(?:下面|后面|之后)/)
+    const movingLabel = moveMatch?.[1]?.trim()
+    const anchorLabel = moveMatch?.[2]?.trim()
+    const moving =
+      (movingLabel ? flat.find((f) => (f.label || '').includes(movingLabel)) : undefined) ||
+      flat.find((f) => /性别|备注|评分/.test(f.label || '')) ||
+      flat[1]
+    const anchor =
+      (anchorLabel ? flat.find((f) => f !== moving && (f.label || '').includes(anchorLabel)) : undefined) ||
+      flat.find((f) => f !== moving && /姓名|时间定向|人物定向/.test(f.label || '')) ||
+      flat[0]
+    if (moving && anchor && (moving.id || moving.name) && (anchor.id || anchor.name)) {
+      return refinePlanSchema.parse({
+        summary: `同级排序：将 ${moving.label || moving.name} 移到 ${anchor.label || anchor.name} 之后`,
+        warnings,
+        operations: [
+          {
+            op: 'reorderField',
+            target: moving.id ? { id: moving.id } : { name: moving.name! },
+            position: {
+              kind: 'after',
+              sibling: anchor.id ? { id: anchor.id } : { name: anchor.name! },
+            },
+          },
+        ],
+      })
+    }
+  }
 
   if (wantDangerousCss) {
     return refinePlanSchema.parse({

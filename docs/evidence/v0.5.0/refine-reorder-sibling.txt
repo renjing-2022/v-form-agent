@@ -1,0 +1,8 @@
+case: refine-reorder-sibling
+status: pass
+observed: POST /api/agent/v1/refine reorderField applied; summary=部分警告：当前使用 mock refine 规划（未配置 DeepSeek Key）。已更新：structure=reordered
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@d422465e0fda (working tree has uncommitted changes)
+capturedAt: 2026-09-21T02:46:59.488Z
+durationMs: 3116
+screenshot: docs/evidence/v0.5.0/refine-reorder-sibling.png
