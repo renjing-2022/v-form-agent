@@ -30,7 +30,7 @@
       "repositoryId": "app",
       "branch": "main",
       "commit": "8cb90a575bd8a1ff1a7b6db325eaffdc3f6f8f4a",
-      "status": "submitted"
+      "status": "merged"
     }
   ],
   "acceptance": {
@@ -38,8 +38,20 @@
     "evidence": ".deliveryguard/acceptance/v0.6.0/evidence.json",
     "report": "docs/acceptance/v0.6.0.md"
   },
-  "deployments": [],
+  "deployments": [
+    {
+      "repositoryId": "app",
+      "environmentId": "production",
+      "branch": "main",
+      "commit": "9aafd4ab2e592a9c635a91f2b443602f72c5dae4",
+      "status": "succeeded",
+      "anchor": "https://github.com/renjing-2022/v-form-agent/tree/v0.6.0",
+      "recordedAt": "2026-09-21T08:05:00Z"
+    }
+  ],
   "release": {
-    "status": "pending"
+    "status": "published",
+    "anchor": "https://github.com/renjing-2022/v-form-agent/releases/tag/v0.6.0",
+    "releasedAt": "2026-09-21T08:05:00Z"
   }
 }
