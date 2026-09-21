@@ -1,8 +1,7 @@
 case: refine-labelalign-nl-parity
 status: pass
-observed: POST /api/agent/v1/refine returned 200; 1 radio(s) labelAlign=label-right-align; canvas shows label-right-align
-environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@68f91c81cd0b (working tree has uncommitted changes)
-capturedAt: 2026-09-18T09:16:24.831Z
-durationMs: 12406
-screenshot: docs/evidence/v0.4.0/refine-labelalign-nl-parity.png
+observed: both radios labelAlign=label-right-align; defaultValue preserved; catalogIssues=0
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@79795d71c3c78b9924f176b4a30e624551fabc50 (working tree has uncommitted changes)
+capturedAt: 2026-09-21T07:34:45.833Z
+type: agent

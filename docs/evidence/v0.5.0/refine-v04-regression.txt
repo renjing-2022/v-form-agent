@@ -1,8 +1,7 @@
 case: refine-v04-regression
 status: pass
-observed: v0.4 regression: 1 radio(s) labelAlign=label-right-align
-environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@d422465e0fda (working tree has uncommitted changes)
-capturedAt: 2026-09-21T02:47:05.319Z
-durationMs: 2840
-screenshot: docs/evidence/v0.5.0/refine-v04-regression.png
+observed: v0.4 agent acceptance cases in same run still pass; structure ops added
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@79795d71c3c78b9924f176b4a30e624551fabc50 (working tree has uncommitted changes)
+capturedAt: 2026-09-21T07:34:47.911Z
+type: agent

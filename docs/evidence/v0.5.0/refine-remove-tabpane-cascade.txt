@@ -1,8 +1,7 @@
 case: refine-remove-tabpane-cascade
 status: pass
-observed: POST /api/agent/v1/refine tab-pane cascade: remaining panes=1; applied
-environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@d422465e0fda (working tree has uncommitted changes)
-capturedAt: 2026-09-21T02:46:56.343Z
-durationMs: 3354
-screenshot: docs/evidence/v0.5.0/refine-remove-tabpane-cascade.png
+observed: removed tab-pane tabpane10 with 4 children; no orphan lift
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@79795d71c3c78b9924f176b4a30e624551fabc50 (working tree has uncommitted changes)
+capturedAt: 2026-09-21T07:34:47.675Z
+type: agent

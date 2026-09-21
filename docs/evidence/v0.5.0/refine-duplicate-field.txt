@@ -1,8 +1,7 @@
 case: refine-duplicate-field
 status: pass
-observed: POST /api/agent/v1/refine duplicateField: widgets=8; uniqueIds=8; canvasBeforeHint=7
-environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@d422465e0fda (working tree has uncommitted changes)
-capturedAt: 2026-09-21T02:47:02.485Z
-durationMs: 2993
-screenshot: docs/evidence/v0.5.0/refine-duplicate-field.png
+observed: duplicateField added widget; unique ids=9
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@79795d71c3c78b9924f176b4a30e624551fabc50 (working tree has uncommitted changes)
+capturedAt: 2026-09-21T07:34:47.795Z
+type: agent

@@ -1,7 +1,7 @@
 case: refine-container-non-goal-reject
 status: pass
-observed: vf-dialog title patch blocked; container policy partition ok
+observed: vf-drawer title patch blocked; container policy partition ok
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: main@d422465e0fdac8a2dd9c9b28fd9d62b7032eab9f (working tree has uncommitted changes)
-capturedAt: 2026-09-21T02:39:59.755Z
+sourceRevision: main@79795d71c3c78b9924f176b4a30e624551fabc50 (working tree has uncommitted changes)
+capturedAt: 2026-09-21T07:34:45.199Z
 type: agent
