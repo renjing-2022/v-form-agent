@@ -4,7 +4,7 @@
 |---|---|
 | Change ID | `ai-form-heavy-container-refine` |
 | Target version | `v0.6.0` |
-| Status | `applied`；source=`local` @ `8cb90a5`；acceptance=`passed`；release pending |
+| Status | `applied`；source=`submitted` @ `8cb90a5`；acceptance=`passed`；release pending |
 
 本目录为 DeliveryGuard 版本 `v0.6.0` 的 OpenSpec 挂载点。
 
