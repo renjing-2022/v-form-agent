@@ -46,7 +46,7 @@
 
 - [x] table / data-table / 内部 cell 删排 → NON_GOAL reject（`STRUCTURE_OP_NON_GOAL_TYPES`）
 - [x] 不提供 `moveField` / reparent schema
-- [ ] 删后 id/name 唯一；公式悬空 warning
+- [x] 删后 id/name 唯一；公式悬空 warning
 - [x] `REFINE_CREATE_WHITELIST` 不变
 
 ### 2.3 Planner + IntentGate
