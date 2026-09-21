@@ -171,8 +171,12 @@ export function constraintSourceFor(kind: 'widget' | 'form', key: string): Const
   return 'widgets-config'
 }
 
-export function structureSurgeryFor(type: string): 'supported' | 'unsupported' {
+/** v0.6：data-table / sub-form 为部分结构手术（列 op / 子字段 op） */
+export const STRUCTURE_SURGERY_PARTIAL = new Set(['data-table', 'sub-form'])
+
+export function structureSurgeryFor(type: string): 'supported' | 'partial' | 'unsupported' {
   if (STRUCTURE_SURGERY_SUPPORTED.has(type)) return 'supported'
+  if (STRUCTURE_SURGERY_PARTIAL.has(type)) return 'partial'
   if (HEAVY_STRUCTURE_TYPES.has(type)) return 'unsupported'
   return 'unsupported'
 }

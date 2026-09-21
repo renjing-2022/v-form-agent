@@ -1,0 +1,8 @@
+case: refine-subform-shell-props
+status: pass
+observed: POST /api/agent/v1/refine sub-form showRowNumber=true applied
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@79795d71c3c7 (working tree has uncommitted changes)
+capturedAt: 2026-09-21T07:35:38.491Z
+durationMs: 6039
+screenshot: docs/evidence/v0.6.0/refine-subform-shell-props.png

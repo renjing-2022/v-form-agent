@@ -203,7 +203,7 @@ export const widgetCatalogEntrySchema = z.object({
   constraints: z.record(optionConstraintSchema),
   notes: z
     .object({
-      structureSurgery: z.enum(['supported', 'unsupported']).optional(),
+      structureSurgery: z.enum(['supported', 'partial', 'unsupported']).optional(),
       /** 本条目是否满足高精度矩阵 enum 覆盖 */
       highPrecisionReady: z.boolean().optional(),
       /** 静态 Catalog 内 extension-adjacent 边界说明 */

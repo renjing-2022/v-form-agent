@@ -62,6 +62,42 @@ export const reorderPositionSchema = z.discriminatedUnion('kind', [
   }),
 ])
 
+/** data-table 扁平列定位：columnId > prop > label */
+export const columnRefSchema = z
+  .object({
+    columnId: z.number().int().positive().optional(),
+    prop: z.string().min(1).optional(),
+    label: z.string().min(1).optional(),
+  })
+  .refine((t) => t.columnId !== undefined || Boolean(t.prop) || Boolean(t.label), {
+    message: 'column requires columnId, prop, or label',
+  })
+
+export const flatColumnSpecSchema = z
+  .object({
+    prop: z.string().min(1),
+    label: z.string().min(1),
+    width: z.string().optional(),
+    show: z.boolean().optional(),
+    align: z.string().optional(),
+    fixed: z.string().optional(),
+    sortable: z.boolean().optional(),
+  })
+  .strict()
+
+export const columnPositionSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('first') }),
+  z.object({ kind: z.literal('last') }),
+  z.object({
+    kind: z.literal('before'),
+    sibling: columnRefSchema,
+  }),
+  z.object({
+    kind: z.literal('after'),
+    sibling: columnRefSchema,
+  }),
+])
+
 export const refineOperationSchema = z.discriminatedUnion('op', [
   z.object({
     op: z.literal('updateField'),
@@ -89,7 +125,7 @@ export const refineOperationSchema = z.discriminatedUnion('op', [
   z.object({
     op: z.literal('addField'),
     field: refineFieldDraftSchema,
-    /** 可选：放入指定 tab-pane（id/name） */
+    /** 可选：放入指定 tab-pane / sub-form（id/name） */
     parent: targetRefSchema.optional(),
   }),
   z.object({
@@ -142,6 +178,40 @@ export const refineOperationSchema = z.discriminatedUnion('op', [
     op: z.literal('duplicateField'),
     target: targetRefSchema,
     position: reorderPositionSchema.optional(),
+  }),
+  z.object({
+    op: z.literal('addTableColumn'),
+    table: targetRefSchema,
+    column: flatColumnSpecSchema,
+    position: columnPositionSchema.optional(),
+  }),
+  z.object({
+    op: z.literal('removeTableColumn'),
+    table: targetRefSchema,
+    column: columnRefSchema,
+  }),
+  z.object({
+    op: z.literal('reorderTableColumn'),
+    table: targetRefSchema,
+    column: columnRefSchema,
+    position: columnPositionSchema,
+  }),
+  z.object({
+    op: z.literal('updateTableColumn'),
+    table: targetRefSchema,
+    column: columnRefSchema,
+    patch: z
+      .object({
+        prop: z.string().min(1).optional(),
+        label: z.string().min(1).optional(),
+        width: z.string().optional(),
+        show: z.boolean().optional(),
+        align: z.string().optional(),
+        fixed: z.string().optional(),
+        sortable: z.boolean().optional(),
+      })
+      .strict()
+      .refine((p) => Object.keys(p).length > 0, { message: 'column patch must not be empty' }),
   }),
 ])
 

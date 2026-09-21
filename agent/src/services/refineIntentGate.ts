@@ -11,6 +11,7 @@ const SIZE_INTENT = /控件大小|组件大小|字号|尺寸|size/i
 const REMOVE_INTENT = /删除|删掉|去掉|移除|remove/i
 const REORDER_INTENT = /移到|排在|顺序|下面|上面|之前|之后|reorder|排序/i
 const DUPLICATE_INTENT = /复制|拷贝|再来一份|duplicate|copy/i
+const TABLE_COLUMN_INTENT = /列|表头|tableColumn|增列|加一列|删.*列|改.*列/i
 
 type WidgetNode = {
   type?: string
@@ -92,8 +93,23 @@ export function instructionHasDuplicateIntent(instruction: string): boolean {
   return DUPLICATE_INTENT.test(instruction)
 }
 
+export function instructionHasTableColumnIntent(instruction: string): boolean {
+  return TABLE_COLUMN_INTENT.test(instruction)
+}
+
 function structureOpFailed(warnings: string[], opName: string): boolean {
-  const failHints = ['未找到', '越界', '同一层级', '未删除', '插入位置', '不在本版 delete/reorder/duplicate']
+  const failHints = [
+    '未找到',
+    '越界',
+    '同一层级',
+    '未删除',
+    '插入位置',
+    '不在本版 delete/reorder/duplicate',
+    '含多级表头',
+    '歧义',
+    '禁止',
+    '无可应用',
+  ]
   return warnings.some((w) => w.includes(opName) && failHints.some((h) => w.includes(h)))
 }
 
@@ -185,6 +201,13 @@ export function structureIntentUnfulfilled(
   const hasRemove = plan.operations.some((op) => op.op === 'removeField' || op.op === 'removeFieldsInScope')
   const hasReorder = plan.operations.some((op) => op.op === 'reorderField')
   const hasDuplicate = plan.operations.some((op) => op.op === 'duplicateField')
+  const hasTableColumn = plan.operations.some(
+    (op) =>
+      op.op === 'addTableColumn' ||
+      op.op === 'removeTableColumn' ||
+      op.op === 'reorderTableColumn' ||
+      op.op === 'updateTableColumn',
+  )
 
   if (instructionHasRemoveIntent(instruction) && hasRemove) {
     if (
@@ -199,6 +222,24 @@ export function structureIntentUnfulfilled(
   }
   if (instructionHasDuplicateIntent(instruction) && hasDuplicate && structureOpFailed(mergeWarnings, 'duplicateField')) {
     return { reject: true, message: '复制诉求未落地：未找到目标或目标不可复制' }
+  }
+  if (instructionHasTableColumnIntent(instruction) && hasTableColumn) {
+    const failed =
+      structureOpFailed(mergeWarnings, 'addTableColumn') ||
+      structureOpFailed(mergeWarnings, 'removeTableColumn') ||
+      structureOpFailed(mergeWarnings, 'reorderTableColumn') ||
+      structureOpFailed(mergeWarnings, 'updateTableColumn') ||
+      mergeWarnings.some((w) => w.includes('含多级表头') || w.includes('禁止经 updateField'))
+    const succeeded = mergeWarnings.some(
+      (w) =>
+        w.includes('已新增列') ||
+        w.includes('已删除列') ||
+        w.includes('已调整列顺序') ||
+        w.includes('已更新列'),
+    )
+    if (failed && !succeeded) {
+      return { reject: true, message: '表格列诉求未落地：目标未找到、含多级表头或列定位歧义' }
+    }
   }
   return { reject: false }
 }
@@ -302,6 +343,35 @@ export function buildHonestSummary(
         countWidgets((before.widgetList || []) as WidgetNode[])
       ) {
         changes.push('structure=duplicated')
+      }
+      continue
+    }
+    if (
+      op.op === 'addTableColumn' ||
+      op.op === 'removeTableColumn' ||
+      op.op === 'reorderTableColumn' ||
+      op.op === 'updateTableColumn'
+    ) {
+      const successHint =
+        mergeWarnings.some(
+          (w) =>
+            w.includes('已新增列') ||
+            w.includes('已删除列') ||
+            w.includes('已调整列顺序') ||
+            w.includes('已更新列'),
+        )
+      if (successHint) {
+        const kind =
+          op.op === 'addTableColumn'
+            ? 'add'
+            : op.op === 'removeTableColumn'
+              ? 'remove'
+              : op.op === 'reorderTableColumn'
+                ? 'reorder'
+                : 'update'
+        changes.push(`tableColumns=${kind}`)
+      } else if (mergeWarnings.some((w) => w.includes('TableColumn') || w.includes('tableColumns') || w.includes('多级表头'))) {
+        plannedButUnchanged = true
       }
       continue
     }

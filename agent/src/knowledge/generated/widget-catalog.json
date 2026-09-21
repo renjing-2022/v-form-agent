@@ -3536,7 +3536,7 @@
         }
       },
       "notes": {
-        "structureSurgery": "unsupported",
+        "structureSurgery": "partial",
         "highPrecisionReady": true
       }
     },
@@ -11665,7 +11665,7 @@
         }
       },
       "notes": {
-        "structureSurgery": "unsupported",
+        "structureSurgery": "partial",
         "highPrecisionReady": true
       }
     },

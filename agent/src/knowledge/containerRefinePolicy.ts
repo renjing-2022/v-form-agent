@@ -1,12 +1,41 @@
 import type { WidgetCatalog } from './widgetCatalog.js'
-import { STRUCTURE_SURGERY_SUPPORTED } from './catalogPolicy.js'
 
-/** v0.4 允许 NL refine 容器属性的 type → 白名单键（Catalog writable 子集） */
+/** 允许 NL refine 容器属性的 type → 白名单键（Catalog writable 子集） */
 export const CONTAINER_REFINE_PROPERTY_MATRIX: Record<string, readonly string[]> = {
   'tab-pane': ['label', 'active', 'hidden', 'disabled', 'name', 'customClass'],
   'grid-col': ['span', 'offset', 'push', 'pull', 'responsive', 'md', 'sm', 'xs', 'hidden', 'name', 'customClass'],
   tab: ['name', 'hidden', 'tabType', 'tabPosition', 'customClass'],
   grid: ['name', 'hidden', 'gutter', 'colHeight', 'customClass'],
+  /** v0.6：sub-form 壳层 */
+  'sub-form': [
+    'name',
+    'label',
+    'showBlankRow',
+    'showRowNumber',
+    'labelAlign',
+    'actionColumnPosition',
+    'hidden',
+    'disabled',
+    'customClass',
+  ],
+  /** v0.6：vf-dialog 壳层 */
+  'vf-dialog': [
+    'name',
+    'title',
+    'width',
+    'fullscreen',
+    'showModal',
+    'showClose',
+    'closeOnClickModal',
+    'closeOnPressEscape',
+    'center',
+    'readMode',
+    'disabledMode',
+    'okButtonLabel',
+    'okButtonHidden',
+    'cancelButtonLabel',
+    'cancelButtonHidden',
+  ],
 }
 
 export type ContainerPropertyRefineNonGoalReason =
@@ -20,11 +49,11 @@ export const CONTAINER_PROPERTY_REFINE_NON_GOAL: Record<
 > = {
   'button-group': {
     reason: 'heavy-structure',
-    message: 'button-group 容器属性本版未开放 NL refine（仅 tab/grid 结构手术内）',
+    message: 'button-group 容器属性本版未开放 NL refine',
   },
   'data-table': {
     reason: 'heavy-structure',
-    message: 'data-table 容器属性本版未开放 NL refine',
+    message: 'data-table 容器属性本版未开放 NL refine（仅扁平列专用 op）',
   },
   'grid-sub-form': {
     reason: 'heavy-structure',
@@ -33,10 +62,6 @@ export const CONTAINER_PROPERTY_REFINE_NON_GOAL: Record<
   'object-group': {
     reason: 'heavy-structure',
     message: 'object-group 容器属性本版未开放 NL refine',
-  },
-  'sub-form': {
-    reason: 'heavy-structure',
-    message: 'sub-form 容器属性本版未开放 NL refine',
   },
   tree: {
     reason: 'heavy-structure',
@@ -50,10 +75,6 @@ export const CONTAINER_PROPERTY_REFINE_NON_GOAL: Record<
     reason: 'internal-container',
     message: 'table-cell 为表格内部节点，不支持直接 refine 容器属性',
   },
-  'vf-dialog': {
-    reason: 'dialog-shell',
-    message: 'vf-dialog 弹窗壳层属性本版未开放 NL refine',
-  },
   'vf-drawer': {
     reason: 'dialog-shell',
     message: 'vf-drawer 抽屉壳层属性本版未开放 NL refine',
@@ -64,13 +85,13 @@ export const CONTAINER_PROPERTY_REFINE_NON_GOAL_REASON_LABEL: Record<
   ContainerPropertyRefineNonGoalReason,
   string
 > = {
-  'heavy-structure': '重型容器，本版仅 tab/tab-pane/grid/grid-col 开放容器属性 refine',
-  'dialog-shell': '弹窗/抽屉壳层，本版不开放容器属性 refine',
+  'heavy-structure': '重型容器：本版开放 tab/grid/sub-form 壳层；data-table 仅列 op',
+  'dialog-shell': '抽屉壳层本版未开放；vf-dialog 壳层已开放',
   'internal-container': '表格内部节点，不支持直接 refine 容器属性',
 }
 
 export function isContainerRefineSupported(type: string): boolean {
-  return STRUCTURE_SURGERY_SUPPORTED.has(type) && type in CONTAINER_REFINE_PROPERTY_MATRIX
+  return type in CONTAINER_REFINE_PROPERTY_MATRIX
 }
 
 export function containerRefineAllowedKeys(type: string): readonly string[] | undefined {
@@ -104,7 +125,7 @@ export function sanitizeContainerPropertyPatch(
     if (allowed.has(key)) {
       next[key] = value
     } else {
-      warnings.push(`${type} 容器属性 ${key} 不在 v0.4 refine 白名单，已忽略`)
+      warnings.push(`${type} 容器属性 ${key} 不在容器 refine 白名单，已忽略`)
     }
   }
   return { patch: next, warnings, rejected: false }

@@ -18,6 +18,16 @@ import {
   type ReorderPosition,
   type WidgetNode as StructureWidgetNode,
 } from './structureRefine.js'
+import {
+  applyAddTableColumn,
+  applyRemoveTableColumn,
+  applyReorderTableColumn,
+  applyUpdateTableColumn,
+  stripTableColumnsFromPatch,
+} from './tableColumnRefine.js'
+
+/** addField 可作 parent 的重型容器（其余 heavy 仍拒绝） */
+const ADD_FIELD_PARENT_ALLOWED_HEAVY = new Set(['sub-form', 'vf-dialog'])
 
 type WidgetNode = Record<string, unknown> & {
   type?: string
@@ -237,7 +247,9 @@ function applyUpdateField(root: WidgetNode[], op: Extract<RefineOperation, { op:
   }
   widget.options = widget.options || {}
   const type = String(widget.type || '')
-  const containerPre = preSanitizeContainerPatch(type, op.patch as Record<string, unknown>)
+  const stripped = stripTableColumnsFromPatch(type, op.patch as Record<string, unknown>)
+  warnings.push(...stripped.warnings)
+  const containerPre = preSanitizeContainerPatch(type, stripped.patch)
   warnings.push(...containerPre.warnings)
   if (containerPre.blocked || Object.keys(containerPre.patch).length === 0) {
     if (!containerPre.blocked && Object.keys(op.patch as object).length > 0) {
@@ -360,7 +372,7 @@ function applyAddField(root: WidgetNode[], op: Extract<RefineOperation, { op: 'a
       return
     }
     const parentType = String(parent.type || '')
-    if (isHeavyStructureType(parentType)) {
+    if (isHeavyStructureType(parentType) && !ADD_FIELD_PARENT_ALLOWED_HEAVY.has(parentType)) {
       warnings.push(`父容器 ${parentType} 未纳入结构手术能力，字段已追加到根节点`)
       root.push(widget)
       return
@@ -641,6 +653,41 @@ export function applyRefinePlan(current: FormJson, plan: RefinePlan): MergeResul
       case 'duplicateField':
         applyDuplicateField(root, op, warnings)
         break
+      case 'addTableColumn': {
+        const result = applyAddTableColumn(
+          root as StructureWidgetNode[],
+          op.table,
+          op.column as Record<string, unknown>,
+          op.position,
+        )
+        warnings.push(...result.warnings)
+        break
+      }
+      case 'removeTableColumn': {
+        const result = applyRemoveTableColumn(root as StructureWidgetNode[], op.table, op.column)
+        warnings.push(...result.warnings)
+        break
+      }
+      case 'reorderTableColumn': {
+        const result = applyReorderTableColumn(
+          root as StructureWidgetNode[],
+          op.table,
+          op.column,
+          op.position,
+        )
+        warnings.push(...result.warnings)
+        break
+      }
+      case 'updateTableColumn': {
+        const result = applyUpdateTableColumn(
+          root as StructureWidgetNode[],
+          op.table,
+          op.column,
+          op.patch as Record<string, unknown>,
+        )
+        warnings.push(...result.warnings)
+        break
+      }
       default:
         warnings.push(`未知操作已忽略`)
     }

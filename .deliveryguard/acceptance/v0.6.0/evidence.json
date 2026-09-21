@@ -1,0 +1,199 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.6.0",
+  "documents": [
+    {
+      "documentId": "ai-form-heavy-container-refine-prd",
+      "requirementIds": ["fr-1-datatable-columns", "fr-2-subform", "fr-3-dialog-shell", "fr-4-create-boundary", "fr-5-regression"]
+    },
+    {
+      "documentId": "ai-form-heavy-container-refine-design",
+      "requirementIds": ["td-column-ops", "td-container-shell", "td-policy-parity"]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-datatable-columns",
+      "description": "data-table 扁平列增删排改；多级表头与整段 tableColumns patch 拒绝",
+      "caseIds": [
+        "refine-datatable-add-column",
+        "refine-datatable-update-column",
+        "refine-datatable-remove-reorder-column",
+        "refine-datatable-nested-header-reject",
+        "refine-datatable-tablecolumns-patch-block"
+      ]
+    },
+    {
+      "id": "fr-2-subform",
+      "description": "sub-form 子字段结构 op + 壳层 + addField parent",
+      "caseIds": [
+        "refine-subform-structure-ops",
+        "refine-subform-shell-props",
+        "refine-subform-add-field-parent"
+      ]
+    },
+    {
+      "id": "fr-3-dialog-shell",
+      "description": "vf-dialog 壳层 refine；事件禁写",
+      "caseIds": ["refine-dialog-shell-props", "refine-dialog-event-forbid"]
+    },
+    {
+      "id": "fr-4-create-boundary",
+      "description": "不可新建重型容器；create 白名单不变；grid-sub-form 仍 NON_GOAL",
+      "caseIds": [
+        "refine-heavy-create-reject",
+        "refine-grid-subform-still-non-goal",
+        "create-whitelist-unchanged"
+      ]
+    },
+    {
+      "id": "fr-5-regression",
+      "description": "v0.5 回归 + Truth Strict + 前端无密钥 + Catalog policy",
+      "caseIds": [
+        "refine-v05-regression",
+        "catalog-full-strict-sweep",
+        "frontend-no-secret",
+        "catalog-heavy-container-policy-parity"
+      ]
+    },
+    {
+      "id": "td-column-ops",
+      "description": "列级专用 op + flatten-only 守卫",
+      "caseIds": [
+        "refine-datatable-add-column",
+        "refine-datatable-nested-header-reject",
+        "refine-datatable-tablecolumns-patch-block"
+      ]
+    },
+    {
+      "id": "td-container-shell",
+      "description": "sub-form / vf-dialog 壳层矩阵",
+      "caseIds": ["refine-subform-shell-props", "refine-dialog-shell-props"]
+    },
+    {
+      "id": "td-policy-parity",
+      "description": "structureSurgery partial + container refine partition",
+      "caseIds": ["catalog-heavy-container-policy-parity", "create-whitelist-unchanged"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "refine-datatable-add-column",
+      "title": "扁平表增列",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.6.0/refine-datatable-add-column.txt",
+        "docs/evidence/v0.6.0/refine-datatable-add-column.png"
+      ]
+    },
+    {
+      "id": "refine-datatable-update-column",
+      "title": "扁平表更新列",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.6.0/refine-datatable-update-column.txt",
+        "docs/evidence/v0.6.0/refine-datatable-update-column.png"
+      ]
+    },
+    {
+      "id": "refine-datatable-remove-reorder-column",
+      "title": "扁平表删列/重排",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/refine-datatable-remove-reorder-column.txt"]
+    },
+    {
+      "id": "refine-datatable-nested-header-reject",
+      "title": "多级表头列 op 拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/refine-datatable-nested-header-reject.txt"]
+    },
+    {
+      "id": "refine-datatable-tablecolumns-patch-block",
+      "title": "禁止 updateField 整段替换 tableColumns",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/refine-datatable-tablecolumns-patch-block.txt"]
+    },
+    {
+      "id": "refine-subform-structure-ops",
+      "title": "sub-form 内 duplicateField",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/refine-subform-structure-ops.txt"]
+    },
+    {
+      "id": "refine-subform-shell-props",
+      "title": "sub-form 壳层 showRowNumber",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.6.0/refine-subform-shell-props.txt",
+        "docs/evidence/v0.6.0/refine-subform-shell-props.png"
+      ]
+    },
+    {
+      "id": "refine-subform-add-field-parent",
+      "title": "addField 进入既有 sub-form",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/refine-subform-add-field-parent.txt"]
+    },
+    {
+      "id": "refine-dialog-shell-props",
+      "title": "vf-dialog 壳层 title/width",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.6.0/refine-dialog-shell-props.txt",
+        "docs/evidence/v0.6.0/refine-dialog-shell-props.png"
+      ]
+    },
+    {
+      "id": "refine-dialog-event-forbid",
+      "title": "vf-dialog 事件键禁写",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/refine-dialog-event-forbid.txt"]
+    },
+    {
+      "id": "refine-heavy-create-reject",
+      "title": "重型容器不可新建",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/refine-heavy-create-reject.txt"]
+    },
+    {
+      "id": "refine-grid-subform-still-non-goal",
+      "title": "grid-sub-form 仍 NON_GOAL",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/refine-grid-subform-still-non-goal.txt"]
+    },
+    {
+      "id": "create-whitelist-unchanged",
+      "title": "create 白名单基数不变",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/create-whitelist-unchanged.txt"]
+    },
+    {
+      "id": "catalog-heavy-container-policy-parity",
+      "title": "Catalog structureSurgery partial + 容器 refine 分区",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/catalog-heavy-container-policy-parity.txt"]
+    },
+    {
+      "id": "refine-v05-regression",
+      "title": "v0.5 删除字段回归",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.6.0/refine-v05-regression.txt",
+        "docs/evidence/v0.6.0/refine-v05-regression.png"
+      ]
+    },
+    {
+      "id": "catalog-full-strict-sweep",
+      "title": "Truth Strict 全量 sweep 回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/catalog-full-strict-sweep.txt"]
+    },
+    {
+      "id": "frontend-no-secret",
+      "title": "前端无 DeepSeek 密钥",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.6.0/frontend-no-secret.txt"]
+    }
+  ]
+}

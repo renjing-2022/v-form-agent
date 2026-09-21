@@ -10,13 +10,15 @@ export type WidgetNode = Record<string, unknown> & {
   rows?: Array<{ cols?: WidgetNode[] }>
 }
 
-/** v0.5 结构 op 不支持的 widget type */
+/**
+ * 节点级 remove/reorder/duplicate 不支持的 widget type。
+ * v0.6：sub-form 已放开（子字段 + 整块 remove）；data-table 仍拒绝节点级结构 op（走列级专用 op）。
+ */
 export const STRUCTURE_OP_NON_GOAL_TYPES = new Set([
   'table-cell',
   'table',
   'data-table',
   'grid-sub-form',
-  'sub-form',
   'vf-dialog',
   'vf-drawer',
 ])

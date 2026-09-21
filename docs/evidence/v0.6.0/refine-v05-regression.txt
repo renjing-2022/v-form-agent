@@ -1,0 +1,8 @@
+case: refine-v05-regression
+status: pass
+observed: v0.5 removeField regression still green under v0.6
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@79795d71c3c7 (working tree has uncommitted changes)
+capturedAt: 2026-09-21T07:35:48.303Z
+durationMs: 3747
+screenshot: docs/evidence/v0.6.0/refine-v05-regression.png

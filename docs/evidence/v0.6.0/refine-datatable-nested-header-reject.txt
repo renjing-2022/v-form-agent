@@ -1,0 +1,7 @@
+case: refine-datatable-nested-header-reject
+status: pass
+observed: nested header addTableColumn rejected
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@79795d71c3c78b9924f176b4a30e624551fabc50 (working tree has uncommitted changes)
+capturedAt: 2026-09-21T07:34:48.197Z
+type: agent

@@ -56,7 +56,7 @@ import {
   getWidgetDefaultSchema,
 } from '../src/knowledge/widgetDefaults.js'
 import { REFINE_CREATE_WHITELIST, CREATE_NON_GOAL, getDefaultFormConfig } from '../src/knowledge/widgetWhitelist.js'
-import { checkContainerRefinePolicyParity, sanitizeContainerPropertyPatch } from '../src/knowledge/containerRefinePolicy.js'
+import { checkContainerRefinePolicyParity, sanitizeContainerPropertyPatch, CONTAINER_REFINE_PROPERTY_MATRIX, CONTAINER_PROPERTY_REFINE_NON_GOAL } from '../src/knowledge/containerRefinePolicy.js'
 import { checkCompositeSchemaParity, VALIDATION_PRESETS } from '../src/knowledge/compositeSchemaPolicy.js'
 import { checkContainerLevelPropertyParity, CONTAINER_LEVEL_PROPERTY_MATRIX } from '../src/knowledge/containerLevelPolicy.js'
 import { checkFormFieldDualTrackParity, FORM_FIELD_DUAL_TRACK_KEYS } from '../src/knowledge/formFieldDualTrackPolicy.js'
@@ -158,7 +158,9 @@ async function main() {
   assert(input.forbiddenKeys.includes('onChange'), 'input.onChange should be forbidden')
   assert(input.forbiddenKeys.every((k) => isEventKey(k)), 'input forbidden keys should be event callbacks')
   assert(tab.notes?.structureSurgery === 'supported', 'tab structure surgery should be supported')
-  assert(dataTable.notes?.structureSurgery === 'unsupported', 'data-table structure surgery should be unsupported')
+  assert(dataTable.notes?.structureSurgery === 'partial', 'data-table structure surgery should be partial (column ops)')
+  const subFormEntry = catalog.widgets.find((w) => w.type === 'sub-form')
+  assert(subFormEntry?.notes?.structureSurgery === 'partial', 'sub-form structure surgery should be partial')
   assert(catalog.form.writableKeys.includes('cssCode'), 'form.cssCode should be writable')
   assert(catalog.form.forbiddenKeys.includes('onFormCreated'), 'form.onFormCreated should be forbidden')
   for (const widget of catalog.widgets) {
@@ -457,40 +459,40 @@ async function main() {
   assert(col1.options.span === 8, 'grid-col span updated')
   writeCaseTo(outDirV040, 'refine-container-gridcol-span', `grid-col span=8 applied`, { type: 'agent' })
 
-  const dialogBlocked = sanitizeContainerPropertyPatch('vf-dialog', { title: '新标题' })
-  assert(dialogBlocked.rejected && dialogBlocked.patch.title === undefined, 'vf-dialog property refine blocked')
-  const dialogPlan = refinePlanSchema.parse({
-    summary: '改弹窗标题',
+  const drawerBlocked = sanitizeContainerPropertyPatch('vf-drawer', { title: '新标题' })
+  assert(drawerBlocked.rejected && drawerBlocked.patch.title === undefined, 'vf-drawer property refine blocked')
+  const drawerPlan = refinePlanSchema.parse({
+    summary: '改抽屉标题',
     warnings: [],
-    operations: [{ op: 'updateField', target: { id: 'd1' }, patch: { title: '新标题' } }],
+    operations: [{ op: 'updateField', target: { id: 'dr1' }, patch: { title: '新标题' } }],
   })
-  const dialogForm = {
+  const drawerForm = {
     widgetList: [
       {
-        type: 'vf-dialog',
-        id: 'd1',
-        options: { title: '旧标题', width: '50%', fullscreen: false, hidden: false, customClass: '' },
+        type: 'vf-drawer',
+        id: 'dr1',
+        options: { title: '旧标题', size: '30%', showModal: true, customClass: '' },
         widgetList: [],
       },
     ],
     formConfig: { customClass: [] },
   }
-  const dialogMerged = applyRefinePlan(dialogForm, dialogPlan)
+  const drawerMerged = applyRefinePlan(drawerForm, drawerPlan)
   assert(
-    (dialogMerged.formJson.widgetList[0] as { options: Record<string, unknown> }).options.title === '旧标题',
-    'vf-dialog title unchanged when NON_GOAL',
+    (drawerMerged.formJson.widgetList[0] as { options: Record<string, unknown> }).options.title === '旧标题',
+    'vf-drawer title unchanged when NON_GOAL',
   )
-  assert(dialogMerged.warnings.some((w) => /vf-dialog.*未开放|NON_GOAL|refine 未开放/i.test(w)), 'dialog NON_GOAL warning')
+  assert(drawerMerged.warnings.some((w) => /vf-drawer.*未开放|NON_GOAL|refine 未开放/i.test(w)), 'drawer NON_GOAL warning')
   writeCaseTo(
     outDirV040,
     'refine-container-non-goal-reject',
-    `vf-dialog title patch blocked; container policy partition ok`,
+    `vf-drawer title patch blocked; container policy partition ok`,
     { type: 'agent' },
   )
   writeCaseTo(
     outDirV040,
     'container-refine-policy-parity',
-    `supported=4 nonGoal=9 container types partitioned`,
+    `supported=${Object.keys(CONTAINER_REFINE_PROPERTY_MATRIX).length} nonGoal=${Object.keys(CONTAINER_PROPERTY_REFINE_NON_GOAL).length} container types partitioned`,
     { type: 'agent/static' },
   )
 
@@ -1808,6 +1810,382 @@ async function main() {
     'frontend-no-secret',
     'AiChat sources contain no DeepSeek API key literals',
     { type: 'static' },
+  )
+
+  // ---- v0.6.0 heavy container refine ----
+  const outDirV060 = path.join(root, 'docs/evidence/v0.6.0')
+  fs.mkdirSync(outDirV060, { recursive: true })
+
+  const flatTableForm = {
+    widgetList: [
+      {
+        type: 'data-table',
+        id: 'dt1',
+        options: {
+          name: 'dt1',
+          label: '人员表',
+          tableColumns: [
+            { columnId: 1, prop: 'name', label: '姓名', width: '100', show: true, align: 'left' },
+            { columnId: 2, prop: 'date', label: '日期', width: '160', show: true, align: 'left' },
+          ],
+          stripe: true,
+          showIndex: false,
+          customClass: '',
+        },
+        widgetList: [],
+      },
+    ],
+    formConfig: { customClass: [] },
+  }
+
+  const addCol = applyRefinePlan(
+    flatTableForm,
+    refinePlanSchema.parse({
+      summary: '加备注列',
+      warnings: [],
+      operations: [
+        {
+          op: 'addTableColumn',
+          table: { id: 'dt1' },
+          column: { prop: 'remark', label: '备注', width: '120', show: true },
+        },
+      ],
+    }),
+  )
+  const colsAfterAdd = (addCol.formJson.widgetList[0] as { options: { tableColumns: Array<{ prop: string; columnId: number }> } })
+    .options.tableColumns
+  assert(colsAfterAdd.length === 3 && colsAfterAdd.some((c) => c.prop === 'remark'), 'addTableColumn should append remark')
+  assert(colsAfterAdd.find((c) => c.prop === 'remark')?.columnId === 3, 'new columnId should be max+1')
+  writeCaseTo(outDirV060, 'refine-datatable-add-column', 'flat table addColumn remark columnId=3', { type: 'agent' })
+
+  const updCol = applyRefinePlan(
+    flatTableForm,
+    refinePlanSchema.parse({
+      summary: '改姓名列宽',
+      warnings: [],
+      operations: [
+        { op: 'updateTableColumn', table: { id: 'dt1' }, column: { prop: 'name' }, patch: { width: '140', label: '姓名列' } },
+      ],
+    }),
+  )
+  const nameCol = (updCol.formJson.widgetList[0] as { options: { tableColumns: Array<{ prop: string; width: string; label: string }> } })
+    .options.tableColumns.find((c) => c.prop === 'name')
+  assert(nameCol?.width === '140' && nameCol?.label === '姓名列', 'updateTableColumn should patch label/width')
+  writeCaseTo(outDirV060, 'refine-datatable-update-column', 'update name column width=140 label=姓名列', { type: 'agent' })
+
+  const remReorder = applyRefinePlan(
+    flatTableForm,
+    refinePlanSchema.parse({
+      summary: '删日期并重排',
+      warnings: [],
+      operations: [
+        { op: 'removeTableColumn', table: { id: 'dt1' }, column: { prop: 'date' } },
+        { op: 'reorderTableColumn', table: { id: 'dt1' }, column: { prop: 'name' }, position: { kind: 'last' } },
+      ],
+    }),
+  )
+  const remCols = (remReorder.formJson.widgetList[0] as { options: { tableColumns: Array<{ prop: string }> } }).options
+    .tableColumns
+  assert(remCols.length === 1 && remCols[0].prop === 'name', 'remove+reorder should leave name only')
+  writeCaseTo(outDirV060, 'refine-datatable-remove-reorder-column', 'removed date; name remains', { type: 'agent' })
+
+  const nestedTableForm = {
+    widgetList: [
+      {
+        type: 'data-table',
+        id: 'dtn',
+        options: {
+          name: 'dtn',
+          label: '嵌套表',
+          tableColumns: [
+            { columnId: 1, prop: 'name', label: '姓名', show: true },
+            {
+              columnId: 14,
+              prop: '~',
+              headerFlag: true,
+              label: '表头1',
+              children: [{ columnId: 15, prop: 'x', label: '子列', show: true }],
+            },
+          ],
+          customClass: '',
+        },
+        widgetList: [],
+      },
+    ],
+    formConfig: { customClass: [] },
+  }
+  const nestedReject = applyRefinePlan(
+    nestedTableForm,
+    refinePlanSchema.parse({
+      summary: '嵌套表加列',
+      warnings: [],
+      operations: [
+        { op: 'addTableColumn', table: { id: 'dtn' }, column: { prop: 'y', label: 'Y' } },
+      ],
+    }),
+  )
+  assert(
+    nestedReject.warnings.some((w) => /多级表头|children|headerFlag/i.test(w)),
+    'nested header must reject column ops',
+  )
+  assert(
+    ((nestedReject.formJson.widgetList[0] as { options: { tableColumns: unknown[] } }).options.tableColumns.length === 2),
+    'nested table columns unchanged',
+  )
+  writeCaseTo(outDirV060, 'refine-datatable-nested-header-reject', 'nested header addTableColumn rejected', {
+    type: 'agent',
+  })
+
+  const patchBlock = applyRefinePlan(
+    flatTableForm,
+    refinePlanSchema.parse({
+      summary: '整段替换列',
+      warnings: [],
+      operations: [
+        {
+          op: 'updateField',
+          target: { id: 'dt1' },
+          patch: { tableColumns: [{ columnId: 99, prop: 'hack', label: 'Hack' }] },
+        },
+      ],
+    }),
+  )
+  assert(
+    patchBlock.warnings.some((w) => /禁止经 updateField|tableColumns/i.test(w)),
+    'updateField tableColumns must be blocked',
+  )
+  assert(
+    (patchBlock.formJson.widgetList[0] as { options: { tableColumns: Array<{ prop: string }> } }).options.tableColumns[0]
+      .prop === 'name',
+    'tableColumns must remain original after blocked patch',
+  )
+  writeCaseTo(outDirV060, 'refine-datatable-tablecolumns-patch-block', 'updateField tableColumns stripped', {
+    type: 'agent',
+  })
+
+  const subFormStruct = {
+    widgetList: [
+      {
+        type: 'sub-form',
+        id: 'sf1',
+        options: {
+          name: 'sf1',
+          label: '明细',
+          showBlankRow: true,
+          showRowNumber: false,
+          labelAlign: 'label-center-align',
+          actionColumnPosition: 'left',
+          hidden: false,
+          disabled: false,
+          customClass: '',
+        },
+        widgetList: [
+          { type: 'input', id: 'sfi1', options: { name: 'sfi1', label: '品名', placeholder: '', required: false } },
+          { type: 'number', id: 'sfi2', options: { name: 'sfi2', label: '数量', precision: 0, required: false } },
+        ],
+      },
+    ],
+    formConfig: { customClass: [] },
+  }
+  const subDup = applyRefinePlan(
+    subFormStruct,
+    refinePlanSchema.parse({
+      summary: '复制品名',
+      warnings: [],
+      operations: [{ op: 'duplicateField', target: { id: 'sfi1' } }],
+    }),
+  )
+  const sfList = (subDup.formJson.widgetList[0] as { widgetList: Array<{ id?: string; options?: { label?: string } }> })
+    .widgetList
+  assert(sfList.length === 3, 'sub-form child duplicate should grow widgetList')
+  assert(sfList.filter((w) => w.options?.label === '品名').length === 2, 'duplicated 品名')
+  writeCaseTo(outDirV060, 'refine-subform-structure-ops', 'duplicateField inside sub-form widgetList', { type: 'agent' })
+
+  const subShell = applyRefinePlan(
+    subFormStruct,
+    refinePlanSchema.parse({
+      summary: '显示行号',
+      warnings: [],
+      operations: [
+        { op: 'updateField', target: { id: 'sf1', containerType: 'sub-form' }, patch: { showRowNumber: true } },
+      ],
+    }),
+  )
+  assert(
+    (subShell.formJson.widgetList[0] as { options: { showRowNumber: boolean } }).options.showRowNumber === true,
+    'sub-form showRowNumber should update',
+  )
+  writeCaseTo(outDirV060, 'refine-subform-shell-props', 'sub-form showRowNumber=true', { type: 'agent' })
+
+  const subAdd = applyRefinePlan(
+    subFormStruct,
+    refinePlanSchema.parse({
+      summary: '子表加备注',
+      warnings: [],
+      operations: [
+        {
+          op: 'addField',
+          parent: { id: 'sf1' },
+          field: { key: 'note', label: '备注', type: 'input' },
+        },
+      ],
+    }),
+  )
+  assert(
+    (subAdd.formJson.widgetList[0] as { widgetList: unknown[] }).widgetList.length === 3,
+    'addField parent=sub-form should nest field',
+  )
+  assert(
+    !subAdd.warnings.some((w) => /未纳入结构手术|追加到根节点/i.test(w)),
+    'sub-form parent must not fallback to root',
+  )
+  writeCaseTo(outDirV060, 'refine-subform-add-field-parent', 'addField into sub-form widgetList', { type: 'agent' })
+
+  const dialogShellForm = {
+    widgetList: [
+      {
+        type: 'vf-dialog',
+        id: 'dlg1',
+        options: {
+          name: 'dlg1',
+          title: '旧标题',
+          width: '50%',
+          fullscreen: false,
+          showModal: true,
+          showClose: true,
+          closeOnClickModal: false,
+          closeOnPressEscape: false,
+          center: false,
+          readMode: false,
+          disabledMode: false,
+          okButtonLabel: '',
+          okButtonHidden: false,
+          cancelButtonLabel: '',
+          cancelButtonHidden: false,
+          onOkButtonClick: '',
+        },
+        widgetList: [
+          { type: 'input', id: 'di1', options: { name: 'di1', label: '弹窗内字段', required: false } },
+        ],
+      },
+    ],
+    formConfig: { customClass: [] },
+  }
+  const dialogShell = applyRefinePlan(
+    dialogShellForm,
+    refinePlanSchema.parse({
+      summary: '改弹窗标题宽度',
+      warnings: [],
+      operations: [
+        {
+          op: 'updateField',
+          target: { id: 'dlg1', containerType: 'vf-dialog' },
+          patch: { title: '新标题', width: '60%' },
+        },
+      ],
+    }),
+  )
+  const dlgOpts = (dialogShell.formJson.widgetList[0] as { options: Record<string, unknown> }).options
+  assert(dlgOpts.title === '新标题' && dlgOpts.width === '60%', 'vf-dialog shell props applied')
+  writeCaseTo(outDirV060, 'refine-dialog-shell-props', 'vf-dialog title+width updated', { type: 'agent' })
+
+  const dialogEvent = applyRefinePlan(
+    dialogShellForm,
+    refinePlanSchema.parse({
+      summary: '写事件',
+      warnings: [],
+      operations: [
+        {
+          op: 'updateField',
+          target: { id: 'dlg1' },
+          patch: { onOkButtonClick: 'alert(1)' },
+        },
+      ],
+    }),
+  )
+  assert(
+    (dialogEvent.formJson.widgetList[0] as { options: { onOkButtonClick: string } }).options.onOkButtonClick === '',
+    'dialog event key must stay empty',
+  )
+  writeCaseTo(outDirV060, 'refine-dialog-event-forbid', 'onOkButtonClick stripped/forbidden', { type: 'agent' })
+
+  assert(!(REFINE_CREATE_WHITELIST as readonly string[]).includes('data-table'), 'data-table not in create whitelist')
+  assert(!(REFINE_CREATE_WHITELIST as readonly string[]).includes('sub-form'), 'sub-form not in create whitelist')
+  assert(!(REFINE_CREATE_WHITELIST as readonly string[]).includes('vf-dialog'), 'vf-dialog not in create whitelist')
+  assert(CREATE_NON_GOAL['data-table'] && CREATE_NON_GOAL['sub-form'] && CREATE_NON_GOAL['vf-dialog'], 'heavy create NON_GOAL')
+  writeCaseTo(outDirV060, 'refine-heavy-create-reject', 'data-table/sub-form/vf-dialog remain CREATE_NON_GOAL', {
+    type: 'agent',
+  })
+
+  const gridSubBlocked = sanitizeContainerPropertyPatch('grid-sub-form', { showRowNumber: true })
+  assert(gridSubBlocked.rejected, 'grid-sub-form shell still NON_GOAL')
+  const gridSubStruct = applyRefinePlan(
+    {
+      widgetList: [
+        {
+          type: 'grid-sub-form',
+          id: 'gsf1',
+          options: { name: 'gsf1', label: 'g', showBlankRow: true, showRowNumber: false, customClass: '' },
+          widgetList: [{ type: 'input', id: 'gsfi', options: { name: 'gsfi', label: 'A', required: false } }],
+        },
+      ],
+      formConfig: { customClass: [] },
+    },
+    refinePlanSchema.parse({
+      summary: '删 grid-sub-form 子字段',
+      warnings: [],
+      operations: [{ op: 'removeField', target: { id: 'gsfi' } }],
+    }),
+  )
+  // child field inside grid-sub-form: target type is input, should work; removing grid-sub-form itself blocked
+  assert(
+    (gridSubStruct.formJson.widgetList[0] as { widgetList: unknown[] }).widgetList.length === 0,
+    'field inside grid-sub-form can still be removed by type=input',
+  )
+  const gridSubSelf = applyRefinePlan(
+    {
+      widgetList: [
+        {
+          type: 'grid-sub-form',
+          id: 'gsf2',
+          options: { name: 'gsf2', label: 'g2', customClass: '' },
+          widgetList: [],
+        },
+      ],
+      formConfig: { customClass: [] },
+    },
+    refinePlanSchema.parse({
+      summary: '删整块 grid-sub-form',
+      warnings: [],
+      operations: [{ op: 'removeField', target: { id: 'gsf2' } }],
+    }),
+  )
+  assert(
+    gridSubSelf.warnings.some((w) => /不在本版 delete\/reorder\/duplicate/i.test(w)),
+    'grid-sub-form node structure op still NON_GOAL',
+  )
+  writeCaseTo(outDirV060, 'refine-grid-subform-still-non-goal', 'grid-sub-form shell+node NON_GOAL', { type: 'agent' })
+
+  assert(REFINE_CREATE_WHITELIST.length === 12, `create whitelist must stay 12, got ${REFINE_CREATE_WHITELIST.length}`)
+  writeCaseTo(outDirV060, 'create-whitelist-unchanged', `REFINE_CREATE_WHITELIST length=${REFINE_CREATE_WHITELIST.length}`, {
+    type: 'static',
+  })
+
+  const heavyParity = checkContainerRefinePolicyParity(catalog)
+  assert(heavyParity.length === 0, `container refine parity: ${heavyParity.join('; ')}`)
+  assert(dataTable.notes?.structureSurgery === 'partial', 'catalog data-table partial')
+  writeCaseTo(
+    outDirV060,
+    'catalog-heavy-container-policy-parity',
+    `structureSurgery partial for data-table/sub-form; container refine parity ok; matrix=${Object.keys(CONTAINER_REFINE_PROPERTY_MATRIX).length}`,
+    { type: 'agent/static' },
+  )
+
+  writeCaseTo(
+    outDirV060,
+    'refine-v05-regression',
+    'v0.5 remove/reorder/duplicate and strict sweep still exercised in same acceptance run',
+    { type: 'agent' },
   )
 
   console.log('ACCEPTANCE_CASES_PASSED')

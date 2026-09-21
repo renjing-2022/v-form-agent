@@ -37,20 +37,26 @@ type WidgetNode = {
 const systemPrompt = `你是 v-form 表单优化规划器。根据用户指令与当前表单摘要，输出 RefinePlan JSON（不要 Markdown）。
 只能输出 operations，禁止直接输出完整 formJson。
 允许的 op：
-- updateField: { op, target:{id?|name?|label?|containerType?}, patch:{...} }  字段与 tab-pane/grid-col/tab/grid 容器属性；容器 target 建议带 containerType
+- updateField: { op, target:{id?|name?|label?|containerType?}, patch:{...} }  字段与 tab-pane/grid-col/tab/grid/sub-form/vf-dialog 容器属性；容器 target 建议带 containerType
 - updateFieldsInScope: { op, parent:{id?|name?|label?|parentScope?}, filterType?, patch:{...} }  批量更新 parent 容器下字段；parent 可用 parentScope 语法如 tab-pane/基本信息 或 path:widgetList[0].tabs[0]
 - setFormula: { op, target, formula, formulaEnabled? }  （仅 number；formula 可用字段 name，如 score1+score2）
-- addField: { op, field:{key,label,type,required?,options?,formula?}, parent? }
+- addField: { op, field:{key,label,type,required?,options?,formula?}, parent? }  parent 可为 tab-pane / sub-form / vf-dialog
 - wrapInTabs: { op, tabName?, panes:[{label, targets:[{id:"..."} 或 {name:"..."}]}] }
 - patchFormConfig: { op, patch:{labelWidth?,labelPosition?,labelAlign?,size?,layoutType?,cssCode?,customClass?,...} }
 - setCustomClass: { op, target, customClass }
 - setCssCode: { op, css, mode?:append|replace, target?, customClass? }  css 应尽量绑定 target/customClass，避免全局选择器
-- removeField: { op, target }  删除单个控件；删除 tab-pane 时其内部控件一并删除
+- removeField: { op, target }  删除单个控件；删除 tab-pane 时其内部控件一并删除；可删除整块 sub-form
 - removeFieldsInScope: { op, parent, filterType? }  批量删除 parent 容器下字段
 - reorderField: { op, target, position:{kind:first|last|before|after,sibling?} }  仅同级排序，禁止跨 tab/grid 移动
 - duplicateField: { op, target, position? }  复制控件（新 id/name），默认插入源后一位
+- addTableColumn: { op, table, column:{prop,label,width?,show?,align?,fixed?,sortable?}, position? }  仅扁平列；禁止多级表头
+- removeTableColumn: { op, table, column:{columnId?|prop?|label?} }
+- reorderTableColumn: { op, table, column, position:{kind:first|last|before|after,sibling?} }
+- updateTableColumn: { op, table, column, patch:{label?,prop?,width?,show?,align?,fixed?,sortable?} }
 重要：target / targets 必须是对象，禁止写成字符串。正确示例 targets:[{"name":"input1"},{"id":"radio2"}]；错误示例 targets:["input1","radio2"]。
 重要：不支持 moveField / reparent；跨容器移动须用户手动操作。
+重要：禁止 NL 新建 data-table / sub-form / vf-dialog / grid-sub-form / vf-drawer；禁止 updateField 整段替换 tableColumns。
+重要：含 children/headerFlag 的多级表头表禁止列手术。
 
 布局重叠修复顺序（必须完整执行，禁止半套）：
 1. 长题干与选项重叠：优先 updateField 设置 labelWrap=true、displayStyle=block、必要时 labelWidth 数字加宽
@@ -171,6 +177,125 @@ export function mockRefinePlan(instruction: string, current: FormJson): RefinePl
   const wantReorder =
     /移到.*下面|排到.*下面|移到.*上面|排到.*上面|放到.*后面|放到.*前面|同级排序|reorder/i.test(instruction)
   const wantAddRemark = /新增.*备注|加一个备注|添加备注/i.test(instruction)
+  const wantAddColumn = /加一列|新增.*列|添加.*列|增列|addTableColumn/i.test(instruction)
+  const wantRemoveColumn = /删.*列|去掉.*列|移除.*列|removeTableColumn/i.test(instruction)
+  const wantUpdateColumn = /列.*(标题|宽度|改)|改.*列|updateTableColumn/i.test(instruction)
+  const wantReorderColumn = /列.*(移到|排序|重排)|reorderTableColumn/i.test(instruction)
+  const wantDialogShell = /弹窗|对话框|dialog|vf-dialog/i.test(instruction) && /标题|宽度|title|width/i.test(instruction)
+  const wantSubFormShell =
+    /子表|sub-form|subform/i.test(instruction) && /行号|空白行|showRowNumber|showBlankRow|标签对齐/i.test(instruction)
+
+  const dataTable = flat.find((f) => f.type === 'data-table')
+  const subForm = flat.find((f) => f.type === 'sub-form')
+  const dialog = flat.find((f) => f.type === 'vf-dialog')
+
+  if (wantDialogShell && dialog) {
+    const titleMatch = instruction.match(/标题(?:改|成|为|成)?[「"']?([^」"'\s]+)[」"']?/)
+    const widthMatch = instruction.match(/宽度(?:改|成|为)?\s*(\d+%?|\d+px)/i)
+    const patch: Record<string, unknown> = {}
+    if (titleMatch) patch.title = titleMatch[1]
+    else if (/标题/i.test(instruction)) patch.title = '新弹窗标题'
+    if (widthMatch) patch.width = widthMatch[1].includes('%') || widthMatch[1].includes('px') ? widthMatch[1] : `${widthMatch[1]}%`
+    else if (/宽度/i.test(instruction)) patch.width = '60%'
+    if (Object.keys(patch).length > 0) {
+      return refinePlanSchema.parse({
+        summary: '更新 vf-dialog 壳层属性',
+        warnings,
+        operations: [
+          {
+            op: 'updateField',
+            target: dialog.id
+              ? { id: dialog.id, containerType: 'vf-dialog' }
+              : { name: dialog.name!, containerType: 'vf-dialog' },
+            patch,
+          },
+        ],
+      })
+    }
+  }
+
+  if (wantSubFormShell && subForm) {
+    const patch: Record<string, unknown> = {}
+    if (/显示行号|showRowNumber/i.test(instruction)) patch.showRowNumber = !/不显示行号|隐藏行号/i.test(instruction)
+    if (/空白行|showBlankRow/i.test(instruction)) patch.showBlankRow = !/隐藏空白|不显示空白/i.test(instruction)
+    if (/标签.*居中|labelAlign.*center/i.test(instruction)) patch.labelAlign = 'label-center-align'
+    if (Object.keys(patch).length === 0) patch.showRowNumber = true
+    return refinePlanSchema.parse({
+      summary: '更新 sub-form 壳层属性',
+      warnings,
+      operations: [
+        {
+          op: 'updateField',
+          target: subForm.id
+            ? { id: subForm.id, containerType: 'sub-form' }
+            : { name: subForm.name!, containerType: 'sub-form' },
+          patch,
+        },
+      ],
+    })
+  }
+
+  if ((wantAddColumn || wantRemoveColumn || wantUpdateColumn || wantReorderColumn) && dataTable) {
+    const tableTarget = dataTable.id
+      ? { id: dataTable.id, containerType: 'data-table' as const }
+      : { name: dataTable.name!, containerType: 'data-table' as const }
+    if (wantAddColumn) {
+      const labelMatch = instruction.match(/加一列[「"']?([^」"'\s]+)[」"']?|列[「"']?([^」"'\s]+)[」"']?/)
+      const label = labelMatch?.[1] || labelMatch?.[2] || '备注'
+      return refinePlanSchema.parse({
+        summary: `data-table 新增列 ${label}`,
+        warnings,
+        operations: [
+          {
+            op: 'addTableColumn',
+            table: tableTarget,
+            column: { prop: label === '备注' ? 'remark' : `col_${Date.now() % 10000}`, label, width: '120', show: true },
+          },
+        ],
+      })
+    }
+    if (wantRemoveColumn) {
+      const labelMatch = instruction.match(/删(?:掉|除)?[「"']?([^」"'\s]+)[」"']?列|列[「"']?([^」"'\s]+)[」"']?/)
+      const label = labelMatch?.[1] || labelMatch?.[2] || '姓名'
+      return refinePlanSchema.parse({
+        summary: `data-table 删除列 ${label}`,
+        warnings,
+        operations: [{ op: 'removeTableColumn', table: tableTarget, column: { label } }],
+      })
+    }
+    if (wantReorderColumn) {
+      return refinePlanSchema.parse({
+        summary: 'data-table 列重排',
+        warnings,
+        operations: [
+          {
+            op: 'reorderTableColumn',
+            table: tableTarget,
+            column: { prop: 'name' },
+            position: { kind: 'last' },
+          },
+        ],
+      })
+    }
+    if (wantUpdateColumn) {
+      const widthMatch = instruction.match(/宽度(?:改|成|为)?\s*(\d+)/)
+      const patch: { label?: string; width?: string } = {}
+      if (/标题|改名/i.test(instruction)) patch.label = '姓名列'
+      patch.width = widthMatch ? String(widthMatch[1]) : '140'
+      return refinePlanSchema.parse({
+        summary: 'data-table 更新列',
+        warnings,
+        operations: [
+          {
+            op: 'updateTableColumn',
+            table: tableTarget,
+            column: { prop: 'name' },
+            patch,
+          },
+        ],
+      })
+    }
+  }
 
   if (wantAddRemark && !wantRemove) {
     return refinePlanSchema.parse({
