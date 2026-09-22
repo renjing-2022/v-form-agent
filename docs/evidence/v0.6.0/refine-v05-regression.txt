@@ -1,8 +1,7 @@
 case: refine-v05-regression
 status: pass
-observed: v0.5 removeField regression still green under v0.6
-environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@79795d71c3c7 (working tree has uncommitted changes)
-capturedAt: 2026-09-21T07:35:48.303Z
-durationMs: 3747
-screenshot: docs/evidence/v0.6.0/refine-v05-regression.png
+observed: v0.5 remove/reorder/duplicate and strict sweep still exercised in same acceptance run
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: feature/v0.7.0-event-interaction-js@016dcc70b5cd2663cd5e5dcf3edd637cd829e81b (working tree has uncommitted changes)
+capturedAt: 2026-09-22T08:33:34.791Z
+type: agent

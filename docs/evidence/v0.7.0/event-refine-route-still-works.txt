@@ -1,0 +1,8 @@
+case: event-refine-route-still-works
+status: pass
+observed: POST /api/agent/v1/refine for property instruction; event path not required
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: feature/v0.7.0-event-interaction-js@016dcc70b5cd (working tree has uncommitted changes)
+capturedAt: 2026-09-22T08:34:54.425Z
+durationMs: 3910
+screenshot: docs/evidence/v0.7.0/event-refine-route-still-works.png

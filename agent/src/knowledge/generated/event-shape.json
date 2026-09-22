@@ -1,0 +1,1628 @@
+{
+  "schemaVersion": 1,
+  "generatedFor": "v0.7.0",
+  "note": "writableIn=v0.8+ is reserved; v0.7 merge path still forbids all event keys",
+  "shapes": [
+    {
+      "owner": {
+        "kind": "form"
+      },
+      "key": "onFormCreated",
+      "params": [],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "lifecycle",
+        "form",
+        "init"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "form"
+      },
+      "key": "onFormDataChange",
+      "params": [
+        "fieldName",
+        "newValue",
+        "oldValue",
+        "formModel",
+        "subFormName",
+        "subFormRowIndex"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "linkage",
+        "form"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "form"
+      },
+      "key": "onFormMounted",
+      "params": [],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "lifecycle",
+        "form",
+        "init"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "form"
+      },
+      "key": "onFormValidate",
+      "params": [
+        "formModel"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "validate",
+        "submit"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onAppendButtonClick",
+      "params": [],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onBeforeUpload",
+      "params": [
+        "file"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "upload",
+        "network"
+      ],
+      "writableIn": "never"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onBlur",
+      "params": [
+        "event"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onButtonGroupClick",
+      "params": [
+        "buttonConfig"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onCancelButtonClick",
+      "params": [],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "dialog",
+        "action"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onCellClick",
+      "params": [
+        "row",
+        "column",
+        "cell",
+        "event"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onCellDoubleClick",
+      "params": [
+        "row",
+        "column",
+        "cell",
+        "event"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onChange",
+      "params": [
+        "value",
+        "oldValue"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "linkage",
+        "compute"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onCheckChange",
+      "params": [
+        "data",
+        "checked",
+        "indeterminate"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onClick",
+      "params": [],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "action",
+        "button"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onCreated",
+      "params": [],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "lifecycle",
+        "init"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onCurrentPageChange",
+      "params": [
+        "pageSize",
+        "currentPage"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onDialogBeforeClose",
+      "params": [
+        "done"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onDialogOpened",
+      "params": [],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onDisableOperationButton",
+      "params": [
+        "buttonConfig",
+        "rowIndex",
+        "row"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onDrawerBeforeClose",
+      "params": [],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onDrawerOpened",
+      "params": [],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onFileRemove",
+      "params": [
+        "file",
+        "fileList"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "upload"
+      ],
+      "writableIn": "never"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onFocus",
+      "params": [
+        "event"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onGetOperationButtonLabel",
+      "params": [
+        "buttonConfig",
+        "rowIndex",
+        "row"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onGetRowClassName",
+      "params": [
+        "rowIndex",
+        "row"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onGetSpanMethod",
+      "params": [
+        "row",
+        "column",
+        "rowIndex",
+        "columnIndex"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onHeaderClick",
+      "params": [
+        "column",
+        "event"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onHideOperationButton",
+      "params": [
+        "buttonConfig",
+        "rowIndex",
+        "row"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onInput",
+      "params": [
+        "value"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onMounted",
+      "params": [],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "lifecycle",
+        "init"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onNodeCheck",
+      "params": [
+        "data",
+        "treeState"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onNodeClick",
+      "params": [
+        "data",
+        "node",
+        "el"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onNodeContextmenu",
+      "params": [
+        "event",
+        "data",
+        "node",
+        "el"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onOkButtonClick",
+      "params": [],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "dialog",
+        "action"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onOperationButtonClick",
+      "params": [
+        "buttonName",
+        "rowIndex",
+        "row"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onPageSizeChange",
+      "params": [
+        "pageSize",
+        "currentPage"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onRemoteQuery",
+      "params": [
+        "keyword"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "remote",
+        "network"
+      ],
+      "writableIn": "never"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onRowClick",
+      "params": [
+        "row",
+        "column",
+        "event"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onRowDoubleClick",
+      "params": [
+        "row",
+        "column",
+        "event"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onSelectionChange",
+      "params": [
+        "selection",
+        "selectedIndices"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onSortChange",
+      "params": [
+        "column",
+        "prop",
+        "order",
+        "pageSize",
+        "currentPage"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onSubFormRowAdd",
+      "params": [
+        "subFormData",
+        "newRowId"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "sub-form",
+        "row"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onSubFormRowChange",
+      "params": [
+        "subFormData"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "sub-form",
+        "row"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onSubFormRowDelete",
+      "params": [
+        "subFormData",
+        "deletedDataRow",
+        "deletedRowIndex"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "sub-form",
+        "row"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onSubFormRowInsert",
+      "params": [
+        "subFormData",
+        "newRowId"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "sub-form",
+        "row"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onTabClick",
+      "params": [
+        "tab"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onUploadError",
+      "params": [
+        "error",
+        "file",
+        "fileList"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "upload",
+        "network"
+      ],
+      "writableIn": "never"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onUploadSuccess",
+      "params": [
+        "result",
+        "file",
+        "fileList"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "upload",
+        "network"
+      ],
+      "writableIn": "never"
+    },
+    {
+      "owner": {
+        "kind": "widget"
+      },
+      "key": "onValidate",
+      "params": [
+        "rule",
+        "value",
+        "callback"
+      ],
+      "thisApiAllowlist": [
+        "getFormRef",
+        "getWidgetRef",
+        "getParentFormRef",
+        "getGlobalDsv",
+        "getFieldEditor",
+        "setValue",
+        "$message",
+        "getFormData",
+        "setFormData",
+        "getFieldValue",
+        "setFieldValue",
+        "disableWidgets",
+        "enableWidgets",
+        "hideWidgets",
+        "showWidgets",
+        "validateForm",
+        "resetForm"
+      ],
+      "intentTags": [
+        "general"
+      ],
+      "writableIn": "v0.8+"
+    }
+  ]
+}

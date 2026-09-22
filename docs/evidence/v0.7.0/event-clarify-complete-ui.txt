@@ -1,0 +1,8 @@
+case: event-clarify-complete-ui
+status: pass
+observed: POST /api/agent/v1/event spec_ready onChange; apply disabled; summary denies event write
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: feature/v0.7.0-event-interaction-js@016dcc70b5cd (working tree has uncommitted changes)
+capturedAt: 2026-09-22T08:34:50.527Z
+durationMs: 3418
+screenshot: docs/evidence/v0.7.0/event-clarify-complete-ui.png

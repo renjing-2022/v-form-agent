@@ -1,0 +1,188 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.7.0",
+  "documents": [
+    {
+      "documentId": "ai-form-event-interaction-js-prd",
+      "requirementIds": [
+        "fr-1-event-clarify",
+        "fr-2-event-shape",
+        "fr-3-frontend-clarify-ui",
+        "fr-4-regression"
+      ]
+    },
+    {
+      "documentId": "ai-form-event-interaction-js-design",
+      "requirementIds": [
+        "td-shape-registry",
+        "td-event-pipeline",
+        "td-frontend-route"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-event-clarify",
+      "description": "POST /event 澄清闭环：不完备追问、完备 EventSpec、危险拒绝、生命周期/子表行可出 Spec、不写 on*",
+      "caseIds": [
+        "event-clarify-incomplete-intent",
+        "event-clarify-complete-to-spec",
+        "event-clarify-danger-reject",
+        "event-clarify-lifecycle-spec",
+        "event-clarify-subform-row-spec",
+        "event-endpoint-does-not-write-onstar"
+      ]
+    },
+    {
+      "id": "fr-2-event-shape",
+      "description": "事件 shape 与运行时真源 parity；writableIn 不含 v0.7 可写",
+      "caseIds": ["event-shape-registry-parity"]
+    },
+    {
+      "id": "fr-3-frontend-clarify-ui",
+      "description": "AiChat 交互意图走 /event；澄清可见；spec_ready 不启用写入",
+      "caseIds": ["event-clarify-ui", "event-clarify-complete-ui"]
+    },
+    {
+      "id": "fr-4-regression",
+      "description": "v0.6 事件禁写与重型容器回归；strict-sweep；frontend-no-secret；结构仍走 /refine",
+      "caseIds": [
+        "event-refine-still-forbids-events",
+        "refine-dialog-event-forbid",
+        "refine-v06-regression",
+        "catalog-full-strict-sweep",
+        "frontend-no-secret",
+        "event-refine-route-still-works"
+      ]
+    },
+    {
+      "id": "td-shape-registry",
+      "description": "event-shape.json / registry 与 fieldMixin 等真源签名一致",
+      "caseIds": ["event-shape-registry-parity"]
+    },
+    {
+      "id": "td-event-pipeline",
+      "description": "eventPlanner + /event 契约：澄清 / EventSpec / 禁写",
+      "caseIds": [
+        "event-clarify-incomplete-intent",
+        "event-clarify-complete-to-spec",
+        "event-clarify-danger-reject",
+        "event-clarify-lifecycle-spec",
+        "event-clarify-subform-row-spec",
+        "event-endpoint-does-not-write-onstar",
+        "event-refine-still-forbids-events"
+      ]
+    },
+    {
+      "id": "td-frontend-route",
+      "description": "前端分流：交互 → /event；结构/属性 → /refine",
+      "caseIds": [
+        "event-clarify-ui",
+        "event-clarify-complete-ui",
+        "event-refine-route-still-works"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "event-clarify-incomplete-intent",
+      "title": "不完备意图 → need_clarification",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/event-clarify-incomplete-intent.txt"]
+    },
+    {
+      "id": "event-clarify-complete-to-spec",
+      "title": "完备意图 → spec_ready EventSpec",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/event-clarify-complete-to-spec.txt"]
+    },
+    {
+      "id": "event-clarify-danger-reject",
+      "title": "接口/危险意图拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/event-clarify-danger-reject.txt"]
+    },
+    {
+      "id": "event-clarify-lifecycle-spec",
+      "title": "生命周期意图可出 EventSpec（不写）",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/event-clarify-lifecycle-spec.txt"]
+    },
+    {
+      "id": "event-clarify-subform-row-spec",
+      "title": "子表行意图可出 EventSpec（不写）",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/event-clarify-subform-row-spec.txt"]
+    },
+    {
+      "id": "event-endpoint-does-not-write-onstar",
+      "title": "/event 响应不写 on* / functions",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/event-endpoint-does-not-write-onstar.txt"]
+    },
+    {
+      "id": "event-shape-registry-parity",
+      "title": "事件 shape 登记与运行时签名 parity",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/event-shape-registry-parity.txt"]
+    },
+    {
+      "id": "event-refine-still-forbids-events",
+      "title": "/refine 仍禁写事件键",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/event-refine-still-forbids-events.txt"]
+    },
+    {
+      "id": "refine-dialog-event-forbid",
+      "title": "vf-dialog 事件键禁写（v0.6 锁）",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/refine-dialog-event-forbid.txt"]
+    },
+    {
+      "id": "refine-v06-regression",
+      "title": "v0.6 重型容器回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/refine-v06-regression.txt"]
+    },
+    {
+      "id": "catalog-full-strict-sweep",
+      "title": "Truth Strict 全量 sweep",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/catalog-full-strict-sweep.txt"]
+    },
+    {
+      "id": "frontend-no-secret",
+      "title": "前端无 DeepSeek 密钥",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.7.0/frontend-no-secret.txt"]
+    },
+    {
+      "id": "event-clarify-ui",
+      "title": "E2E：不完备交互意图展示澄清问题",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.7.0/event-clarify-ui.txt",
+        "docs/evidence/v0.7.0/event-clarify-ui.png"
+      ]
+    },
+    {
+      "id": "event-clarify-complete-ui",
+      "title": "E2E：spec_ready 摘要可见且不启用写入",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.7.0/event-clarify-complete-ui.txt",
+        "docs/evidence/v0.7.0/event-clarify-complete-ui.png"
+      ]
+    },
+    {
+      "id": "event-refine-route-still-works",
+      "title": "E2E：结构/属性仍走 /refine",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.7.0/event-refine-route-still-works.txt",
+        "docs/evidence/v0.7.0/event-refine-route-still-works.png"
+      ]
+    }
+  ]
+}

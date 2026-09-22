@@ -20,6 +20,7 @@ import {
 } from '../src/knowledge/generateWidgetCatalog.js'
 import { checkDesignTruthGraphParity } from '../src/knowledge/compileDesignTruthGraph.js'
 
+import { checkEventShapeParity } from '../src/knowledge/eventShapeRegistry.js'
 import { checkContainerRefinePolicyParity } from '../src/knowledge/containerRefinePolicy.js'
 import { checkCompositeSchemaParity } from '../src/knowledge/compositeSchemaPolicy.js'
 import { checkContainerLevelPropertyParity } from '../src/knowledge/containerLevelPolicy.js'
@@ -157,6 +158,13 @@ const strictSweep = checkCatalogFullStrictSweep(catalog, editorGraph, registerSo
 if (strictSweep.length) {
   console.error('CATALOG_FULL_STRICT_SWEEP_FAILED')
   for (const issue of strictSweep) console.error(`- ${issue}`)
+  process.exit(1)
+}
+
+const eventShapeIssues = checkEventShapeParity(root)
+if (eventShapeIssues.length) {
+  console.error('EVENT_SHAPE_PARITY_FAILED')
+  for (const issue of eventShapeIssues) console.error(`- ${issue}`)
   process.exit(1)
 }
 

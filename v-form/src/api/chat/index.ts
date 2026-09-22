@@ -103,3 +103,45 @@ export async function refineFormByAgent(payload: {
   }
   return data;
 }
+
+export type AgentEventResponse = {
+  status: 'need_clarification' | 'spec_ready';
+  summary: string;
+  warnings: string[];
+  questions?: string[];
+  eventSpec?: Record<string, unknown>;
+  formJson: AgentGenerateResponse['formJson'];
+  applied: false;
+  message?: string;
+};
+
+/**
+ * v0.7：交互意图澄清（不写事件 JS）
+ */
+export async function eventFormByAgent(payload: {
+  instruction: string;
+  currentFormJson: AgentGenerateResponse['formJson'];
+  messages?: Array<{ role: 'user' | 'assistant'; content: string }>;
+}): Promise<AgentEventResponse> {
+  const base = import.meta.env.VITE_APP_AGENT_API || '/api/agent';
+  const res = await fetch(`${base}/v1/event`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      instruction: payload.instruction,
+      currentFormJson: payload.currentFormJson,
+      messages: payload.messages || [],
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    const issueHint = Array.isArray(data?.issues)
+      ? `：${data.issues
+          .slice(0, 3)
+          .map((i: any) => i.message)
+          .join('；')}`
+      : '';
+    throw new Error((data?.message || data?.summary || `交互澄清失败 (${res.status})`) + issueHint);
+  }
+  return data;
+}
