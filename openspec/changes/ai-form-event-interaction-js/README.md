@@ -4,10 +4,10 @@
 |---|---|
 | Change ID | `ai-form-event-interaction-js` |
 | Target version | `v0.7.0` |
-| Status | `proposed`（实现代码已落在分支 `feature/v0.7.0-event-interaction-js`；source/acceptance 未钉点，故版本记录仍为 planned） |
+| Status | `applied`（已 merge `main`；acceptance passed；tag `v0.7.0` published） |
 | 文档修订 | 3 — 2026-09-22 纯前端事件全覆盖预留；接口类禁 |
 
-本目录为 DeliveryGuard 版本 `v0.7.0` 的 OpenSpec 挂载点。**尚未实现**。
+本目录为 DeliveryGuard 版本 `v0.7.0` 的 OpenSpec 挂载点。实现与验收已完成；事件 JS 生成/合入属 `v0.8.0`。
 
 ## 用户确认边界
 

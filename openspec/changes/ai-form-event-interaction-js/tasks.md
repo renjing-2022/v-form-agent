@@ -72,7 +72,7 @@
 ## 完成定义（DoD）
 
 **实现切片 Done：** 交付物 0–4（含 E2E）已绿；事件合入层仍禁写。  
-**DeliveryGuard：** `acceptance.status=passed`；source=`submitted` @ `ac28445e`（feature branch）；`release=pending`。
+**DeliveryGuard：** `acceptance.status=passed`；source=`merged` @ `ac28445e`（`main`）；release=`published`（tag `v0.7.0`）。
 
 ## Acceptance 表
 

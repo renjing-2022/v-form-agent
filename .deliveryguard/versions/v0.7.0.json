@@ -28,9 +28,9 @@
   "sources": [
     {
       "repositoryId": "app",
-      "branch": "feature/v0.7.0-event-interaction-js",
+      "branch": "main",
       "commit": "ac28445e15e8c9cea23f9f7c45a5d16bf3d77eda",
-      "status": "submitted"
+      "status": "merged"
     }
   ],
   "acceptance": {
@@ -38,8 +38,20 @@
     "evidence": ".deliveryguard/acceptance/v0.7.0/evidence.json",
     "report": "docs/acceptance/v0.7.0.md"
   },
-  "deployments": [],
+  "deployments": [
+    {
+      "repositoryId": "app",
+      "environmentId": "production",
+      "branch": "main",
+      "commit": "16ecd584152d9f27dd9a13e3306eab6f55d67bb4",
+      "status": "succeeded",
+      "anchor": "https://github.com/renjing-2022/v-form-agent/tree/v0.7.0",
+      "recordedAt": "2026-09-22T09:03:58Z"
+    }
+  ],
   "release": {
-    "status": "pending"
+    "status": "published",
+    "anchor": "https://github.com/renjing-2022/v-form-agent/releases/tag/v0.7.0",
+    "releasedAt": "2026-09-22T09:03:58Z"
   }
 }
