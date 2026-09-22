@@ -61,7 +61,7 @@
       </el-button>
       <el-button
         type="success"
-        :disabled="!lastResult || loading"
+        :disabled="!canApply"
         @click="onApply"
       >应用到设计器（整表覆盖）</el-button>
       <el-button size="small" text :disabled="loading || (!messages.length && !lastResult)" @click="onReset">
@@ -77,6 +77,22 @@
       show-icon
       :closable="false"
     />
+
+    <el-alert
+      v-if="lastEvent"
+      class="mt"
+      :type="lastEvent.status === 'spec_ready' ? 'info' : 'warning'"
+      :title="lastEvent.summary"
+      show-icon
+      :closable="false"
+    />
+
+    <div v-if="lastEvent?.questions?.length" class="warnings mt">
+      <div class="warnings-title">澄清问题</div>
+      <ul>
+        <li v-for="(q, i) in lastEvent.questions" :key="i">{{ q }}</li>
+      </ul>
+    </div>
 
     <el-alert
       v-if="lastResult"
@@ -106,7 +122,9 @@ import { ElMessage } from 'element-plus'
 import {
   generateFormByAgent,
   refineFormByAgent,
+  eventFormByAgent,
   type AgentGenerateResponse,
+  type AgentEventResponse,
 } from '@/api/chat'
 
 const props = defineProps<{
@@ -127,9 +145,19 @@ const fileInputRef = ref<HTMLInputElement | null>(null)
 const loading = ref(false)
 const error = ref('')
 const lastResult = ref<AgentGenerateResponse | null>(null)
+const lastEvent = ref<AgentEventResponse | null>(null)
 const messages = ref<ChatTurn[]>([])
 
 const previewCount = computed(() => lastResult.value?.formJson?.widgetList?.length || 0)
+const canApply = computed(
+  () => Boolean(lastResult.value?.formJson) && !lastEvent.value && !loading.value,
+)
+
+function looksLikeEventIntent(text: string): boolean {
+  return /联动|交互|事件|onChange|onClick|onMounted|onCreated|onForm|子表|增行|挂载|打开表单时|提交前|校验规则|计分|加权|显示|隐藏|禁用|启用/.test(
+    text,
+  )
+}
 
 const canvasWidgetCount = computed(() => {
   const json = props.getCurrentFormJson?.()
@@ -169,6 +197,7 @@ function clearFile() {
 function onReset() {
   messages.value = []
   lastResult.value = null
+  lastEvent.value = null
   error.value = ''
   prompt.value = ''
   clearFile()
@@ -189,7 +218,55 @@ async function onSubmit() {
     error.value = '请输入优化指令'
     return
   }
+  if (looksLikeEventIntent(text)) {
+    await runEvent(text)
+    return
+  }
   await runRefine(text)
+}
+
+async function runEvent(text: string) {
+  const current = props.getCurrentFormJson?.()
+  if (!current?.widgetList?.length) {
+    error.value = '当前画布无表单，请先生成/拖拽控件，或切换到「整表生成」'
+    return
+  }
+  loading.value = true
+  lastEvent.value = null
+  try {
+    const history = messages.value.slice(-20)
+    const data = await eventFormByAgent({
+      instruction: text,
+      currentFormJson: current,
+      messages: history,
+    })
+    lastEvent.value = data
+    // v0.7：交互澄清不得作为「应用到设计器」的候选
+    lastResult.value = null
+    messages.value.push({ role: 'user', content: text })
+    const q = Array.isArray(data.questions) && data.questions.length
+      ? `\n追问：\n- ${data.questions.join('\n- ')}`
+      : ''
+    const specHint =
+      data.status === 'spec_ready'
+        ? '\n（EventSpec 已就绪；本版不写入事件代码，v0.8 才会生成/验证/合入）'
+        : ''
+    messages.value.push({
+      role: 'assistant',
+      content: `${data.summary}${q}${specHint}`,
+    })
+    prompt.value = ''
+    if (data.status === 'need_clarification') {
+      ElMessage.info('请根据追问继续补充交互细节')
+    } else {
+      ElMessage.success('交互意图已澄清（本版不写入事件）')
+    }
+  } catch (e: any) {
+    error.value = e?.message || '交互澄清失败'
+    emit('AiError')
+  } finally {
+    loading.value = false
+  }
 }
 
 async function runGenerate(text: string) {
@@ -224,6 +301,7 @@ async function runRefine(text: string) {
     return
   }
   loading.value = true
+  lastEvent.value = null
   try {
     const history = messages.value.slice(-20)
     const data = await refineFormByAgent({

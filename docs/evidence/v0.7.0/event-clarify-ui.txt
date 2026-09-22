@@ -1,0 +1,8 @@
+case: event-clarify-ui
+status: pass
+observed: POST /api/agent/v1/event need_clarification; questions visible; apply disabled; no event write
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: feature/v0.7.0-event-interaction-js@016dcc70b5cd (working tree has uncommitted changes)
+capturedAt: 2026-09-22T08:34:47.095Z
+durationMs: 11490
+screenshot: docs/evidence/v0.7.0/event-clarify-ui.png

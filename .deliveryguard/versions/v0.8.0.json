@@ -1,0 +1,36 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/version.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.8.0",
+  "title": "交互执行面第二刀：受约束事件 JS + 真实渲染 applied",
+  "documents": [
+    {
+      "id": "ai-form-event-js-execution-prd",
+      "type": "product-requirement",
+      "title": "交互执行面第二刀 — 受约束事件 JS 生成 + 真实渲染 applied（v0.8.0）产品需求",
+      "ref": "docs/requirements/ai-form-event-js-execution.md",
+      "revision": 2,
+      "primary": true
+    },
+    {
+      "id": "ai-form-event-js-execution-design",
+      "type": "technical-design",
+      "title": "交互执行面第二刀 — 受约束事件 JS + 真实渲染 applied（v0.8.0）技术设计",
+      "ref": "docs/design/ai-form-event-js-execution.md",
+      "revision": 2
+    }
+  ],
+  "openSpec": {
+    "changeId": "ai-form-event-js-execution",
+    "path": "openspec/changes/ai-form-event-js-execution",
+    "status": "proposed"
+  },
+  "sources": [],
+  "acceptance": {
+    "status": "pending"
+  },
+  "deployments": [],
+  "release": {
+    "status": "pending"
+  }
+}

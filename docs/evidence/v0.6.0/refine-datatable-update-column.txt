@@ -1,8 +1,7 @@
 case: refine-datatable-update-column
 status: pass
-observed: POST /api/agent/v1/refine updateTableColumn width=140 applied
-environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
-sourceRevision: main@79795d71c3c7 (working tree has uncommitted changes)
-capturedAt: 2026-09-21T07:35:32.465Z
-durationMs: 6270
-screenshot: docs/evidence/v0.6.0/refine-datatable-update-column.png
+observed: update name column width=140 label=姓名列
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: feature/v0.7.0-event-interaction-js@016dcc70b5cd2663cd5e5dcf3edd637cd829e81b (working tree has uncommitted changes)
+capturedAt: 2026-09-22T08:33:33.954Z
+type: agent

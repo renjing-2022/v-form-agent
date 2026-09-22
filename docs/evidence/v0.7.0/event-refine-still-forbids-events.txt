@@ -1,0 +1,7 @@
+case: event-refine-still-forbids-events
+status: pass
+observed: refine path still forbids event keys
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: feature/v0.7.0-event-interaction-js@016dcc70b5cd2663cd5e5dcf3edd637cd829e81b (working tree has uncommitted changes)
+capturedAt: 2026-09-22T08:33:35.474Z
+type: agent

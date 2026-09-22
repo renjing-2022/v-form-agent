@@ -1590,7 +1590,10 @@ async function main() {
     'expected reject',
   )
   assert(aiChat.includes('error.value'), 'error state present')
-  assert(aiChat.includes(':disabled="!lastResult'), 'apply disabled without result')
+  assert(
+    aiChat.includes('canApply') && aiChat.includes(':disabled="!canApply"'),
+    'apply disabled without applyable refine result',
+  )
   writeCase(
     'refine-reject-keeps-canvas',
     `illegal new type rejected by refine validator; AiChat apply disabled without lastResult and only emits apply on explicit click`,
@@ -2187,6 +2190,149 @@ async function main() {
     'v0.5 remove/reorder/duplicate and strict sweep still exercised in same acceptance run',
     { type: 'agent' },
   )
+
+  // ---- v0.7.0 event shape + clarify (no event write) ----
+  const outDirV070 = path.join(root, 'docs/evidence/v0.7.0')
+  fs.mkdirSync(outDirV070, { recursive: true })
+
+  const {
+    buildEventShapeRegistry,
+    checkEventShapeParity,
+    loadEventShapeRegistry,
+    writeEventShapeRegistry,
+  } = await import('../src/knowledge/eventShapeRegistry.js')
+  const { planEventClarify, assertEventKeysUnchanged } = await import('../src/services/eventPlanner.js')
+
+  const shapesBuilt = buildEventShapeRegistry(root)
+  writeEventShapeRegistry(root, shapesBuilt)
+  const shapeIssues = checkEventShapeParity(root)
+  assert(shapeIssues.length === 0, `event shape parity: ${shapeIssues.join('; ')}`)
+  const shapesLoaded = loadEventShapeRegistry(root)
+  assert(shapesLoaded.some((s) => s.key === 'onCreated' && s.writableIn === 'v0.8+'), 'onCreated v0.8+')
+  assert(shapesLoaded.some((s) => s.key === 'onMounted' && s.writableIn === 'v0.8+'), 'onMounted v0.8+')
+  assert(shapesLoaded.some((s) => s.key === 'onSubFormRowAdd' && s.writableIn === 'v0.8+'), 'onSubFormRowAdd v0.8+')
+  assert(shapesLoaded.some((s) => s.key === 'onRemoteQuery' && s.writableIn === 'never'), 'onRemoteQuery never')
+  writeCaseTo(outDirV070, 'event-shape-registry-parity', `shapes=${shapesLoaded.length} parity ok`, {
+    type: 'static',
+  })
+
+  const eventForm = {
+    widgetList: [
+      { type: 'number', id: 'yw', options: { name: 'yw', label: '语文', required: false, defaultValue: 0 } },
+      { type: 'number', id: 'sx', options: { name: 'sx', label: '数学', required: false, defaultValue: 0 } },
+      { type: 'number', id: 'zf', options: { name: 'zf', label: '总分', required: false, defaultValue: 0 } },
+      {
+        type: 'sub-form',
+        id: 'sf1',
+        options: { name: 'sf1', label: '明细子表', showBlankRow: true, showRowNumber: false, customClass: '' },
+        widgetList: [{ type: 'input', id: 'sfi', options: { name: 'sfi', label: '项', required: false } }],
+      },
+    ],
+    formConfig: { customClass: [], functions: '', onFormMounted: '', onFormCreated: '' },
+  }
+
+  const incomplete = planEventClarify({
+    instruction: '加点交互',
+    currentFormJson: eventForm,
+  })
+  assert(incomplete.httpStatus === 200, 'incomplete should be 200')
+  assert(incomplete.response.status === 'need_clarification', 'incomplete need_clarification')
+  assert((incomplete.response.questions || []).length > 0, 'incomplete questions')
+  assert(incomplete.response.applied === false, 'incomplete not applied')
+  assertEventKeysUnchanged(eventForm, incomplete.response.formJson)
+  writeCaseTo(outDirV070, 'event-clarify-incomplete-intent', 'need_clarification with questions', {
+    type: 'agent',
+  })
+
+  const complete = planEventClarify({
+    instruction: '改语文时把总分设为加权结果 例如：语文=2,数学=4 期望：{"总分":6}',
+    currentFormJson: eventForm,
+  })
+  assert(complete.httpStatus === 200 && complete.response.status === 'spec_ready', 'complete spec_ready')
+  assert(complete.response.eventSpec?.trigger.eventKey === 'onChange', 'complete onChange')
+  assert((complete.response.eventSpec?.examples || []).length >= 1, 'complete has example')
+  assert(complete.response.applied === false, 'complete not applied')
+  assert(!/已更新事件|已应用\s*JS|已写入事件/i.test(complete.response.summary), 'no write claim')
+  assertEventKeysUnchanged(eventForm, complete.response.formJson)
+  writeCaseTo(outDirV070, 'event-clarify-complete-to-spec', 'spec_ready onChange with example', {
+    type: 'agent',
+  })
+
+  const danger = planEventClarify({
+    instruction: '请求接口填充下拉选项',
+    currentFormJson: eventForm,
+  })
+  assert(danger.httpStatus === 422, 'danger 422')
+  assertEventKeysUnchanged(eventForm, danger.response.formJson)
+  writeCaseTo(outDirV070, 'event-clarify-danger-reject', 'interface intent rejected 422', { type: 'agent' })
+
+  const life = planEventClarify({
+    instruction: '打开表单时初始化 期望：{"ready":true}',
+    currentFormJson: eventForm,
+  })
+  assert(life.response.status === 'spec_ready', 'lifecycle spec_ready')
+  assert(life.response.eventSpec?.trigger.eventKey === 'onFormMounted', 'lifecycle onFormMounted')
+  assert(life.response.applied === false, 'lifecycle not applied')
+  writeCaseTo(outDirV070, 'event-clarify-lifecycle-spec', 'spec_ready onFormMounted', { type: 'agent' })
+
+  const row = planEventClarify({
+    instruction: '子表增行时带默认值 期望：{"ok":true}',
+    currentFormJson: eventForm,
+  })
+  assert(row.response.status === 'spec_ready', 'subform row spec_ready')
+  assert(row.response.eventSpec?.trigger.eventKey === 'onSubFormRowAdd', 'onSubFormRowAdd')
+  assert(row.response.applied === false, 'row not applied')
+  writeCaseTo(outDirV070, 'event-clarify-subform-row-spec', 'spec_ready onSubFormRowAdd', { type: 'agent' })
+
+  assertEventKeysUnchanged(eventForm, complete.response.formJson)
+  writeCaseTo(outDirV070, 'event-endpoint-does-not-write-onstar', 'clarify responses keep event keys empty', {
+    type: 'agent',
+  })
+
+  const refineStillForbid = applyRefinePlan(
+    eventForm,
+    refinePlanSchema.parse({
+      summary: '偷写 onChange',
+      warnings: [],
+      operations: [{ op: 'updateField', target: { id: 'yw' }, patch: { onChange: 'alert(1)' } }],
+    }),
+  )
+  assert(
+    (refineStillForbid.formJson.widgetList[0] as { options: { onChange: string } }).options.onChange === '' ||
+      (refineStillForbid.formJson.widgetList[0] as { options: { onChange?: string } }).options.onChange === undefined ||
+      String((refineStillForbid.formJson.widgetList[0] as { options: Record<string, unknown> }).options.onChange || '') ===
+        '',
+    'refine still strips onChange',
+  )
+  writeCaseTo(outDirV070, 'event-refine-still-forbids-events', 'refine path still forbids event keys', {
+    type: 'agent',
+  })
+
+  writeCaseTo(
+    outDirV070,
+    'refine-v06-regression',
+    'v0.6 heavy container cases still executed earlier in this acceptance run',
+    { type: 'agent' },
+  )
+
+  // 回归证据落入 v0.7 目录，便于 Evidence Manifest 自包含
+  writeCaseTo(
+    outDirV070,
+    'refine-dialog-event-forbid',
+    'onOkButtonClick stripped/forbidden (re-asserted in same run as v0.6 case)',
+    { type: 'agent' },
+  )
+  const strictAgain = checkCatalogFullStrictSweep(catalog, editorGraph, registerSource)
+  assert(strictAgain.length === 0, `catalog-full-strict-sweep: ${strictAgain.join('; ')}`)
+  writeCaseTo(outDirV070, 'catalog-full-strict-sweep', 'Truth Strict full sweep green', { type: 'static' })
+  const frontendAiChat = [
+    readRepoFile('v-form/src/components/AiChat/index.vue'),
+    readRepoFile('v-form/src/api/chat/index.ts'),
+  ].join('\n')
+  assert(!/DEEPSEEK_API_KEY|sk-[a-zA-Z0-9]{10,}/.test(frontendAiChat), 'frontend must not embed DeepSeek secrets')
+  writeCaseTo(outDirV070, 'frontend-no-secret', 'AiChat/event client contain no DeepSeek API key literals', {
+    type: 'static',
+  })
 
   console.log('ACCEPTANCE_CASES_PASSED')
 }
