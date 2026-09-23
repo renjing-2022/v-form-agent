@@ -28,9 +28,9 @@
   "sources": [
     {
       "repositoryId": "app",
-      "branch": "feat/v0.8.0-event-js-execution",
+      "branch": "main",
       "commit": "cd81e52d26dd24cb18623a3ee21e24e94ac6f8d9",
-      "status": "submitted"
+      "status": "merged"
     }
   ],
   "acceptance": {
@@ -38,8 +38,20 @@
     "evidence": ".deliveryguard/acceptance/v0.8.0/evidence.json",
     "report": "docs/acceptance/v0.8.0.md"
   },
-  "deployments": [],
+  "deployments": [
+    {
+      "repositoryId": "app",
+      "environmentId": "production",
+      "branch": "main",
+      "commit": "399f0b9bb7d11a44ac5ca52dee89f8dd174557a9",
+      "status": "succeeded",
+      "anchor": "https://github.com/renjing-2022/v-form-agent/tree/v0.8.0",
+      "recordedAt": "2026-09-23T06:16:16Z"
+    }
+  ],
   "release": {
-    "status": "pending"
+    "status": "published",
+    "anchor": "https://github.com/renjing-2022/v-form-agent/tree/v0.8.0",
+    "releasedAt": "2026-09-23T06:16:16Z"
   }
 }

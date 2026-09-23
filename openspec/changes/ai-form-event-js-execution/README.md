@@ -4,7 +4,7 @@
 |---|---|
 | Change ID | `ai-form-event-js-execution` |
 | Target version | `v0.8.0` |
-| Status | `applied`；source `cd81e52`（local）；证据 26/26 pass，acceptance 待 source submitted 后记 passed；release `pending` |
+| Status | `applied`；source `cd81e52`（merged @ main）；acceptance `passed`；release `published` @ tag `v0.8.0` |
 
 v0.8 挂载点。Agent generate/guard/apply 与前端预览闸已落地；验证真实性修复见 `tasks.md` 交付物 5，验收见 `docs/acceptance/v0.8.0.md`。依赖 v0.7 EventSpec 契约。
 
