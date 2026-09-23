@@ -26,7 +26,8 @@ function gitOutput(args: string[]) {
 function sourceRevision() {
   const branch = gitOutput(['branch', '--show-current'])
   const revision = gitOutput(['rev-parse', '--short=12', 'HEAD'])
-  const dirty = gitOutput(['status', '--porcelain']) !== ''
+  // evidence files written by this run must not mark the source revision dirty
+  const dirty = gitOutput(['status', '--porcelain', '--', '.', ':(exclude)docs/evidence']) !== ''
   return `${branch || 'detached'}@${revision}${dirty ? ' (working tree has uncommitted changes)' : ''}`
 }
 

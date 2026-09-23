@@ -17,6 +17,8 @@ export type ValidateFormJsonOptions = {
   mode?: 'generate' | 'refine'
   /** refine 时传入优化前已存在的 widget id */
   existingIds?: Set<string>
+  /** event-apply：允许纯前端事件键非空（仍禁接口类） */
+  catalogMode?: 'strict' | 'event-apply'
 }
 
 /** generate / excel / refine 共用 Catalog 校验（widget options + formConfig） */
@@ -131,6 +133,7 @@ export function validateFormJson(
   opts: ValidateFormJsonOptions = {},
 ): ValidationIssue[] {
   const mode = opts.mode || 'generate'
+  const catalogMode = opts.catalogMode || 'strict'
   const issues: ValidationIssue[] = []
   if (!formJson || typeof formJson !== 'object') {
     return [{ path: '', message: 'formJson must be an object' }]
@@ -201,7 +204,7 @@ export function validateFormJson(
 
       validateContainerShape(type, w, p, issues)
       validateFormula(type, options, p, names, issues)
-      issues.push(...validateWidgetOptionsAgainstCatalog(type, options, p))
+      issues.push(...validateWidgetOptionsAgainstCatalog(type, options, p, catalogMode))
 
       for (const child of collectChildLists(w)) {
         walk(child.list, `${p}.${child.pathSuffix}`, depth + 1)
@@ -213,7 +216,7 @@ export function validateFormJson(
     walk(json.widgetList as unknown[], 'widgetList', 0)
   }
   if (json.formConfig && typeof json.formConfig === 'object') {
-    issues.push(...validateFormConfigAgainstCatalog(json.formConfig as Record<string, unknown>))
+    issues.push(...validateFormConfigAgainstCatalog(json.formConfig as Record<string, unknown>, catalogMode))
   }
 
   return issues

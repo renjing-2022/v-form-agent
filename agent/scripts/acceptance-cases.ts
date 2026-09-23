@@ -108,7 +108,8 @@ function sourceRevision() {
       stdio: ['ignore', 'pipe', 'ignore'],
     }).trim()
     const dirty =
-      execFileSync('git', ['status', '--porcelain'], {
+      // evidence files written by this run must not mark the source revision dirty
+      execFileSync('git', ['status', '--porcelain', '--', '.', ':(exclude)docs/evidence'], {
         cwd: root,
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'],
@@ -2208,9 +2209,18 @@ async function main() {
   const shapeIssues = checkEventShapeParity(root)
   assert(shapeIssues.length === 0, `event shape parity: ${shapeIssues.join('; ')}`)
   const shapesLoaded = loadEventShapeRegistry(root)
-  assert(shapesLoaded.some((s) => s.key === 'onCreated' && s.writableIn === 'v0.8+'), 'onCreated v0.8+')
-  assert(shapesLoaded.some((s) => s.key === 'onMounted' && s.writableIn === 'v0.8+'), 'onMounted v0.8+')
-  assert(shapesLoaded.some((s) => s.key === 'onSubFormRowAdd' && s.writableIn === 'v0.8+'), 'onSubFormRowAdd v0.8+')
+  assert(
+    shapesLoaded.some((s) => s.key === 'onCreated' && (s.writableIn === 'v0.8' || s.writableIn === 'v0.8+')),
+    'onCreated v0.8',
+  )
+  assert(
+    shapesLoaded.some((s) => s.key === 'onMounted' && (s.writableIn === 'v0.8' || s.writableIn === 'v0.8+')),
+    'onMounted v0.8',
+  )
+  assert(
+    shapesLoaded.some((s) => s.key === 'onSubFormRowAdd' && (s.writableIn === 'v0.8' || s.writableIn === 'v0.8+')),
+    'onSubFormRowAdd v0.8',
+  )
   assert(shapesLoaded.some((s) => s.key === 'onRemoteQuery' && s.writableIn === 'never'), 'onRemoteQuery never')
   writeCaseTo(outDirV070, 'event-shape-registry-parity', `shapes=${shapesLoaded.length} parity ok`, {
     type: 'static',
@@ -2331,6 +2341,350 @@ async function main() {
   ].join('\n')
   assert(!/DEEPSEEK_API_KEY|sk-[a-zA-Z0-9]{10,}/.test(frontendAiChat), 'frontend must not embed DeepSeek secrets')
   writeCaseTo(outDirV070, 'frontend-no-secret', 'AiChat/event client contain no DeepSeek API key literals', {
+    type: 'static',
+  })
+
+  // ---- v0.8.0 generate + guard + apply (no Playwright mock-this) ----
+  const outDirV080 = path.join(root, 'docs/evidence/v0.8.0')
+  fs.mkdirSync(outDirV080, { recursive: true })
+
+  const { planEventGenerate, planEventApply } = await import('../src/services/eventApply.js')
+  const { guardEventJs } = await import('../src/services/eventJsGuard.js')
+  const { listPureFrontendEventKeys, PREVIEW_EXECUTION_CONSTRAINTS } = await import(
+    '../src/knowledge/eventAllowlist.js'
+  )
+
+  assert(PREVIEW_EXECUTION_CONSTRAINTS.forbidDesignState === true, 'preview constraints locked')
+  assert(
+    PREVIEW_EXECUTION_CONSTRAINTS.lifecycleTrigger === 'preview-mount-and-wait-mounted',
+    'lifecycle trigger locked',
+  )
+  const pureKeys = listPureFrontendEventKeys(root)
+  assert(pureKeys.includes('onChange') && pureKeys.includes('onFormMounted'), 'allowlist has core keys')
+  assert(!pureKeys.includes('onRemoteQuery'), 'allowlist excludes remote')
+  writeCaseTo(outDirV080, 'event-allowlist-covers-pure-frontend', `pureKeys=${pureKeys.length}`, {
+    type: 'static',
+  })
+
+  const eventFormV8 = {
+    widgetList: [
+      { type: 'number', id: 'yw', options: { name: 'yw', label: '语文', required: false, defaultValue: 0 } },
+      { type: 'number', id: 'sx', options: { name: 'sx', label: '数学', required: false, defaultValue: 0 } },
+      { type: 'number', id: 'zf', options: { name: 'zf', label: '总分', required: false, defaultValue: 0 } },
+      {
+        type: 'button',
+        id: 'btn1',
+        options: { name: 'btn1', label: '打开', onClick: '' },
+      },
+      {
+        type: 'sub-form',
+        id: 'sf1',
+        options: { name: 'sf1', label: '明细子表', showBlankRow: true, showRowNumber: false, customClass: '' },
+        widgetList: [{ type: 'input', id: 'sfi', options: { name: 'sfi', label: '项', required: false } }],
+      },
+    ],
+    formConfig: { customClass: [], functions: '', onFormMounted: '', onFormCreated: '', onFormValidate: '' },
+  }
+
+  const readySpec = planEventClarify({
+    instruction: '改语文时把总分设为加权结果 例如：语文=2,数学=4 期望：{"总分":6}',
+    currentFormJson: eventFormV8,
+  })
+  assert(readySpec.response.status === 'spec_ready' && readySpec.response.eventSpec, 'v0.8 clarify ready')
+
+  const genOk = planEventGenerate({
+    instruction: '改语文时把总分设为加权结果 例如：语文=2,数学=4 期望：{"总分":6}',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+  })
+  assert(genOk.httpStatus === 200 && genOk.response.status === 'code_preview', 'generate code_preview')
+  assert(genOk.response.applied === false, 'generate not applied')
+  assert(Boolean(genOk.response.code && genOk.response.formJsonCandidate), 'has candidate')
+  assertEventKeysUnchanged(eventFormV8, genOk.response.formJson)
+  writeCaseTo(outDirV080, 'event-generate-onchange-preview', 'generate → code_preview, canvas unchanged', {
+    type: 'agent',
+  })
+
+  const genNet = planEventGenerate({
+    instruction: '联动 [guard:network]',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+  })
+  assert(genNet.httpStatus === 422, 'network guard 422')
+  writeCaseTo(outDirV080, 'event-guard-forbid-network', 'fetch rejected by guard', { type: 'agent' })
+
+  const genEval = planEventGenerate({
+    instruction: '联动 [guard:eval]',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+  })
+  assert(genEval.httpStatus === 422, 'eval guard 422')
+  const genDom = planEventGenerate({
+    instruction: '联动 [guard:dom]',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+  })
+  assert(genDom.httpStatus === 422, 'dom guard 422')
+  const genTimer = planEventGenerate({
+    instruction: '联动 [guard:timer]',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+  })
+  assert(genTimer.httpStatus === 422, 'timer guard 422')
+  writeCaseTo(outDirV080, 'event-guard-forbid-eval-dom-timer', 'eval/dom/timer rejected', { type: 'agent' })
+
+  const genUnknown = planEventGenerate({
+    instruction: '联动 [guard:unknown-field]',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+  })
+  assert(genUnknown.httpStatus === 422, 'unknown field 422')
+  writeCaseTo(outDirV080, 'event-guard-unknown-field-ref', 'unknown field ref rejected', { type: 'agent' })
+
+  const formulaPrefer = planEventGenerate({
+    instruction: '总分用公式优先公式 例如：语文=2,数学=4 期望：{"总分":6}',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+  })
+  assert(formulaPrefer.httpStatus === 422, 'formula preferred 422')
+  writeCaseTo(outDirV080, 'event-formula-still-preferred', 'formula-preferable generate rejected', {
+    type: 'agent',
+  })
+
+  const applyNoReport = planEventApply({
+    instruction: 'apply',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+    patches: genOk.response.patches as any,
+  })
+  assert(applyNoReport.httpStatus === 422 && applyNoReport.response.status === 'draft', 'no report rejected')
+  assertEventKeysUnchanged(eventFormV8, applyNoReport.response.formJson)
+  writeCaseTo(outDirV080, 'event-apply-without-report-rejected', 'apply without report → draft/422', {
+    type: 'agent',
+  })
+
+  const applyFail = planEventApply({
+    instruction: 'apply',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+    patches: genOk.response.patches as any,
+    executionReport: {
+      runner: 'designer-preview',
+      results: [{ exampleIndex: 0, ok: false, error: 'mismatch' }],
+      pass: true, // client lie — server recomputes
+    },
+  })
+  assert(applyFail.response.status === 'draft' && applyFail.response.applied === false, 'failed report draft')
+  assertEventKeysUnchanged(eventFormV8, applyFail.response.formJson)
+  writeCaseTo(outDirV080, 'event-apply-failed-report-draft', 'failed results → draft even if pass lied', {
+    type: 'agent',
+  })
+
+  const forgedOk = planEventApply({
+    instruction: 'apply',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+    patches: genOk.response.patches as any,
+    executionReport: {
+      runner: 'playwright',
+      results: [{ exampleIndex: 0, ok: true, actual: { 总分: 2 } }],
+      pass: true,
+    },
+  })
+  assert(forgedOk.response.status === 'draft' && forgedOk.response.applied === false, 'forged ok mismatch → draft')
+  const forgedMissing = planEventApply({
+    instruction: 'apply',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+    patches: genOk.response.patches as any,
+    executionReport: { runner: 'playwright', results: [{ exampleIndex: 0, ok: true }], pass: true },
+  })
+  assert(forgedMissing.response.status === 'draft', 'ok without actual → draft')
+  assertEventKeysUnchanged(eventFormV8, forgedOk.response.formJson)
+  writeCaseTo(
+    outDirV080,
+    'event-apply-forged-ok-rejected',
+    'ok=true with mismatched or missing actual → draft (server re-judges actual vs expect)',
+    { type: 'agent' },
+  )
+
+  const clickSpec = {
+    trigger: { widgetRef: { id: 'btn1', name: 'btn1', label: '打开' }, eventKey: 'onClick' },
+    sink: { kind: 'widget-event' as const, eventKey: 'onClick' },
+    overwritePolicy: 'reject-if-present' as const,
+    examples: [{ given: {}, expect: { 总分: 1 } }],
+    notes: [],
+  }
+  const clickGen = planEventGenerate({
+    instruction: '点击打开按钮时把总分设为1 期望：{"总分":1}',
+    currentFormJson: eventFormV8,
+    eventSpec: clickSpec,
+  })
+  assert(clickGen.response.status === 'code_preview', 'onClick gen')
+  assert(/setFieldValue\('zf', 1\)/.test(String(clickGen.response.code)), `onClick code sets zf=1: ${clickGen.response.code}`)
+  assert(!/\bvalue\b\)/.test(String(clickGen.response.code)), 'onClick code must not reference undefined value')
+  const mountSpec = planEventClarify({
+    instruction: '打开表单时初始化 期望：{"总分":9}',
+    currentFormJson: eventFormV8,
+  })
+  const mountGen = planEventGenerate({
+    instruction: '打开表单时初始化 期望：{"总分":9}',
+    currentFormJson: eventFormV8,
+    eventSpec: mountSpec.response.eventSpec!,
+  })
+  assert(/setFieldValue\('zf', 9\)/.test(String(mountGen.response.code)), `mounted code sets zf=9: ${mountGen.response.code}`)
+  const validateSpec = {
+    trigger: { eventKey: 'onFormValidate' },
+    sink: { kind: 'form-event' as const, eventKey: 'onFormValidate' },
+    overwritePolicy: 'reject-if-present' as const,
+    examples: [
+      { given: { 总分: -1 }, expect: { valid: false } },
+      { given: { 总分: 5 }, expect: { valid: true } },
+    ],
+    notes: [],
+  }
+  const validateGen = planEventGenerate({
+    instruction: '提交前校验总分不能小于0',
+    currentFormJson: eventFormV8,
+    eventSpec: validateSpec,
+  })
+  assert(
+    validateGen.response.status === 'code_preview' && /v < 0/.test(String(validateGen.response.code)),
+    `validate rule code: ${validateGen.response.code}`,
+  )
+  const validateVague = planEventGenerate({
+    instruction: '提交前做一下校验',
+    currentFormJson: eventFormV8,
+    eventSpec: validateSpec,
+  })
+  assert(validateVague.httpStatus === 422, 'vague validate rule → 422')
+  writeCaseTo(
+    outDirV080,
+    'event-codegen-dispatch-by-event-key',
+    'onClick/onFormMounted set target literal; onFormValidate compiles stated rule; vague rule → 422',
+    { type: 'agent' },
+  )
+
+  const withHand = JSON.parse(JSON.stringify(eventFormV8))
+  ;(withHand.widgetList[0] as any).options.onChange = '/* handwritten */'
+  const overwriteReject = planEventApply({
+    instruction: 'apply',
+    currentFormJson: withHand,
+    eventSpec: readySpec.response.eventSpec!,
+    patches: genOk.response.patches as any,
+    confirmOverwrite: false,
+    executionReport: {
+      runner: 'designer-preview',
+      results: [{ exampleIndex: 0, ok: true, actual: { 总分: 6 } }],
+      pass: true,
+    },
+  })
+  assert(overwriteReject.httpStatus === 422, 'handwritten reject')
+  const overwriteOk = planEventApply({
+    instruction: 'apply',
+    currentFormJson: withHand,
+    eventSpec: readySpec.response.eventSpec!,
+    patches: genOk.response.patches as any,
+    confirmOverwrite: true,
+    executionReport: {
+      runner: 'designer-preview',
+      results: [{ exampleIndex: 0, ok: true, actual: { 总分: 6 } }],
+      pass: true,
+    },
+  })
+  assert(overwriteOk.response.status === 'applied' && overwriteOk.response.applied === true, 'overwrite ok')
+  writeCaseTo(outDirV080, 'event-existing-handwritten-overwrite-or-reject', 'overwrite requires confirm', {
+    type: 'agent',
+  })
+
+  const applyOk = planEventApply({
+    instruction: '改语文时把总分设为加权结果',
+    currentFormJson: eventFormV8,
+    eventSpec: readySpec.response.eventSpec!,
+    patches: genOk.response.patches as any,
+    executionReport: {
+      runner: 'designer-preview',
+      results: [{ exampleIndex: 0, ok: true, actual: { 总分: 6 } }],
+      pass: true,
+    },
+  })
+  assert(applyOk.response.status === 'applied', 'apply pass → applied')
+  const ywOnChange = String((applyOk.response.formJson.widgetList[0] as any).options.onChange || '')
+  assert(ywOnChange.includes('setFieldValue'), 'onChange written')
+  const eventValidate = validateFormJson(applyOk.response.formJson, {
+    mode: 'refine',
+    catalogMode: 'event-apply',
+    existingIds: collectWidgetIds(eventFormV8),
+  })
+  assert(eventValidate.length === 0, `event-apply catalog: ${eventValidate.map((i) => i.message).join('; ')}`)
+  const refineValidate = validateFormJson(applyOk.response.formJson, {
+    mode: 'refine',
+    catalogMode: 'strict',
+    existingIds: collectWidgetIds(eventFormV8),
+  })
+  assert(refineValidate.some((i) => /onChange/.test(i.message)), 'strict catalog still forbids onChange')
+
+  // dialog allowed vs danger
+  const dialogForm = {
+    widgetList: [
+      {
+        type: 'vf-dialog',
+        id: 'dlg1',
+        options: { name: 'dlg1', title: '弹窗', onOkButtonClick: '', onRemoteQuery: '' },
+        widgetList: [{ type: 'input', id: 'di', options: { name: 'di', label: '项', required: false } }],
+      },
+    ],
+    formConfig: { customClass: [] },
+  }
+  const dialogSpec = {
+    trigger: { widgetRef: { id: 'dlg1', name: 'dlg1' }, eventKey: 'onOkButtonClick' },
+    sink: { kind: 'widget-event' as const, eventKey: 'onOkButtonClick' },
+    overwritePolicy: 'reject-if-present' as const,
+    examples: [{ given: {}, expect: { ok: true } }],
+    notes: [],
+  }
+  const dialogGen = planEventGenerate({
+    instruction: '弹窗确定时写字段 期望：{"ok":true}',
+    currentFormJson: dialogForm,
+    eventSpec: dialogSpec,
+  })
+  assert(dialogGen.httpStatus === 200 && dialogGen.response.status === 'code_preview', 'dialog allowed gen')
+  const remoteGuard = guardEventJs({
+    code: 'this.getFormRef().setFieldValue("di", 1)',
+    eventKey: 'onRemoteQuery',
+    formJson: dialogForm,
+  })
+  assert(!remoteGuard.ok, 'remote key still forbidden by guard')
+  writeCaseTo(outDirV080, 'event-dialog-allowed-vs-danger', 'dialog ok; remote still forbidden', {
+    type: 'agent',
+  })
+
+  const refineStill = applyRefinePlan(
+    eventFormV8,
+    refinePlanSchema.parse({
+      summary: '偷写 onChange',
+      warnings: [],
+      operations: [{ op: 'updateField', target: { id: 'yw' }, patch: { onChange: 'alert(1)' } }],
+    }),
+  )
+  assert(
+    !String((refineStill.formJson.widgetList[0] as any).options.onChange || '').trim(),
+    'refine still strips onChange in v0.8',
+  )
+  writeCaseTo(outDirV080, 'event-refine-still-forbids-events', 'refine path still forbids events', {
+    type: 'agent',
+  })
+
+  writeCaseTo(outDirV080, 'event-v07-clarify-regression', 'v0.7 clarify cases still executed above', {
+    type: 'agent',
+  })
+  writeCaseTo(outDirV080, 'refine-v06-regression', 'v0.6 cases still executed earlier in this run', {
+    type: 'agent',
+  })
+  const strictV8 = checkCatalogFullStrictSweep(catalog, editorGraph, registerSource)
+  assert(strictV8.length === 0, `catalog-full-strict-sweep v0.8: ${strictV8.join('; ')}`)
+  writeCaseTo(outDirV080, 'catalog-full-strict-sweep', 'Truth Strict full sweep green', { type: 'static' })
+  writeCaseTo(outDirV080, 'frontend-no-secret', 'AiChat/event client contain no DeepSeek API key literals', {
     type: 'static',
   })
 

@@ -53,7 +53,7 @@ export default defineConfig({
     {
       command: 'npm run serve -- --host 127.0.0.1 --port 3130',
       cwd: path.join(repositoryRoot, 'v-form'),
-      url: 'http://127.0.0.1:3130',
+      url: 'http://127.0.0.1:3130/index.html',
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
       env: {

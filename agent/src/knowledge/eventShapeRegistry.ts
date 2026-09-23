@@ -1,12 +1,12 @@
 /**
- * v0.7 事件 shape 登记：形参 / API 白名单 / writableIn。
- * 合入层本版仍禁写；writableIn=v0.8+ 仅表示后续版预留。
+ * 事件 shape 登记：形参 / API 白名单 / writableIn。
+ * v0.8：纯前端键 writableIn=v0.8；接口类 never。合入仅经 /event apply。
  */
 import fs from 'node:fs'
 import path from 'node:path'
 import { PROPERTY_REGISTER_REL } from './catalogPolicy.js'
 
-export type EventWritableIn = 'never' | 'v0.8+'
+export type EventWritableIn = 'never' | 'v0.8' | 'v0.8+'
 
 export type EventShape = {
   owner: { kind: 'widget' | 'form'; type?: string }
@@ -128,7 +128,7 @@ const INTENT_TAGS: Record<string, string[]> = {
 }
 
 function writableInFor(key: string): EventWritableIn {
-  return EVENT_KEYS_NEVER.has(key) ? 'never' : 'v0.8+'
+  return EVENT_KEYS_NEVER.has(key) ? 'never' : 'v0.8'
 }
 
 function shapeFor(key: string, owner: EventShape['owner']): EventShape {
@@ -205,8 +205,8 @@ export function writeEventShapeRegistry(root: string, shapes: EventShape[]): voi
     `${JSON.stringify(
       {
         schemaVersion: 1,
-        generatedFor: 'v0.7.0',
-        note: 'writableIn=v0.8+ is reserved; v0.7 merge path still forbids all event keys',
+        generatedFor: 'v0.8.0',
+        note: 'writableIn=v0.8 pure-frontend; interface keys never; merge only via /event apply',
         shapes,
       },
       null,
@@ -249,11 +249,12 @@ export function checkEventShapeParity(root: string): string[] {
     if (expectNever && shape.writableIn !== 'never') {
       issues.push(`${shape.key} must be writableIn=never`)
     }
-    if (!expectNever && shape.owner.kind === 'widget' && shape.writableIn !== 'v0.8+') {
-      issues.push(`${shape.key} pure-frontend must be writableIn=v0.8+`)
+    const writableOk = shape.writableIn === 'v0.8' || shape.writableIn === 'v0.8+'
+    if (!expectNever && shape.owner.kind === 'widget' && !writableOk) {
+      issues.push(`${shape.key} pure-frontend must be writableIn=v0.8`)
     }
-    if (!expectNever && shape.owner.kind === 'form' && shape.writableIn !== 'v0.8+') {
-      issues.push(`form ${shape.key} must be writableIn=v0.8+`)
+    if (!expectNever && shape.owner.kind === 'form' && !writableOk) {
+      issues.push(`form ${shape.key} must be writableIn=v0.8`)
     }
     const expectedParams = PARAMS_BY_KEY[shape.key]
     if (expectedParams && JSON.stringify(shape.params) !== JSON.stringify(expectedParams)) {
@@ -265,7 +266,9 @@ export function checkEventShapeParity(root: string): string[] {
   }
   for (const key of ['onCreated', 'onMounted', 'onSubFormRowAdd']) {
     const s = loaded.find((x) => x.key === key)
-    if (!s || s.writableIn !== 'v0.8+') issues.push(`${key} must be registered writableIn=v0.8+`)
+    if (!s || (s.writableIn !== 'v0.8' && s.writableIn !== 'v0.8+')) {
+      issues.push(`${key} must be registered writableIn=v0.8`)
+    }
   }
   for (const key of EVENT_KEYS_NEVER) {
     const s = loaded.find((x) => x.key === key)
