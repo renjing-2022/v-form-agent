@@ -61,8 +61,8 @@
 - [x] `refine-v06-regression`
 - [x] `catalog-full-strict-sweep`
 - [x] `frontend-no-secret`
-- [x] `.deliveryguard/acceptance/v0.8.0/evidence.json`（已生成并校验；source commit 登记前结论保持 pending）
-- [x] `docs/acceptance/v0.8.0.md`（已生成；记录 source revision 阻塞）
+- [x] `.deliveryguard/acceptance/v0.8.0/evidence.json`（26 用例，证据锚定 `cd81e52`，validate ok）
+- [x] `docs/acceptance/v0.8.0.md`（26/26 pass；source 为 local，acceptance 待 submitted 后记 passed；已知限制与收窄范围已记录）
 
 ## 交付物 5：验证真实性修复
 

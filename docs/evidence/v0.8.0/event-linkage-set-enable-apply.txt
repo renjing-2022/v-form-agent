@@ -1,0 +1,8 @@
+case: event-linkage-set-enable-apply
+status: pass
+observed: before={"总分.disabled":false} after typing 语文=5 → {"总分.disabled":true}; input disabled in DOM
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: feat/v0.8.0-event-js-execution@cd81e52d26dd
+capturedAt: 2026-09-23T04:59:33.665Z
+durationMs: 5206
+screenshot: docs/evidence/v0.8.0/event-linkage-set-enable-apply.png

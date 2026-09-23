@@ -1,0 +1,7 @@
+case: event-guard-forbid-network
+status: pass
+observed: fetch rejected by guard
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: feat/v0.8.0-event-js-execution@cd81e52d26dd24cb18623a3ee21e24e94ac6f8d9
+capturedAt: 2026-09-23T04:58:59.758Z
+type: agent

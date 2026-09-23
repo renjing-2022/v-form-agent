@@ -1,0 +1,10 @@
+case: event-ui-apply-gate
+status: pass
+observed: designer yw.onChange after UI apply:
+var form = this.getFormRef();
+form.setFieldValue('zf', Number(form.getFieldValue('yw') || 0) + Number(form.getFieldValue('sx') || 0));
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: feat/v0.8.0-event-js-execution@cd81e52d26dd
+capturedAt: 2026-09-23T05:00:01.471Z
+durationMs: 4428
+screenshot: docs/evidence/v0.8.0/event-ui-apply-gate.png
