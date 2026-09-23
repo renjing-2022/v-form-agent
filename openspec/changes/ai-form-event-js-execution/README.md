@@ -4,9 +4,11 @@
 |---|---|
 | Change ID | `ai-form-event-js-execution` |
 | Target version | `v0.8.0` |
-| Status | `proposed`；source 空；acceptance/release `pending` |
+| Status | `ready`（实现进行中）；source 空；acceptance/release `pending` |
 
-v0.8 挂载点。**尚未实现。** 依赖 v0.7 EventSpec 契约。
+v0.8 挂载点。Agent generate/guard/apply 与前端预览闸已落地；验证真实性修复见 `tasks.md` 交付物 5，验收见 `docs/acceptance/v0.8.0.md`。依赖 v0.7 EventSpec 契约。
+
+交付范围限于事件 JS 安全写入、真实执行闸与少量模板交互；任意自然语言页面交互不在本版本范围，由 v0.9 承担。
 
 ## One-line scope
 

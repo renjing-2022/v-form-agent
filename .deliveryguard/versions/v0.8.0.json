@@ -23,11 +23,13 @@
   "openSpec": {
     "changeId": "ai-form-event-js-execution",
     "path": "openspec/changes/ai-form-event-js-execution",
-    "status": "proposed"
+    "status": "ready"
   },
   "sources": [],
   "acceptance": {
-    "status": "pending"
+    "status": "pending",
+    "evidence": ".deliveryguard/acceptance/v0.8.0/evidence.json",
+    "report": "docs/acceptance/v0.8.0.md"
   },
   "deployments": [],
   "release": {

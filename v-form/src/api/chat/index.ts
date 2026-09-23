@@ -24,12 +24,50 @@ export type AgentGenerateResponse = {
     formConfig: Record<string, any>;
   };
   message?: string;
+  applied?: boolean;
 };
+
+export type AgentEventResponse = {
+  status: 'need_clarification' | 'spec_ready' | 'code_preview' | 'applied' | 'draft';
+  summary: string;
+  warnings: string[];
+  questions?: string[];
+  eventSpec?: Record<string, unknown>;
+  code?: string;
+  patches?: unknown[];
+  formJsonCandidate?: AgentGenerateResponse['formJson'];
+  formJson: AgentGenerateResponse['formJson'];
+  applied: boolean;
+  executionReport?: {
+    runner: 'designer-preview' | 'playwright';
+    results: Array<{ exampleIndex: number; ok: boolean; actual?: Record<string, unknown>; error?: string }>;
+    pass: boolean;
+  };
+  message?: string;
+};
+
+async function postEvent(body: Record<string, unknown>): Promise<AgentEventResponse> {
+  const base = import.meta.env.VITE_APP_AGENT_API || '/api/agent';
+  const res = await fetch(`${base}/v1/event`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    const issueHint = Array.isArray(data?.issues)
+      ? `：${data.issues
+          .slice(0, 3)
+          .map((i: any) => i.message)
+          .join('；')}`
+      : '';
+    throw new Error((data?.message || data?.summary || `交互请求失败 (${res.status})`) + issueHint);
+  }
+  return data;
+}
 
 /**
  * 本地 Agent 整表生成（主路径）
- * - text: JSON body
- * - excel: multipart file + optional prompt
  */
 export async function generateFormByAgent(payload: {
   mode: 'text' | 'excel';
@@ -104,44 +142,25 @@ export async function refineFormByAgent(payload: {
   return data;
 }
 
-export type AgentEventResponse = {
-  status: 'need_clarification' | 'spec_ready';
-  summary: string;
-  warnings: string[];
-  questions?: string[];
-  eventSpec?: Record<string, unknown>;
-  formJson: AgentGenerateResponse['formJson'];
-  applied: false;
-  message?: string;
-};
-
-/**
- * v0.7：交互意图澄清（不写事件 JS）
- */
+/** v0.7+：交互澄清（默认 action=clarify） */
 export async function eventFormByAgent(payload: {
   instruction: string;
   currentFormJson: AgentGenerateResponse['formJson'];
   messages?: Array<{ role: 'user' | 'assistant'; content: string }>;
+  action?: 'clarify' | 'generate' | 'apply';
+  eventSpec?: Record<string, unknown>;
+  patches?: unknown[];
+  executionReport?: AgentEventResponse['executionReport'];
+  confirmOverwrite?: boolean;
 }): Promise<AgentEventResponse> {
-  const base = import.meta.env.VITE_APP_AGENT_API || '/api/agent';
-  const res = await fetch(`${base}/v1/event`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      instruction: payload.instruction,
-      currentFormJson: payload.currentFormJson,
-      messages: payload.messages || [],
-    }),
+  return postEvent({
+    instruction: payload.instruction,
+    currentFormJson: payload.currentFormJson,
+    messages: payload.messages || [],
+    action: payload.action || 'clarify',
+    eventSpec: payload.eventSpec,
+    patches: payload.patches,
+    executionReport: payload.executionReport,
+    confirmOverwrite: payload.confirmOverwrite,
   });
-  const data = await res.json();
-  if (!res.ok) {
-    const issueHint = Array.isArray(data?.issues)
-      ? `：${data.issues
-          .slice(0, 3)
-          .map((i: any) => i.message)
-          .join('；')}`
-      : '';
-    throw new Error((data?.message || data?.summary || `交互澄清失败 (${res.status})`) + issueHint);
-  }
-  return data;
 }

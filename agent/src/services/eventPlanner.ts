@@ -217,7 +217,12 @@ export function planEventClarify(params: {
 
   // ---- linkage / compute onChange ----
   const link =
-    combined.match(/改[「"']?([^」"'\s,，]+)[」"']?时[\s\S]*?(?:把|将)[「"']?([^」"'\s,，设成]+)[」"']?/) ||
+    combined.match(
+      /改[「"']?([^」"'\s,，]+)[」"']?时[\s\S]*?(?:把|将)[「"']?([^」"'\s,，设成]+)[」"']?/,
+    ) ||
+    combined.match(
+      /改[「"']?([^」"'\s,，]+)[」"']?时\s*(?:把|将)?\s*(?:隐藏|显示|禁用|启用)[「"']?([^」"'\s,，]+)[」"']?/,
+    ) ||
     combined.match(/当[「"']?([^」"'\s,，]+)[」"']?变化[\s\S]*?[「"']?([^」"'\s,，设成]+)[」"']?/)
   if (link || /联动|onChange|计分|加权|显示|隐藏|禁用/.test(combined)) {
     const sourceHint = link?.[1]
@@ -236,7 +241,7 @@ export function planEventClarify(params: {
       return clarify(formJson, '交互意图需继续澄清后才能形成 EventSpec。', questions)
     }
     const given: Record<string, unknown> = {}
-    const eg = combined.match(/例如[：:]?\s*([^\n；;]+)/)
+    const eg = combined.match(/例如[：:]?\s*(.+?)(?=\s*期望[：:]|$)/)
     if (eg) {
       for (const part of eg[1].split(/[,，]/)) {
         const kv = part.split(/=|＝|:/)

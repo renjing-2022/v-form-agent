@@ -1,0 +1,304 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.8.0",
+  "documents": [
+    {
+      "documentId": "ai-form-event-js-execution-prd",
+      "requirementIds": [
+        "fr-1-constrained-generation",
+        "fr-2-static-guard",
+        "fr-3-real-render-apply-gate",
+        "fr-4-merge-overwrite",
+        "fr-5-catalog-write-policy",
+        "fr-6-frontend-flow"
+      ]
+    },
+    {
+      "documentId": "ai-form-event-js-execution-design",
+      "requirementIds": [
+        "td-event-state-machine",
+        "td-event-js-guard",
+        "td-preview-execution",
+        "td-merge-catalog-routing",
+        "td-regression-contracts"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-constrained-generation",
+      "description": "同一 /event 端点从 EventSpec 生成受约束纯前端事件 JS，公式可表达时仍优先 /refine formula",
+      "caseIds": [
+        "event-generate-onchange-preview",
+        "event-formula-still-preferred",
+        "event-codegen-dispatch-by-event-key"
+      ]
+    },
+    {
+      "id": "fr-2-static-guard",
+      "description": "AST 与符号白名单拒绝网络、动态执行、DOM、定时器及未知字段引用",
+      "caseIds": [
+        "event-guard-forbid-network",
+        "event-guard-forbid-eval-dom-timer",
+        "event-guard-unknown-field-ref"
+      ]
+    },
+    {
+      "id": "fr-3-real-render-apply-gate",
+      "description": "无全绿 executionReport 不得 applied；服务端以 actual 对照 expect 重判；真实 VForm 覆盖联动、点击、生命周期、子表行及表单校验",
+      "caseIds": [
+        "event-apply-without-report-rejected",
+        "event-apply-failed-report-draft",
+        "event-apply-forged-ok-rejected",
+        "event-compute-onchange-apply",
+        "event-linkage-set-enable-apply",
+        "event-show-hide-condition-apply",
+        "event-button-onclick-open-dialog",
+        "event-created-mounted-apply",
+        "event-subform-row-apply",
+        "event-form-validate-submit-guard"
+      ]
+    },
+    {
+      "id": "fr-4-merge-overwrite",
+      "description": "仅 applied 合入允许键；已有手写代码须显式确认；/refine 继续禁写事件",
+      "caseIds": [
+        "event-compute-onchange-apply",
+        "event-existing-handwritten-overwrite-or-reject",
+        "event-refine-still-forbids-events"
+      ]
+    },
+    {
+      "id": "fr-5-catalog-write-policy",
+      "description": "纯前端事件及 functions 在 event apply 路径可写，接口与危险类仍拒绝，shape 覆盖完整",
+      "caseIds": [
+        "event-allowlist-covers-pure-frontend",
+        "event-dialog-allowed-vs-danger",
+        "catalog-full-strict-sweep"
+      ]
+    },
+    {
+      "id": "fr-6-frontend-flow",
+      "description": "前端提供生成、预览验证及确认写入闸，验证前或验证失败时不得写入画布",
+      "caseIds": [
+        "event-ui-apply-gate",
+        "event-ui-verify-rejects-mismatch",
+        "event-compute-onchange-apply"
+      ]
+    },
+    {
+      "id": "td-event-state-machine",
+      "description": "/event 支持 clarify、generate/code_preview、apply/applied/draft 状态机并校验报告明细",
+      "caseIds": [
+        "event-generate-onchange-preview",
+        "event-apply-without-report-rejected",
+        "event-apply-failed-report-draft",
+        "event-apply-forged-ok-rejected",
+        "event-compute-onchange-apply"
+      ]
+    },
+    {
+      "id": "td-event-js-guard",
+      "description": "eventJsGuard 在生成及合入前执行 AST、API、字段引用和危险构造校验",
+      "caseIds": [
+        "event-guard-forbid-network",
+        "event-guard-forbid-eval-dom-timer",
+        "event-guard-unknown-field-ref"
+      ]
+    },
+    {
+      "id": "td-preview-execution",
+      "description": "候选 JSON 在真实 VFormRender preview/render 中触发并生成 executionReport",
+      "caseIds": [
+        "event-compute-onchange-apply",
+        "event-linkage-set-enable-apply",
+        "event-show-hide-condition-apply",
+        "event-button-onclick-open-dialog",
+        "event-created-mounted-apply",
+        "event-subform-row-apply",
+        "event-form-validate-submit-guard",
+        "event-ui-apply-gate",
+        "event-ui-verify-rejects-mismatch"
+      ]
+    },
+    {
+      "id": "td-merge-catalog-routing",
+      "description": "事件补丁隔离合入，Catalog 按 event/refine 路由分流并保护已有手写代码",
+      "caseIds": [
+        "event-existing-handwritten-overwrite-or-reject",
+        "event-dialog-allowed-vs-danger",
+        "event-refine-still-forbids-events",
+        "event-allowlist-covers-pure-frontend"
+      ]
+    },
+    {
+      "id": "td-regression-contracts",
+      "description": "v0.7 澄清、v0.6 重型容器、严格目录扫描及前端无密钥保持回归通过",
+      "caseIds": [
+        "event-v07-clarify-regression",
+        "refine-v06-regression",
+        "catalog-full-strict-sweep",
+        "frontend-no-secret"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "event-allowlist-covers-pure-frontend",
+      "title": "纯前端事件 allowlist 与 shape writableIn 覆盖完整",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-allowlist-covers-pure-frontend.txt"]
+    },
+    {
+      "id": "event-generate-onchange-preview",
+      "title": "generate 产出 code_preview 且不写原画布",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-generate-onchange-preview.txt"]
+    },
+    {
+      "id": "event-guard-forbid-network",
+      "title": "护栏拒绝网络构造",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-guard-forbid-network.txt"]
+    },
+    {
+      "id": "event-guard-forbid-eval-dom-timer",
+      "title": "护栏拒绝 eval、DOM 与定时器",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-guard-forbid-eval-dom-timer.txt"]
+    },
+    {
+      "id": "event-guard-unknown-field-ref",
+      "title": "护栏拒绝未知字段引用",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-guard-unknown-field-ref.txt"]
+    },
+    {
+      "id": "event-formula-still-preferred",
+      "title": "纯 number 公式仍优先走 refine formula",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-formula-still-preferred.txt"]
+    },
+    {
+      "id": "event-apply-without-report-rejected",
+      "title": "无 executionReport 的 apply 被拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-apply-without-report-rejected.txt"]
+    },
+    {
+      "id": "event-apply-failed-report-draft",
+      "title": "失败报告保持 draft 且不合入",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-apply-failed-report-draft.txt"]
+    },
+    {
+      "id": "event-apply-forged-ok-rejected",
+      "title": "ok=true 但 actual 不符或缺失的伪造报告被服务端重判为 draft",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-apply-forged-ok-rejected.txt"]
+    },
+    {
+      "id": "event-codegen-dispatch-by-event-key",
+      "title": "按事件类型生成：onClick/onFormMounted 写入字面量，onFormValidate 编译规则，规则含糊返回 422",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-codegen-dispatch-by-event-key.txt"]
+    },
+    {
+      "id": "event-existing-handwritten-overwrite-or-reject",
+      "title": "已有手写事件覆盖确认或拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-existing-handwritten-overwrite-or-reject.txt"]
+    },
+    {
+      "id": "event-dialog-allowed-vs-danger",
+      "title": "dialog 纯前端事件允许而危险类拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-dialog-allowed-vs-danger.txt"]
+    },
+    {
+      "id": "event-refine-still-forbids-events",
+      "title": "/refine 仍禁止事件与 functions",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-refine-still-forbids-events.txt"]
+    },
+    {
+      "id": "event-v07-clarify-regression",
+      "title": "v0.7 EventSpec 澄清回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-v07-clarify-regression.txt"]
+    },
+    {
+      "id": "refine-v06-regression",
+      "title": "v0.6 重型容器回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/refine-v06-regression.txt"]
+    },
+    {
+      "id": "catalog-full-strict-sweep",
+      "title": "Truth Strict 全量扫描",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/catalog-full-strict-sweep.txt"]
+    },
+    {
+      "id": "frontend-no-secret",
+      "title": "前端无 DeepSeek 密钥",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/frontend-no-secret.txt"]
+    },
+    {
+      "id": "event-compute-onchange-apply",
+      "title": "E2E：真实键盘输入触发 onChange，读到总分=6，按观测组装报告后 applied",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-compute-onchange-apply.txt"]
+    },
+    {
+      "id": "event-linkage-set-enable-apply",
+      "title": "E2E：真实输入后总分由可用变为 disabled（DOM input 禁用）后 applied",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-linkage-set-enable-apply.txt"]
+    },
+    {
+      "id": "event-show-hide-condition-apply",
+      "title": "E2E：真实输入后总分 hidden 且从 DOM 移除后 applied",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-show-hide-condition-apply.txt"]
+    },
+    {
+      "id": "event-button-onclick-open-dialog",
+      "title": "E2E：真实点击按钮后总分变为 1 后 applied",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-button-onclick-open-dialog.txt"]
+    },
+    {
+      "id": "event-created-mounted-apply",
+      "title": "E2E：预览装载触发 onFormMounted，读到总分=9 后 applied",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-created-mounted-apply.txt"]
+    },
+    {
+      "id": "event-subform-row-apply",
+      "title": "E2E：真实点击子表增行，行数+1 且总分=1 后 applied",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-subform-row-apply.txt"]
+    },
+    {
+      "id": "event-form-validate-submit-guard",
+      "title": "E2E：真实 validateForm 对总分=-1 拦截、总分=5 放行后 applied",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-form-validate-submit-guard.txt"]
+    },
+    {
+      "id": "event-ui-apply-gate",
+      "title": "E2E：AiChat 全链路澄清→生成→预览真实验证→确认写入画布，设计器 onChange 已写入",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-ui-apply-gate.txt"]
+    },
+    {
+      "id": "event-ui-verify-rejects-mismatch",
+      "title": "E2E：期望与真实执行不符时预览验证失败、写入画布保持禁用",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.8.0/event-ui-verify-rejects-mismatch.txt"]
+    }
+  ]
+}

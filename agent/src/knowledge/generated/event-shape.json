@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedFor": "v0.7.0",
-  "note": "writableIn=v0.8+ is reserved; v0.7 merge path still forbids all event keys",
+  "generatedFor": "v0.8.0",
+  "note": "writableIn=v0.8 pure-frontend; interface keys never; merge only via /event apply",
   "shapes": [
     {
       "owner": {
@@ -33,7 +33,7 @@
         "form",
         "init"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -71,7 +71,7 @@
         "linkage",
         "form"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -103,7 +103,7 @@
         "form",
         "init"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -136,7 +136,7 @@
         "validate",
         "submit"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -166,7 +166,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -231,7 +231,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -263,7 +263,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -294,7 +294,7 @@
         "dialog",
         "action"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -329,7 +329,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -364,7 +364,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -398,7 +398,7 @@
         "linkage",
         "compute"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -432,7 +432,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -463,7 +463,7 @@
         "action",
         "button"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -494,7 +494,7 @@
         "lifecycle",
         "init"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -527,7 +527,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -559,7 +559,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -589,7 +589,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -623,7 +623,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -653,7 +653,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -683,7 +683,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -748,7 +748,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -782,7 +782,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -815,7 +815,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -850,7 +850,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -883,7 +883,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -917,7 +917,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -949,7 +949,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -980,7 +980,7 @@
         "lifecycle",
         "init"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1013,7 +1013,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1047,7 +1047,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1082,7 +1082,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1113,7 +1113,7 @@
         "dialog",
         "action"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1147,7 +1147,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1180,7 +1180,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1247,7 +1247,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1281,7 +1281,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1314,7 +1314,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1350,7 +1350,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1384,7 +1384,7 @@
         "sub-form",
         "row"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1417,7 +1417,7 @@
         "sub-form",
         "row"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1452,7 +1452,7 @@
         "sub-form",
         "row"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1486,7 +1486,7 @@
         "sub-form",
         "row"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1518,7 +1518,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     },
     {
       "owner": {
@@ -1622,7 +1622,7 @@
       "intentTags": [
         "general"
       ],
-      "writableIn": "v0.8+"
+      "writableIn": "v0.8"
     }
   ]
 }
