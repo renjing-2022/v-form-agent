@@ -4,8 +4,8 @@
 |---|---|
 | Change ID | `ai-form-nl-interaction-compiler` |
 | Target version | `v0.9.0` |
-| Status | `applied`（实现与本地验收证据已齐；release 仍 pending） |
-| 实现位置 | worktree · 分支 `feat/v0.9.0-nl-interaction-js` |
+| Status | `applied`（acceptance passed；release published @ tag `v0.9.0`） |
+| 实现位置 | `main` · source `f9e5244` · production `5e632fb` · tag `v0.9.0` |
 
 ## One-line scope
 
@@ -15,6 +15,7 @@
 
 - `docs/requirements/ai-form-nl-interaction-compiler.md`（primary，revision 3）
 - `docs/design/ai-form-nl-interaction-compiler.md`（revision 3）
+- `docs/releases/v0.9.0.md`
 - `proposal.md` / `tasks.md` / `scenarios.md`
 
 ## 任务来源
@@ -25,8 +26,8 @@
 
 | 交付物 | 状态 |
 |---|---|
-| 0–5 | 完成 |
-| 6 题库真实预览 e2e / 冒烟 / acceptance 清单 | 完成（版本 acceptance 记 passed 需在 source 登记后） |
+| 0–6 | 完成 |
+| DeliveryGuard | `verified` → `released`（production tag `v0.9.0`） |
 
 ## 实现注意
 
