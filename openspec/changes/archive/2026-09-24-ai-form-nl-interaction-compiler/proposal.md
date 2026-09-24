@@ -6,7 +6,7 @@
 | Target version | `v0.9.0` |
 | Primary document | `docs/requirements/ai-form-nl-interaction-compiler.md`（revision 4） |
 | Supporting design | `docs/design/ai-form-nl-interaction-compiler.md`（revision 3） |
-| Acceptance bank | `openspec/changes/ai-form-nl-interaction-compiler/scenarios.md`（用户已审阅） |
+| Acceptance bank | `openspec/changes/archive/2026-09-24-ai-form-nl-interaction-compiler/scenarios.md`（用户已审阅） |
 | Affected repository | `app`（`.`） |
 | Predecessor | `v0.8.0` released — `ai-form-event-js-execution` |
 | Worktree / branch | `../v-form-agent-v0.9.0` · `feat/v0.9.0-nl-interaction-js` |
@@ -98,4 +98,4 @@ AiChat 去关键词分流；`/interaction` generate → 验证 → 修正 → �
 
 ## Lifecycle note
 
-OpenSpec status 为 `applied`。DeliveryGuard `v0.9.0` 已 published：source merged（`f9e5244`，`main`）、acceptance passed、release published（`2026-09-24T02:24:32Z`，锚点 `https://github.com/renjing-2022/v-form-agent/tree/v0.9.0`）。本文件只同步已存在事实，不回写未发生的 source / acceptance / release。
+OpenSpec status 为 `archived`。DeliveryGuard `v0.9.0` 已 published：source merged（`f9e5244`，`main`）、acceptance passed、release published（`2026-09-24T02:24:32Z`，锚点 `https://github.com/renjing-2022/v-form-agent/tree/v0.9.0`）。本文件只同步已存在事实，不回写未发生的 source / acceptance / release。

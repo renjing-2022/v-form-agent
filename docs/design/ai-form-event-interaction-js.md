@@ -142,7 +142,7 @@ HTTP：不完备澄清用 **200 + `status: need_clarification`**（会话继续�
 
 ## 9. 后续版预告（非本版任务）
 
-`v0.8.0` 已登记（`openspec/changes/ai-form-event-js-execution`）：消费本版 EventSpec → 生成受约束 JS → `eventJsGuard` → 设计器真实预览按 `examples` 断言 → 通过才合入 **全部纯前端事件键**（含生命周期与子表行）及纯前端 `functions`。接口类仍禁写。
+`v0.8.0` 已登记（`openspec/changes/archive/2026-09-24-ai-form-event-js-execution`）：消费本版 EventSpec → 生成受约束 JS → `eventJsGuard` → 设计器真实预览按 `examples` 断言 → 通过才合入 **全部纯前端事件键**（含生命周期与子表行）及纯前端 `functions`。接口类仍禁写。
 
 ## 10. Out of scope reminder
 

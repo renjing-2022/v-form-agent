@@ -6,7 +6,7 @@
 | 类型 | product-requirement |
 | 目标版本 | `v0.3.0` |
 | 修订 | 2（2026-09-24：对齐 DeliveryGuard 已发布事实） |
-| 状态 | released（DeliveryGuard `release.published`；acceptance passed；OpenSpec `applied`） |
+| 状态 | released（DeliveryGuard `release.published`；acceptance passed；OpenSpec `archived`） |
 | 关联 OpenSpec | `ai-form-widget-catalog-refine` |
 
 ## 1. 背景与问题

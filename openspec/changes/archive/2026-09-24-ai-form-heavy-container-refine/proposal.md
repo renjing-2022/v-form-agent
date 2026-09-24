@@ -180,4 +180,4 @@
 
 ## Lifecycle note
 
-OpenSpec status 为 `applied`。DeliveryGuard `v0.6.0` 已 published：source merged（`8cb90a57`，`main`）、acceptance passed、release published（`2026-09-21T08:05:00Z`，锚点 `https://github.com/renjing-2022/v-form-agent/releases/tag/v0.6.0`）。本段只同步已存在事实。
+OpenSpec status 为 `archived`。DeliveryGuard `v0.6.0` 已 published：source merged（`8cb90a57`，`main`）、acceptance passed、release published（`2026-09-21T08:05:00Z`，锚点 `https://github.com/renjing-2022/v-form-agent/releases/tag/v0.6.0`）。本段只同步已存在事实。

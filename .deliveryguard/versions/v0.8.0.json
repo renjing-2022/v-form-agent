@@ -22,8 +22,8 @@
   ],
   "openSpec": {
     "changeId": "ai-form-event-js-execution",
-    "path": "openspec/changes/ai-form-event-js-execution",
-    "status": "applied"
+    "path": "openspec/changes/archive/2026-09-24-ai-form-event-js-execution",
+    "status": "archived"
   },
   "sources": [
     {

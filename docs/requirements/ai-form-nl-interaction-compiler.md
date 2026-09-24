@@ -6,10 +6,10 @@
 | 类型 | product-requirement |
 | 目标版本 | `v0.9.0` |
 | 修订 | 4（2026-09-24：对齐 DeliveryGuard 已发布事实，不再写 proposed） |
-| 状态 | released（DeliveryGuard `release.published`；acceptance passed；OpenSpec `applied`） |
+| 状态 | released（DeliveryGuard `release.published`；acceptance passed；OpenSpec `archived`） |
 | 关联 OpenSpec | `ai-form-nl-interaction-compiler`（ID 沿用修订 1） |
 | 前置版本 | `v0.8.0` released — `/event` 状态机、真实预览执行闸、服务端重判、覆盖保护 |
-| 验收题库 | `openspec/changes/ai-form-nl-interaction-compiler/scenarios.md` |
+| 验收题库 | `openspec/changes/archive/2026-09-24-ai-form-nl-interaction-compiler/scenarios.md` |
 
 ## 1. 背景与问题
 

@@ -4,19 +4,19 @@
 
 ## 当前版本
 
-- DeliveryGuard 版本：`v0.4.0`（阶段：`released`；OpenSpec `applied`；acceptance=`passed`）
-- 发布锚点：https://github.com/renjing-2022/v-form-agent/releases/tag/v0.4.0
-- OpenSpec change：`ai-form-design-truth-catalog`
-- 已发布：`v0.1.0`（整表生成 MVP）、`v0.2.0`（多轮优化）、`v0.3.0`（组件知识库 / 厚 P1）
-- 验收报告：`docs/acceptance/v0.4.0.md`
-- Evidence Manifest：`.deliveryguard/acceptance/v0.4.0/evidence.json`
+- DeliveryGuard 最新已发布版本：`v0.9.0`（阶段：`released`；OpenSpec `archived`；acceptance=`passed`）
+- 发布锚点：https://github.com/renjing-2022/v-form-agent/tree/v0.9.0
+- 已归档 OpenSpec：`openspec/changes/archive/`（v0.1.0–v0.9.0）
+- 进行中提案：`v0.10.0`–`v0.13.0`（`openspec/changes/ai-form-*`）
+- 验收报告：`docs/acceptance/v0.9.0.md`
+- Evidence Manifest：`.deliveryguard/acceptance/v0.9.0/evidence.json`
 
 ## 项目结构
 
 - `v-form/`：Vue3 + Vite 低代码表单设计器 / 渲染器
 - `agent/`：本地智能体服务（Fastify + DeepSeek，开发期同机 `3040`）
 - `docs/`：PRD 与技术设计
-- `openspec/changes/ai-form-multiturn-refine/`：当前提案与任务
+- `openspec/changes/`：进行中提案；已发布变更在 `openspec/changes/archive/`
 - `.deliveryguard/`：版本与证据目录
 
 ## 快速启动（开发同机）

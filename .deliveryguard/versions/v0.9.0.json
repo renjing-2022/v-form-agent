@@ -22,8 +22,8 @@
   ],
   "openSpec": {
     "changeId": "ai-form-nl-interaction-compiler",
-    "path": "openspec/changes/ai-form-nl-interaction-compiler",
-    "status": "applied"
+    "path": "openspec/changes/archive/2026-09-24-ai-form-nl-interaction-compiler",
+    "status": "archived"
   },
   "sources": [
     {

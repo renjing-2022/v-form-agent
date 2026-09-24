@@ -140,4 +140,4 @@ v0.7：**知识 + 澄清**。产出 EventSpec（含可判定示例契约），�
 
 ## Lifecycle note
 
-OpenSpec status 为 `applied`。DeliveryGuard `v0.7.0` 已 published：source merged（`ac28445e`，`main`）、acceptance passed、release published（`2026-09-22T09:03:58Z`，锚点 `https://github.com/renjing-2022/v-form-agent/releases/tag/v0.7.0`）。本段只同步已存在事实。后续写 JS 已由 `v0.8.0` / `v0.9.0` 承接。
+OpenSpec status 为 `archived`。DeliveryGuard `v0.7.0` 已 published：source merged（`ac28445e`，`main`）、acceptance passed、release published（`2026-09-22T09:03:58Z`，锚点 `https://github.com/renjing-2022/v-form-agent/releases/tag/v0.7.0`）。本段只同步已存在事实。后续写 JS 已由 `v0.8.0` / `v0.9.0` 承接。

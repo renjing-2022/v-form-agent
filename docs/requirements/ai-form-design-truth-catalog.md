@@ -6,7 +6,7 @@
 | 类型 | product-requirement |
 | 目标版本 | `v0.4.0` |
 | 修订 | 2（2026-09-24：对齐 DeliveryGuard 已发布事实） |
-| 状态 | released（DeliveryGuard `release.published`；acceptance passed；OpenSpec `applied`） |
+| 状态 | released（DeliveryGuard `release.published`；acceptance passed；OpenSpec `archived`） |
 | 关联 OpenSpec | `ai-form-design-truth-catalog` |
 
 ## 1. 背景与问题
@@ -119,7 +119,7 @@
 
 ## 10. 实现里程碑与完成定义（OpenSpec）
 
-权威任务清单：`openspec/changes/ai-form-design-truth-catalog/tasks.md`。
+权威任务清单：`openspec/changes/archive/2026-09-24-ai-form-design-truth-catalog/tasks.md`。
 
 | 阶段 | 范围 |
 |---|---|

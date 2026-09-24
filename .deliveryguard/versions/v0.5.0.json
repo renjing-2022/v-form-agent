@@ -22,8 +22,8 @@
   ],
   "openSpec": {
     "changeId": "ai-form-truth-strict-refine-structure",
-    "path": "openspec/changes/ai-form-truth-strict-refine-structure",
-    "status": "applied"
+    "path": "openspec/changes/archive/2026-09-24-ai-form-truth-strict-refine-structure",
+    "status": "archived"
   },
   "sources": [
     {

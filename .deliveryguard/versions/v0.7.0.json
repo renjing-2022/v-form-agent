@@ -22,8 +22,8 @@
   ],
   "openSpec": {
     "changeId": "ai-form-event-interaction-js",
-    "path": "openspec/changes/ai-form-event-interaction-js",
-    "status": "applied"
+    "path": "openspec/changes/archive/2026-09-24-ai-form-event-interaction-js",
+    "status": "archived"
   },
   "sources": [
     {

@@ -118,4 +118,4 @@ EventSpec → 生成 → AST 护栏 → `code_preview` → 真实 VForm 跑 exam
 
 ## Lifecycle note
 
-OpenSpec status 为 `applied`。DeliveryGuard `v0.8.0` 已 published：source merged（`cd81e52d`，`main`）、acceptance passed、release published（`2026-09-23T06:16:16Z`，锚点 `https://github.com/renjing-2022/v-form-agent/tree/v0.8.0`）。本段只同步已存在事实。
+OpenSpec status 为 `archived`。DeliveryGuard `v0.8.0` 已 published：source merged（`cd81e52d`，`main`）、acceptance passed、release published（`2026-09-23T06:16:16Z`，锚点 `https://github.com/renjing-2022/v-form-agent/tree/v0.8.0`）。本段只同步已存在事实。
