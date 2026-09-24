@@ -1,0 +1,43 @@
+{
+  "match": {
+    "scenarioId": "nl-subform-row-calc",
+    "instructionIncludes": [
+      "小计等于单价乘数量"
+    ]
+  },
+  "output": {
+    "intent": "interaction",
+    "summary": "子表小计与合计",
+    "structure": [],
+    "handlers": [
+      {
+        "id": "h-row",
+        "target": "itemQty",
+        "eventKey": "onChange",
+        "code": "const f=this.getFormRef();const price=Number(f.getFieldValue('itemPrice')||0);const qty=Number(value||0);f.setFieldValue('itemSubtotal',price*qty,true);",
+        "explain": ""
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": [
+          "h-row"
+        ],
+        "title": "占位场景",
+        "arrange": {},
+        "act": [
+          {
+            "mount": true
+          }
+        ],
+        "assert": [
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

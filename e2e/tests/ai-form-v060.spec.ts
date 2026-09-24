@@ -137,7 +137,13 @@ async function refineCurrent(page: Page, instruction: string) {
       response.request().method() === 'POST',
   )
   await page.locator('.ai-agent-panel textarea').fill(instruction)
-  await page.getByRole('button', { name: '优化当前表', exact: true }).click()
+  const panel = page.locator('.ai-agent-panel')
+  const send = panel.getByRole('button', { name: '发送', exact: true })
+  if (await send.isVisible().catch(() => false)) {
+    await send.click()
+  } else {
+    await panel.getByRole('button', { name: '优化当前表', exact: true }).click()
+  }
   return responsePromise
 }
 

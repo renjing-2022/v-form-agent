@@ -1,0 +1,21 @@
+{
+  "match": {
+    "scenarioId": "nl-neg-upload",
+    "instructionIncludes": [
+      "上传附件"
+    ]
+  },
+  "output": {
+    "intent": "unsupported",
+    "summary": "上传不支持",
+    "structure": [],
+    "handlers": [],
+    "scenarios": [],
+    "unsupported": [
+      {
+        "text": "上传附件",
+        "reason": "上传属于非目标"
+      }
+    ]
+  }
+}

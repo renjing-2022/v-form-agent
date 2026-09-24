@@ -1,0 +1,57 @@
+{
+  "match": {
+    "scenarioId": "nl-fill-default",
+    "instructionIncludes": [
+      "「填入示例」按钮"
+    ]
+  },
+  "output": {
+    "intent": "mixed",
+    "summary": "填入示例",
+    "structure": [
+      {
+        "op": "addButton",
+        "label": "填入示例",
+        "name": "btnFill"
+      }
+    ],
+    "handlers": [
+      {
+        "id": "h-fill",
+        "target": "btnFill",
+        "eventKey": "onClick",
+        "code": "const f=this.getFormRef();f.setFieldValue('qty',1);f.setFieldValue('price',100);",
+        "explain": ""
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": [
+          "h-fill"
+        ],
+        "title": "填值",
+        "arrange": {},
+        "act": [
+          {
+            "click": "btnFill"
+          }
+        ],
+        "assert": [
+          {
+            "field": "qty",
+            "value": 1
+          },
+          {
+            "field": "price",
+            "value": 100
+          },
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

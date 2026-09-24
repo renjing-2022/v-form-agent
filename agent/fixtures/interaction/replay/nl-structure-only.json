@@ -1,0 +1,14 @@
+{
+  "match": {
+    "scenarioId": "nl-structure-only",
+    "instructionIncludes": ["备注改成多行文本"]
+  },
+  "output": {
+    "intent": "structure_only",
+    "summary": "纯结构修改，应交 refine",
+    "structure": [],
+    "handlers": [],
+    "scenarios": [],
+    "unsupported": []
+  }
+}

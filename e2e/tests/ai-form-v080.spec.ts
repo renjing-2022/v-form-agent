@@ -522,9 +522,18 @@ async function designerOnChange(page: Page, widgetId: string) {
   }, widgetId)
 }
 
-test(
+test.skip(
   'UI 全链路：澄清 → 生成 → 预览真实验证 → 确认写入画布',
-  { annotation: { type: 'case-id', description: 'event-ui-apply-gate' } },
+  {
+    annotation: [
+      { type: 'case-id', description: 'event-ui-apply-gate' },
+      {
+        type: 'skip-reason',
+        description:
+          'v0.9 Breaking：AiChat 统一走 /interaction，不再提供「生成交互代码」/event UI；由 interaction-ui-confirm-flow 承接',
+      },
+    ],
+  },
   async ({ page }, testInfo) => {
     await seedDesigner(page, formFixture)
     await runAiChatEventFlow(page, '改语文时把总分设为加权结果 例如：语文=2,数学=4 期望：{"总分":6}')
@@ -537,9 +546,18 @@ test(
   },
 )
 
-test(
+test.skip(
   'UI 负例：期望与真实执行不符时预览验证失败，写入画布保持禁用',
-  { annotation: { type: 'case-id', description: 'event-ui-verify-rejects-mismatch' } },
+  {
+    annotation: [
+      { type: 'case-id', description: 'event-ui-verify-rejects-mismatch' },
+      {
+        type: 'skip-reason',
+        description:
+          'v0.9 Breaking：旧 /event UI 预览闸已由 /interaction 验证闸替代；API 层 event-apply-* 用例仍覆盖',
+      },
+    ],
+  },
   async ({ page }, testInfo) => {
     await seedDesigner(page, formFixture)
     await runAiChatEventFlow(page, '改语文时把总分设为加权结果 例如：语文=2,数学=4 期望：{"总分":7}')

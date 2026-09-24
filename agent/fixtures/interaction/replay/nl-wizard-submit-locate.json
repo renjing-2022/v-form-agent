@@ -1,0 +1,60 @@
+{
+  "match": {
+    "scenarioId": "nl-wizard-submit-locate",
+    "instructionIncludes": [
+      "最后一页加一个提交按钮"
+    ]
+  },
+  "output": {
+    "intent": "mixed",
+    "summary": "末页提交并定位错误页",
+    "structure": [
+      {
+        "op": "addButton",
+        "label": "提交",
+        "name": "btnSubmit",
+        "parent": {
+          "name": "tab3"
+        }
+      }
+    ],
+    "handlers": [
+      {
+        "id": "h-sub",
+        "target": "btnSubmit",
+        "eventKey": "onClick",
+        "code": "const f=this.getFormRef();const tab=f.getWidgetRef('wizardTab');var name=f.getFieldValue('name');if(name===null||name===undefined||String(name)===''){if(tab)tab.activeTab(0);var w=f.getWidgetRef('name');if(w&&w.focus)w.focus();return;}f.validateForm(function(){});",
+        "explain": "空姓名回第一页"
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": [
+          "h-sub"
+        ],
+        "title": "空字段提交",
+        "arrange": {
+          "activeTab": 2,
+          "values": {
+            "name": ""
+          }
+        },
+        "act": [
+          {
+            "click": "btnSubmit"
+          }
+        ],
+        "assert": [
+          {
+            "activeTab": 0
+          },
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

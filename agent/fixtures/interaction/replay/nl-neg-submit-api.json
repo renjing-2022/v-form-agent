@@ -1,0 +1,21 @@
+{
+  "match": {
+    "scenarioId": "nl-neg-submit-api",
+    "instructionIncludes": [
+      "发到后端保存"
+    ]
+  },
+  "output": {
+    "intent": "unsupported",
+    "summary": "需要网络请求",
+    "structure": [],
+    "handlers": [],
+    "scenarios": [],
+    "unsupported": [
+      {
+        "text": "提交发后端",
+        "reason": "禁止网络请求"
+      }
+    ]
+  }
+}

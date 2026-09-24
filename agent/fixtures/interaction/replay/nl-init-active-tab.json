@@ -1,0 +1,46 @@
+{
+  "match": {
+    "scenarioId": "nl-init-active-tab",
+    "instructionIncludes": [
+      "默认停在第二页"
+    ]
+  },
+  "output": {
+    "intent": "interaction",
+    "summary": "默认第二页",
+    "structure": [],
+    "handlers": [
+      {
+        "id": "h-m",
+        "target": "form",
+        "eventKey": "onFormMounted",
+        "code": "const t=this.getWidgetRef('wizardTab');if(t)t.activeTab(1);",
+        "explain": ""
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": [
+          "h-m"
+        ],
+        "title": "装载",
+        "arrange": {},
+        "act": [
+          {
+            "mount": true
+          }
+        ],
+        "assert": [
+          {
+            "activeTab": 1
+          },
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

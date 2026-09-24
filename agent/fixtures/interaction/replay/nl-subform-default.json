@@ -1,0 +1,43 @@
+{
+  "match": {
+    "scenarioId": "nl-subform-default",
+    "instructionIncludes": [
+      "新增行时数量默认为1"
+    ]
+  },
+  "output": {
+    "intent": "interaction",
+    "summary": "增行默认数量1",
+    "structure": [],
+    "handlers": [
+      {
+        "id": "h-add",
+        "target": "detail",
+        "eventKey": "onSubFormRowAdd",
+        "code": "const f=this.getFormRef();f.setSubFormValues('detail', (f.getSubFormValues('detail',false)||[]).map((r,i,a)=>i===a.length-1?{...r,itemQty:1}:r));",
+        "explain": ""
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": [
+          "h-add"
+        ],
+        "title": "增行",
+        "arrange": {},
+        "act": [
+          {
+            "addSubFormRow": "detail"
+          }
+        ],
+        "assert": [
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

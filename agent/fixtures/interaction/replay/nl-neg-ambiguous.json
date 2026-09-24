@@ -1,0 +1,19 @@
+{
+  "match": {
+    "scenarioId": "nl-neg-ambiguous",
+    "instructionIncludes": [
+      "那个字段的联动"
+    ]
+  },
+  "output": {
+    "intent": "need_clarification",
+    "summary": "指代不清",
+    "structure": [],
+    "handlers": [],
+    "scenarios": [],
+    "unsupported": [],
+    "questions": [
+      "请明确是哪个字段？希望什么条件下如何变化？"
+    ]
+  }
+}

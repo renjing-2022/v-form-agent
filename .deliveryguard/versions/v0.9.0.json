@@ -1,0 +1,37 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/version.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.9.0",
+  "title": "自然语言直出交互 JS：模型写代码与场景 → 真实执行 → 自动修正 → 确认写入",
+  "documents": [
+    {
+      "id": "ai-form-nl-interaction-compiler-prd",
+      "type": "product-requirement",
+      "title": "自然语言直出交互 JS（v0.9.0）产品需求",
+      "ref": "docs/requirements/ai-form-nl-interaction-compiler.md",
+      "revision": 3,
+      "primary": true
+    },
+    {
+      "id": "ai-form-nl-interaction-compiler-design",
+      "type": "technical-design",
+      "title": "自然语言直出交互 JS（v0.9.0）技术设计",
+      "ref": "docs/design/ai-form-nl-interaction-compiler.md",
+      "revision": 3
+    }
+  ],
+  "openSpec": {
+    "changeId": "ai-form-nl-interaction-compiler",
+    "path": "openspec/changes/ai-form-nl-interaction-compiler",
+    "status": "applied"
+  },
+  "sources": [],
+  "acceptance": {
+    "status": "pending",
+    "evidence": ".deliveryguard/acceptance/v0.9.0/evidence.json"
+  },
+  "deployments": [],
+  "release": {
+    "status": "pending"
+  }
+}

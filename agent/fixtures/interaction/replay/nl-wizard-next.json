@@ -1,0 +1,46 @@
+{
+  "match": {
+    "scenarioId": "nl-wizard-next-structure",
+    "instructionIncludes": ["每个 tab 下新增一个「下一页」按钮"]
+  },
+  "output": {
+    "intent": "mixed",
+    "summary": "每页加下一页按钮并校验切页",
+    "structure": [
+      {
+        "op": "addButton",
+        "label": "下一页",
+        "name": "btnNext",
+        "eachTabPane": true
+      }
+    ],
+    "handlers": [
+      {
+        "id": "h-next",
+        "target": "btnNext",
+        "eventKey": "onClick",
+        "code": "const f=this.getFormRef();const tab=f.getWidgetRef('wizardTab');if(!tab)return;const idx=tab.getActiveTabIndex();const pane=tab.widget.tabs[idx];const names=(pane.widgetList||[]).filter(function(w){return w.formItemFlag&&w.options&&w.options.required;}).map(function(w){return w.options.name;});var bad=null;for(var i=0;i<names.length;i++){var v=f.getFieldValue(names[i]);if(v===null||v===undefined||v===''){bad=names[i];break;}}if(bad){var w=f.getWidgetRef(bad);if(w&&w.focus)w.focus();return;}if(idx<tab.widget.tabs.length-1)tab.activeTab(idx+1);",
+        "explain": "必填为空则聚焦，否则下一页"
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s-empty",
+        "handlerRefs": ["h-next"],
+        "title": "空必填停留",
+        "arrange": { "activeTab": 0, "values": { "name": "", "mobile": "" } },
+        "act": [{ "click": "btnNext__tab1" }],
+        "assert": [{ "activeTab": 0 }, { "noError": true }]
+      },
+      {
+        "id": "s-ok",
+        "handlerRefs": ["h-next"],
+        "title": "填齐跳下一页",
+        "arrange": { "activeTab": 0, "values": { "name": "张三", "mobile": "13800000000" } },
+        "act": [{ "click": "btnNext__tab1" }],
+        "assert": [{ "activeTab": 1 }, { "noError": true }]
+      }
+    ],
+    "unsupported": []
+  }
+}

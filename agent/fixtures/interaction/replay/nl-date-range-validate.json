@@ -1,0 +1,77 @@
+{
+  "match": {
+    "scenarioId": "nl-date-range-validate",
+    "instructionIncludes": [
+      "结束日期不能早于开始日期"
+    ]
+  },
+  "output": {
+    "intent": "interaction",
+    "summary": "日期范围校验",
+    "structure": [],
+    "handlers": [
+      {
+        "id": "h-val",
+        "target": "form",
+        "eventKey": "onFormValidate",
+        "code": "const s=formModel.startDate,e=formModel.endDate;if(s&&e&&e<s)return false;return true;",
+        "explain": ""
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s-bad",
+        "handlerRefs": [
+          "h-val"
+        ],
+        "title": "违反",
+        "arrange": {
+          "values": {
+            "startDate": "2026-09-10",
+            "endDate": "2026-09-01"
+          }
+        },
+        "act": [
+          {
+            "submit": true
+          }
+        ],
+        "assert": [
+          {
+            "valid": false
+          },
+          {
+            "noError": true
+          }
+        ]
+      },
+      {
+        "id": "s-ok",
+        "handlerRefs": [
+          "h-val"
+        ],
+        "title": "满足",
+        "arrange": {
+          "values": {
+            "startDate": "2026-09-01",
+            "endDate": "2026-09-10"
+          }
+        },
+        "act": [
+          {
+            "submit": true
+          }
+        ],
+        "assert": [
+          {
+            "valid": true
+          },
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

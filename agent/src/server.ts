@@ -5,6 +5,7 @@ import multipart from '@fastify/multipart'
 import { registerGenerateRoutes } from './routes/generate.js'
 import { registerRefineRoutes } from './routes/refine.js'
 import { registerEventRoutes } from './routes/event.js'
+import { registerInteractionRoutes } from './routes/interaction.js'
 
 const port = Number(process.env.PORT || 3040)
 
@@ -27,6 +28,7 @@ async function main() {
   await registerGenerateRoutes(app)
   await registerRefineRoutes(app)
   await registerEventRoutes(app)
+  await registerInteractionRoutes(app)
 
   await app.listen({ port, host: '0.0.0.0' })
 }

@@ -1,0 +1,21 @@
+{
+  "match": {
+    "scenarioId": "nl-neg-partial",
+    "instructionIncludes": [
+      "保存时调用接口"
+    ]
+  },
+  "output": {
+    "intent": "unsupported",
+    "summary": "核心意图含接口",
+    "structure": [],
+    "handlers": [],
+    "scenarios": [],
+    "unsupported": [
+      {
+        "text": "保存时调用接口",
+        "reason": "禁止网络；整体不可 apply"
+      }
+    ]
+  }
+}

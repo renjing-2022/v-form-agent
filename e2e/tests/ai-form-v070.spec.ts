@@ -81,7 +81,13 @@ async function selectRefineMode(page: Page) {
 async function submitOptimize(page: Page, instruction: string) {
   await selectRefineMode(page)
   await page.locator('.ai-agent-panel textarea').fill(instruction)
-  await page.getByRole('button', { name: '优化当前表', exact: true }).click()
+  const panel = page.locator('.ai-agent-panel')
+  const send = panel.getByRole('button', { name: '发送', exact: true })
+  if (await send.isVisible().catch(() => false)) {
+    await send.click()
+    return
+  }
+  await panel.getByRole('button', { name: '优化当前表', exact: true }).click()
 }
 
 async function attachEvidence(page: Page, testInfo: TestInfo, observed: string) {
@@ -95,13 +101,16 @@ async function attachEvidence(page: Page, testInfo: TestInfo, observed: string) 
   })
 }
 
-test(
+test.skip(
   '交互意图不完备时走 /event 并展示澄清问题',
   {
-    annotation: {
-      type: 'case-id',
-      description: 'event-clarify-ui',
-    },
+    annotation: [
+      { type: 'case-id', description: 'event-clarify-ui' },
+      {
+        type: 'skip-reason',
+        description: 'v0.9 Breaking：AiChat 统一 /interaction，不再关键词分流到 /event；澄清由 interaction need_clarification 承接',
+      },
+    ],
   },
   async ({ page }, testInfo) => {
     await seedDesigner(page, formFixture)
@@ -131,13 +140,16 @@ test(
   },
 )
 
-test(
+test.skip(
   '完备联动意图 → spec_ready 摘要可见且不启用写入',
   {
-    annotation: {
-      type: 'case-id',
-      description: 'event-clarify-complete-ui',
-    },
+    annotation: [
+      { type: 'case-id', description: 'event-clarify-complete-ui' },
+      {
+        type: 'skip-reason',
+        description: 'v0.9 Breaking：旧 /event spec_ready UI 已移除；API event-clarify-* 仍由 acceptance:cases 覆盖',
+      },
+    ],
   },
   async ({ page }, testInfo) => {
     await seedDesigner(page, formFixture)
@@ -195,7 +207,7 @@ test(
     await attachEvidence(
       page,
       testInfo,
-      `POST ${refinePath} for property instruction; event path not required`,
+      `POST ${refinePath} for property instruction via interaction route_refine; event path not required`,
     )
   },
 )

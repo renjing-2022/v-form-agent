@@ -1,0 +1,58 @@
+{
+  "match": {
+    "scenarioId": "nl-amount-calc",
+    "instructionIncludes": ["金额等于数量乘以单价"]
+  },
+  "output": {
+    "intent": "interaction",
+    "summary": "数量或单价变化时计算金额与实付",
+    "structure": [],
+    "handlers": [
+      {
+        "id": "h-qty",
+        "target": "qty",
+        "eventKey": "onChange",
+        "code": "const f=this.getFormRef(); const q=Number(f.getFieldValue('qty')||0); const p=Number(f.getFieldValue('price')||0); const d=Number(f.getFieldValue('discount')||0); f.setFieldValue('amount', q*p, true); f.setFieldValue('pay', q*p-d, true);",
+        "explain": "数量变化重算"
+      },
+      {
+        "id": "h-price",
+        "target": "price",
+        "eventKey": "onChange",
+        "code": "const f=this.getFormRef(); const q=Number(f.getFieldValue('qty')||0); const p=Number(f.getFieldValue('price')||0); const d=Number(f.getFieldValue('discount')||0); f.setFieldValue('amount', q*p, true); f.setFieldValue('pay', q*p-d, true);",
+        "explain": "单价变化重算"
+      },
+      {
+        "id": "h-discount",
+        "target": "discount",
+        "eventKey": "onChange",
+        "code": "const f=this.getFormRef(); const a=Number(f.getFieldValue('amount')||0); const d=Number(f.getFieldValue('discount')||0); f.setFieldValue('pay', a-d, true);",
+        "explain": "折扣变化重算实付"
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": ["h-qty", "h-price"],
+        "title": "数量2单价50金额100",
+        "arrange": { "values": { "discount": 0 } },
+        "act": [{ "input": "qty", "value": 2 }, { "input": "price", "value": 50 }],
+        "assert": [
+          { "field": "amount", "value": 100 },
+          { "field": "pay", "value": 100 },
+          { "noNetwork": true },
+          { "noError": true }
+        ]
+      },
+      {
+        "id": "s2",
+        "handlerRefs": ["h-discount"],
+        "title": "金额100折扣10实付90",
+        "arrange": { "values": { "qty": 2, "price": 50, "amount": 100, "discount": 0 } },
+        "act": [{ "input": "discount", "value": 10 }],
+        "assert": [{ "field": "pay", "value": 90 }, { "noError": true }]
+      }
+    ],
+    "unsupported": []
+  }
+}
