@@ -70,7 +70,10 @@ const systemPrompt = `你是 v-form 表单优化规划器。根据用户指令�
 - labelWidth 必须是数字（如 450），禁止 "450px"
 - size 只能是 "" / "large" / "small"，禁止 "default"
 - columnWidth 为 css 文本（如 "200px"），不是 labelWidth 数字
-- 字段 customClass 为 string；formConfig.customClass 为 string 数组
+- optionValueType（radio/select/checkbox）只能是 "" / "String" / "Number"；禁止 number/string 小写；改类型时合入层会联动转换 optionItems.value
+- 整表批量改选项值类型：updateFieldsInScope + parent:{pathPrefix:"widgetList"}（可加 filterType:"radio"）；pathPrefix "widgetList" 表示根 scope，不是单控件
+- setCustomClass / 计划里字段 customClass 用 string；合并进 formJson 时会写成 string[]（匹配设计器 multiple / .join）
+- formConfig.customClass 为 string 数组
 
 属性与样式规则（必须遵守）：
 - 能用组件属性表达的（placeholder、labelWidth、labelWrap、displayStyle、columnWidth、size、labelAlign 等）优先 updateField / patchFormConfig，不要先写 CSS。
@@ -170,7 +173,12 @@ export function mockRefinePlan(instruction: string, current: FormJson): RefinePl
   const wantExplicitRename =
     /改(?:成|为|叫)|标题改成|标签名/i.test(instruction) && !wantPlaceholder
   const wantTabs = /tab|页签|选项卡/i.test(instruction) || (/标签/i.test(instruction) && /tab|页签|选项卡/i.test(instruction))
-  const wantOptions = /选项|option|分值|改(?:选项|分值)/i.test(instruction)
+  const wantOptionValueType =
+    /选项值类型|optionValueType|数值类型|选项.*(?:定义为|改成|设为).*(?:number|Number|数字)|所有选项.*number/i.test(
+      instruction,
+    )
+  const wantOptions =
+    !wantOptionValueType && /选项|option|分值|改(?:选项|分值)/i.test(instruction)
   const wantFormula = /公式|总分|合计|计算|求和/i.test(instruction)
   const wantRemove = /删除|删掉|去掉|移除/i.test(instruction)
   const wantDuplicate = /复制|拷贝|再来一份|duplicate/i.test(instruction)
@@ -576,6 +584,25 @@ export function mockRefinePlan(instruction: string, current: FormJson): RefinePl
         },
       ],
     })
+  }
+
+  if (wantOptionValueType) {
+    const hasChoice = flat.some((f) => f.type === 'radio' || f.type === 'select' || f.type === 'checkbox')
+    if (hasChoice) {
+      const asNumber = /number|Number|数字/i.test(instruction) && !/string|String|文本|字符串/i.test(instruction)
+      return refinePlanSchema.parse({
+        summary: `批量设置 optionValueType=${asNumber ? 'Number' : 'String'}`,
+        warnings,
+        operations: [
+          {
+            op: 'updateFieldsInScope',
+            parent: { pathPrefix: 'widgetList' },
+            patch: { optionValueType: asNumber ? 'Number' : 'String' },
+          },
+        ],
+      })
+    }
+    warnings.push('未找到 radio/select/checkbox，跳过 optionValueType')
   }
 
   if (wantOptions) {

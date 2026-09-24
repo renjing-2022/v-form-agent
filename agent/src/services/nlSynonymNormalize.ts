@@ -61,6 +61,18 @@ function normalizeDisplayStyle(value: unknown): unknown {
   return value
 }
 
+/** 设计器 optionValueType："" | String | Number（Boolean 仅运行时兼容） */
+export function normalizeOptionValueType(value: unknown): unknown {
+  if (typeof value !== 'string') return value
+  const trimmed = value.trim()
+  if (trimmed === '' || trimmed === 'String' || trimmed === 'Number' || trimmed === 'Boolean') return trimmed
+  const lower = trimmed.toLowerCase()
+  if (lower === 'string' || trimmed === '字符串' || trimmed === '文本') return 'String'
+  if (lower === 'number' || trimmed === '数字' || trimmed === '数字类型' || trimmed === '数值') return 'Number'
+  if (lower === 'boolean' || trimmed === '布尔') return 'Boolean'
+  return value
+}
+
 function normalizePatch(
   patch: Record<string, unknown>,
   formLevel: boolean,
@@ -93,6 +105,13 @@ function normalizePatch(
     next.displayStyle = normalizeDisplayStyle(next.displayStyle)
     if (JSON.stringify(before) !== JSON.stringify(next.displayStyle)) {
       notes.push(`displayStyle ${JSON.stringify(before)} → ${JSON.stringify(next.displayStyle)}`)
+    }
+  }
+  if ('optionValueType' in next) {
+    const before = next.optionValueType
+    next.optionValueType = normalizeOptionValueType(next.optionValueType)
+    if (JSON.stringify(before) !== JSON.stringify(next.optionValueType)) {
+      notes.push(`optionValueType ${JSON.stringify(before)} → ${JSON.stringify(next.optionValueType)}`)
     }
   }
   return { patch: next, notes }

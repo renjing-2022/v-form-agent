@@ -21,6 +21,18 @@ import { loadExtension } from '@/extension/extension-loader'
 
 import {Popup, Picker, PickerGroup, DatePicker, TimePicker, Cascader, Checkbox} from 'vant'
 
+// 一次性清空设计器本地表单备份（修复 AI 写入 string customClass 导致的白屏）
+if (typeof window !== 'undefined') {
+  try {
+    const FLAG = '__vfa_clear_form_backup_20260924'
+    if (!localStorage.getItem(FLAG)) {
+      localStorage.removeItem('widget__list__backup')
+      localStorage.removeItem('form__config__backup')
+      localStorage.setItem(FLAG, '1')
+    }
+  } catch (_) { /* ignore */ }
+}
+
 if (typeof window !== 'undefined') {
   window.axios = axios
   // e2e / 验收：在真实预览中复用 interactionRunner

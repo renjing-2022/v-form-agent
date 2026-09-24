@@ -21,7 +21,7 @@ export const FORM_FIELD_DUAL_TRACK_REGISTRY: Record<string, FormFieldDualTrackSp
     key: 'customClass',
     field: { valueKind: 'string', valueType: 'string', nullable: false },
     form: { valueKind: 'array', valueType: 'array', nullable: false },
-    note: '字段 options.customClass 为 string；formConfig.customClass 为 string[]',
+    note: '计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]',
   },
   labelWidth: {
     key: 'labelWidth',

@@ -127,6 +127,7 @@ export function inferPreferredKeysFromInstruction(instruction?: string): string[
   if (/重叠|挤|overlap|排版|错位|选项.*排|横排|竖排|inline|block|displayStyle/i.test(instruction)) {
     keys.push('displayStyle', 'labelWrap', 'labelWidth')
   }
+  if (/选项值类型|optionValueType|数值类型/i.test(instruction)) keys.push('optionValueType')
   if (/选项|optionItems|分值/i.test(instruction)) keys.push('optionItems')
   if (/默认|defaultValue/i.test(instruction)) keys.push('defaultValue')
   if (/行数|rows|autosize|自适应/i.test(instruction)) keys.push('rows', 'autosize')
@@ -176,8 +177,15 @@ export function buildCatalogSnippets(
     if (constraints.displayStyle && !notes.some((n) => n.includes('displayStyle'))) {
       notes.push('displayStyle=block 时选项竖排；inline 时横排易与长标签重叠，重叠类诉求优先 block')
     }
+    if (constraints.optionValueType || preferKeys.includes('optionValueType')) {
+      notes.push(
+        'optionValueType 只能是 "" / "String" / "Number"（设计器字面量，禁止 number/string 小写）；整表批量可用 updateFieldsInScope + parent.pathPrefix="widgetList"',
+      )
+    }
     if (constraints.customClass) {
-      notes.push('字段 customClass 为 string；表单 formConfig.customClass 为 string[]')
+      notes.push(
+        '字段 customClass：计划为 string，写出 formJson 为 string[]（对齐 v-form）；表单 formConfig.customClass 为 string[]',
+      )
     }
     if (entry.forbiddenKeys.length) {
       notes.push(

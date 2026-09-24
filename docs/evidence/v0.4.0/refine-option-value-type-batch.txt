@@ -1,0 +1,7 @@
+case: refine-option-value-type-batch
+status: pass
+observed: pathPrefix widgetList batch optionValueType number→Number + optionItems coerce; input untouched
+environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
+sourceRevision: main@36936e07f975a8c30a79b07b537fde4b6377e8d7 (working tree has uncommitted changes)
+capturedAt: 2026-09-24T04:30:22.808Z
+type: agent

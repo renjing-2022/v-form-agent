@@ -265,7 +265,9 @@ scenarios 形状必须严格如下（不要自造 type/action/expect 字段）�
 4. 指代不清 → need_clarification + questions；纯改结构无交互 → structure_only；核心意图含网络 → unsupported。
 5. target 必须是表单已有 name，或本输出 structure 里 addButton 的 name；form 级事件 target 为 "form"。
 6. onFormValidate 返回 false 表示失败；按钮用 onClick。
-7. 用户指令已足够清晰时直接 intent=interaction 或 mixed，不要无故 need_clarification。`
+7. 用户指令已足够清晰时直接 intent=interaction 或 mixed，不要无故 need_clarification。
+8. static-text / html-text（含 Excel「小计」「总分」）formItemFlag=false：禁止 setValue/getValue；必须 setWidgetOption('textContent', ...) 或 htmlContent；预览断言读的是 textContent。
+9. 可计算的「小计」若已是 number 字段，优先 setFieldValue/setValue；仅当目标是 static-text 时才写 textContent 文案。`
 
 export type GenerateInteractionResult = {
   output: InteractionOutput

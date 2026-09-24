@@ -2,6 +2,8 @@
  * 在真实 VFormRender（previewState）上按 EventSpec.examples 执行断言，组装 executionReport。
  * 禁止在 designState 下验证；只报告真实读到的状态，读不到即判失败。
  */
+import { readWidgetDisplayValue } from './interactionObserve'
+
 export type EventExample = {
   given: Record<string, unknown>
   expect: Record<string, unknown>
@@ -145,8 +147,9 @@ export async function runEventExamplesOnPreview(params: {
           else actual[hint] = validResult
         } else {
           const name = resolveName(formJson, hint)
-          if (!formRef.getWidgetRef?.(name)) unobservable.push(hint)
-          else actual[hint] = formRef.getFieldValue?.(name)
+          const ref = formRef.getWidgetRef?.(name)
+          if (!ref) unobservable.push(hint)
+          else actual[hint] = readWidgetDisplayValue(ref as any) ?? formRef.getFieldValue?.(name)
         }
       }
 

@@ -74,6 +74,58 @@ function applyLinkageForces(
   return { patch: next, warnings }
 }
 
+const OPTION_VALUE_CHOICE_TYPES = new Set(['radio', 'select', 'checkbox'])
+
+export function widgetSupportsOptionValueType(type: string): boolean {
+  return OPTION_VALUE_CHOICE_TYPES.has(type)
+}
+
+/**
+ * 对齐设计器 option-items-setting.handelValueTypeChange：
+ * 写入 optionValueType 后转换 optionItems.value，并清空不兼容 defaultValue。
+ */
+export function reconcileOptionValueType(
+  options: Record<string, unknown>,
+  scope: string,
+): string[] {
+  const valueType = options.optionValueType
+  if (valueType !== 'String' && valueType !== 'Number' && valueType !== 'Boolean') return []
+  const items = options.optionItems
+  if (!Array.isArray(items)) return []
+
+  const warnings: string[] = []
+  const multiple =
+    options.multiple === true ||
+    (typeof scope === 'string' && scope === 'checkbox')
+
+  if (multiple) {
+    options.defaultValue = []
+  } else {
+    options.defaultValue = ''
+  }
+
+  options.optionItems = items.map((raw, idx) => {
+    if (!raw || typeof raw !== 'object') return raw
+    const opt = { ...(raw as Record<string, unknown>) }
+    const optValue = `${opt.value ?? ''}`
+    if (valueType === 'String') {
+      opt.value = optValue
+    } else if (valueType === 'Number') {
+      if (!Number.isNaN(Number(optValue)) && optValue.trim() !== '') {
+        opt.value = Number(optValue)
+      } else {
+        opt.value = idx + 1
+      }
+    } else if (valueType === 'Boolean') {
+      const lower = optValue.toLowerCase()
+      opt.value = lower === 'true' || optValue === '1'
+    }
+    return opt
+  })
+  warnings.push(`${scope} 已按 optionValueType=${valueType} 转换 optionItems.value 并重置 defaultValue`)
+  return warnings
+}
+
 /** merge 后修正 multiple/defaultValue 不兼容（模拟 propertyMixin.onMultipleSelected） */
 export function reconcileMultipleDefaultValue(
   options: Record<string, unknown>,

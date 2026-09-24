@@ -959,6 +959,85 @@ async function main() {
     { type: 'agent' },
   )
 
+  const optionTypeForm = {
+    widgetList: [
+      {
+        type: 'radio',
+        id: 'ovt-r1',
+        options: {
+          name: 'ovt_r1',
+          label: '评分1',
+          optionValueType: '',
+          defaultValue: '1',
+          optionItems: [
+            { label: '差', value: '0' },
+            { label: '好', value: '1' },
+          ],
+          onChange: '',
+        },
+      },
+      {
+        type: 'select',
+        id: 'ovt-s1',
+        options: {
+          name: 'ovt_s1',
+          label: '评分2',
+          optionValueType: '',
+          defaultValue: '2',
+          optionItems: [
+            { label: 'A', value: '1' },
+            { label: 'B', value: '2' },
+          ],
+          onChange: '',
+        },
+      },
+      {
+        type: 'input',
+        id: 'ovt-i1',
+        options: { name: 'ovt_note', label: '备注', onChange: '' },
+      },
+    ],
+    formConfig: getDefaultFormConfig(),
+  }
+  const rootScope = resolveScopeFields(optionTypeForm, { pathPrefix: 'widgetList' }, 'radio')
+  assert(rootScope.length === 1, 'root pathPrefix widgetList + filterType radio')
+  const ovtSyn = normalizeRefinePlanSynonyms(
+    refinePlanSchema.parse({
+      summary: '选项值类型 number',
+      warnings: [],
+      operations: [
+        {
+          op: 'updateFieldsInScope',
+          parent: { pathPrefix: 'widgetList' },
+          patch: { optionValueType: 'number' },
+        },
+      ],
+    }),
+  )
+  assert(
+    (ovtSyn.plan.operations[0] as { patch: { optionValueType: string } }).patch.optionValueType === 'Number',
+    'number → Number synonym',
+  )
+  const ovtTargets = validatePlanTargets(optionTypeForm, ovtSyn.plan.operations)
+  assert(ovtTargets.ok, `root widgetList scope must not be ambiguous: ${ovtTargets.rejectMessage || ''}`)
+  const ovtMerged = applyRefinePlan(optionTypeForm, ovtSyn.plan)
+  const ovtRadio = ovtMerged.formJson.widgetList[0] as { options: Record<string, unknown> }
+  const ovtSelect = ovtMerged.formJson.widgetList[1] as { options: Record<string, unknown> }
+  const ovtInput = ovtMerged.formJson.widgetList[2] as { options: Record<string, unknown> }
+  assert(ovtRadio.options.optionValueType === 'Number', 'radio optionValueType Number')
+  assert(ovtSelect.options.optionValueType === 'Number', 'select optionValueType Number')
+  assert(ovtInput.options.optionValueType === undefined, 'input untouched')
+  assert(
+    (ovtRadio.options.optionItems as Array<{ value: unknown }>).every((i) => typeof i.value === 'number'),
+    'radio option values coerced to number',
+  )
+  writeCaseTo(
+    outDirV040,
+    'refine-option-value-type-batch',
+    'pathPrefix widgetList batch optionValueType number→Number + optionItems coerce; input untouched',
+    { type: 'agent' },
+  )
+
   const applicableIssues = checkApplicableKeysParity(catalog)
   assert(applicableIssues.length === 0, `applicableKeys parity: ${applicableIssues.join('; ')}`)
   writeCaseTo(
@@ -1057,6 +1136,16 @@ async function main() {
     (cssOverlapMerged.formJson.widgetList[0] as { options: Record<string, unknown> }).options.label ===
       overlapForm.widgetList[0].options.label,
     'css path keeps label',
+  )
+  assert(
+    Array.isArray(
+      (cssOverlapMerged.formJson.widgetList[0] as { options: Record<string, unknown> }).options.customClass,
+    ) &&
+      (
+        (cssOverlapMerged.formJson.widgetList[0] as { options: Record<string, unknown> }).options
+          .customClass as string[]
+      ).includes('field-q_hallucination'),
+    'setCssCode customClass written as string[] for v-form runtime',
   )
   writeCaseTo(
     outDirV040,
@@ -1487,6 +1576,15 @@ async function main() {
   assert(
     (cssApply.formJson.widgetList[0] as { options: Record<string, unknown> }).options.label === '姓名',
     'css apply keeps label',
+  )
+  assert(
+    Array.isArray(
+      (cssApply.formJson.widgetList[0] as { options: Record<string, unknown> }).options.customClass,
+    ) &&
+      (
+        (cssApply.formJson.widgetList[0] as { options: Record<string, unknown> }).options.customClass as string[]
+      )[0] === 'field-input1',
+    'scoped css binds customClass as string[]',
   )
   writeCaseTo(
     outDirV030,

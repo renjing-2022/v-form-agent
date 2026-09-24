@@ -90,7 +90,8 @@ export async function repairInteraction(params: {
   const failed = (params.verificationReport.results || []).filter((r) => !r.ok)
   const system = `你是 v-form 交互修复工程师。根据失败的验证报告修正 handlers/structure 中的 JS，禁止修改 scenarios（id/assert/act/arrange/handlerRefs 必须原样返回）。
 只输出 JSON：intent、summary、structure、handlers、scenarios、unsupported。
-scenarios 必须与输入完全一致。禁止网络请求。`
+scenarios 必须与输入完全一致。禁止网络请求。
+重要：static-text/html-text 禁止 setValue（空操作）；必须 setWidgetOption('textContent', '小计: N')。预览断言读 textContent，不是 getFieldValue。`
 
   const content = await chatCompletion([
     { role: 'system', content: system },

@@ -36,7 +36,7 @@ const SNAPSHOT_KEYS = [
   'size',
 ]
 
-const ON_DEMAND_SNAPSHOT_KEYS = ['optionItems', 'defaultValue', 'validation']
+const ON_DEMAND_SNAPSHOT_KEYS = ['optionItems', 'defaultValue', 'validation', 'optionValueType']
 
 const MAX_DEPTH = 8
 
@@ -45,6 +45,7 @@ export { MAX_FIELDS as FORM_SUMMARY_MAX_FIELDS }
 function inferOnDemandSnapshotKeys(instruction?: string): string[] {
   if (!instruction) return []
   const keys: string[] = []
+  if (/选项值类型|optionValueType|数值类型/.test(instruction)) keys.push('optionValueType')
   if (/选项|optionItems|分值|单选|多选/.test(instruction)) keys.push('optionItems')
   if (/默认|defaultValue|默认值/.test(instruction)) keys.push('defaultValue')
   if (/校验|validation/.test(instruction)) keys.push('validation')

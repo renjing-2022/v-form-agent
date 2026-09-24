@@ -1,0 +1,53 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/repair-case.schema.json",
+  "schemaVersion": 1,
+  "id": "REFINE-OPTION-VALUE-TYPE-BATCH",
+  "title": "refine 批量 optionValueType=Number 不得因 pathPrefix widgetList 歧义失败",
+  "stage": "diagnosed",
+  "status": "active",
+  "classification": "code",
+  "baseline": {
+    "repository": ".",
+    "commit": "36936e07f975a8c30a79b07b537fde4b6377e8d7"
+  },
+  "symptom": {
+    "environment": "v0.9.x refine；Excel 生成多 radio 评估表后用户要求全部选项值类型为 number",
+    "expected": "updateFieldsInScope + pathPrefix widgetList 可批量写入 optionValueType=Number，并联动 optionItems.value 为数字",
+    "actual": "validatePlanTargets 报 pathPrefix \"widgetList\" 命中多个节点，422 未合入"
+  },
+  "phases": {
+    "reproduction": [
+      {
+        "id": "option-value-type-batch-red",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/repair-option-value-type.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 1,
+        "outputPattern": "OPTION_VALUE_TYPE_SCOPE_REJECTED|OPTION_VALUE_TYPE_NOT_APPLIED"
+      }
+    ],
+    "targeted": [
+      {
+        "id": "option-value-type-batch-green",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/repair-option-value-type.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 0,
+        "outputPattern": "REPAIR_OPTION_VALUE_TYPE_PASSED"
+      }
+    ],
+    "regression": [
+      {
+        "id": "agent-acceptance-cases",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/acceptance-cases.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 0
+      },
+      {
+        "id": "agent-smoke",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/smoke.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 0,
+        "outputPattern": "SMOKE_PASSED"
+      }
+    ]
+  }
+}

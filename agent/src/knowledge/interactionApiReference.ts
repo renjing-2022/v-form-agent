@@ -186,6 +186,14 @@ export const FIELD_APIS: ApiEntry[] = [
     owner: 'field',
     name: 'setValue',
     signature: 'setValue(newValue, disableChangeEvent = false)',
+    note: '仅 formItemFlag=true 的表单项有效；static-text/html-text 上调用为空操作',
+    source: 'v-form/src/components/form-designer/form-widget/field-widget/fieldMixin.js',
+  },
+  {
+    owner: 'field',
+    name: 'setWidgetOption',
+    signature: 'setWidgetOption(optionName, optionValue)',
+    note: '改 options；static-text 更新展示用 setWidgetOption(\'textContent\', \'小计: 10\')，不要用 setValue',
     source: 'v-form/src/components/form-designer/form-widget/field-widget/fieldMixin.js',
   },
   {

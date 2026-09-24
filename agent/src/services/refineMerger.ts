@@ -1,7 +1,13 @@
 import { buildWidgetFromCatalogDefaults, getWidgetDefaultSchema } from '../knowledge/widgetDefaults.js'
 import type { RefineOperation, RefinePlan, TargetRef, FormJson } from '../schemas/refinePlan.js'
 import type { FieldType } from '../schemas/fieldPlan.js'
-import { sanitizeFormPatch, sanitizeWidgetPatch, reconcileMultipleDefaultValue } from './refinePropertyPolicy.js'
+import {
+  sanitizeFormPatch,
+  sanitizeWidgetPatch,
+  reconcileMultipleDefaultValue,
+  reconcileOptionValueType,
+  widgetSupportsOptionValueType,
+} from './refinePropertyPolicy.js'
 import { mergeCssCode, validateCssCode } from './cssGuard.js'
 import { isHeavyStructureType } from './catalogValidator.js'
 import { resolveScopeFields } from './targetResolver.js'
@@ -25,6 +31,10 @@ import {
   applyUpdateTableColumn,
   stripTableColumnsFromPatch,
 } from './tableColumnRefine.js'
+import {
+  normalizeFormJsonWidgetCustomClasses,
+  toVFormWidgetCustomClass,
+} from './customClassRuntime.js'
 
 /** addField 可作 parent 的重型容器（其余 heavy 仍拒绝） */
 const ADD_FIELD_PARENT_ALLOWED_HEAVY = new Set(['sub-form', 'vf-dialog'])
@@ -272,6 +282,12 @@ function applyUpdateField(root: WidgetNode[], op: Extract<RefineOperation, { op:
     }
   }
   Object.assign(widget.options, sanitized.patch)
+  if (sanitized.patch.customClass !== undefined) {
+    widget.options.customClass = toVFormWidgetCustomClass(widget.options.customClass)
+  }
+  if (sanitized.patch.optionValueType !== undefined) {
+    warnings.push(...reconcileOptionValueType(widget.options, type))
+  }
   warnings.push(...reconcileMultipleDefaultValue(widget.options, type))
   reconcileTabPaneActive(root, widget, warnings)
 }
@@ -313,7 +329,8 @@ function applySetCustomClass(root: WidgetNode[], op: Extract<RefineOperation, { 
     warnings.push('setCustomClass 未写入：customClass 不可用')
     return
   }
-  widget.options.customClass = sanitized.patch.customClass
+  // 计划值为 string；写出为 string[]，匹配 v-form el-select multiple / .join
+  widget.options.customClass = toVFormWidgetCustomClass(sanitized.patch.customClass)
 }
 
 function applySetCssCode(formJson: FormJson, root: WidgetNode[], op: Extract<RefineOperation, { op: 'setCssCode' }>, warnings: string[]) {
@@ -453,10 +470,14 @@ function applyUpdateFieldsInScope(
   op: Extract<RefineOperation, { op: 'updateFieldsInScope' }>,
   warnings: string[],
 ) {
-  const scopeFields = resolveScopeFields(formJson, op.parent, op.filterType)
+  let scopeFields = resolveScopeFields(formJson, op.parent, op.filterType)
+  // 仅改 optionValueType 时跳过无该属性的控件，避免整表 scope 产生未知键警告
+  if (!op.filterType && op.patch && 'optionValueType' in (op.patch as object)) {
+    scopeFields = scopeFields.filter((f) => f.type && widgetSupportsOptionValueType(f.type))
+  }
   if (scopeFields.length === 0) {
     warnings.push(
-      `updateFieldsInScope 未找到 scope 内字段: parent=${op.parent.id || op.parent.name || op.parent.label}${op.filterType ? ` type=${op.filterType}` : ''}`,
+      `updateFieldsInScope 未找到 scope 内字段: parent=${op.parent.id || op.parent.name || op.parent.label || op.parent.pathPrefix}${op.filterType ? ` type=${op.filterType}` : ''}`,
     )
     return
   }
@@ -691,6 +712,11 @@ export function applyRefinePlan(current: FormJson, plan: RefinePlan): MergeResul
       default:
         warnings.push(`未知操作已忽略`)
     }
+  }
+
+  const healed = normalizeFormJsonWidgetCustomClasses(formJson)
+  if (healed > 0) {
+    warnings.push(`已将 ${healed} 处控件 customClass 从 string 规范为 string[]（兼容 v-form 运行时）`)
   }
 
   return { formJson, warnings }

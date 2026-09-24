@@ -1,0 +1,53 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/repair-case.schema.json",
+  "schemaVersion": 1,
+  "id": "INTERACTION-STATIC-TEXT-OBSERVE",
+  "title": "交互预览须观测 static-text textContent，禁止依赖无效 setValue",
+  "stage": "diagnosed",
+  "status": "active",
+  "classification": "code",
+  "baseline": {
+    "repository": ".",
+    "commit": "36936e07f975a8c30a79b07b537fde4b6377e8d7"
+  },
+  "symptom": {
+    "environment": "v0.9 interaction；Excel 小计为 static-text；用户要各 tab 选项分值求和写回小计",
+    "expected": "预览断言能读到 textContent；handlers 用 setWidgetOption；修正轮可收敛",
+    "actual": "断言走 getFieldValue 永久失败；setValue 空操作；自动修正 2/2 空转"
+  },
+  "phases": {
+    "reproduction": [
+      {
+        "id": "static-text-observe-red",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/repair-static-text-observe.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 1,
+        "outputPattern": "STATIC_TEXT_OBSERVE_MISSING|STATIC_TEXT_OBSERVE_FAILED"
+      }
+    ],
+    "targeted": [
+      {
+        "id": "static-text-observe-green",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/repair-static-text-observe.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 0,
+        "outputPattern": "REPAIR_STATIC_TEXT_OBSERVE_PASSED"
+      }
+    ],
+    "regression": [
+      {
+        "id": "agent-acceptance-cases",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/acceptance-cases.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 0
+      },
+      {
+        "id": "agent-smoke",
+        "command": ["node", "node_modules/tsx/dist/cli.mjs", "scripts/smoke.ts"],
+        "cwd": "agent",
+        "expectedExitCode": 0,
+        "outputPattern": "SMOKE_PASSED"
+      }
+    ]
+  }
+}

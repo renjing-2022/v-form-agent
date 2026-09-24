@@ -3,6 +3,7 @@
  * 验证期拦截网络 API；副作用桩；报告只含观测值。
  */
 import { valuesMatch } from './eventPreviewRunner'
+import { readWidgetDisplayValue } from './interactionObserve'
 
 export type InteractionScenario = {
   id: string
@@ -138,8 +139,9 @@ function readActual(formRef: VFormLike, asserts: Array<Record<string, unknown>>,
     if ('noNetwork' in a || 'noError' in a) continue
     if ('field' in a && 'value' in a) {
       const name = String(a.field)
-      if (!formRef.getWidgetRef?.(name)) missing.push(name)
-      else actual[`field:${name}`] = formRef.getFieldValue?.(name)
+      const ref = formRef.getWidgetRef?.(name)
+      if (!ref) missing.push(name)
+      else actual[`field:${name}`] = readWidgetDisplayValue(ref)
     } else if ('field' in a && 'hidden' in a) {
       const ref = formRef.getWidgetRef?.(String(a.field))
       const v = ref?.field?.options?.hidden ?? ref?.options?.hidden

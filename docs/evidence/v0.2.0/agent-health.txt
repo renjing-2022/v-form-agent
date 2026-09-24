@@ -2,5 +2,5 @@ case: agent-health
 status: pass
 observed: health route and refine registration present in agent/src/server.ts
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: feat/v0.9.0-nl-interaction-js@0e3c8bae17fc5d1fb28f402866f9bb531cc6491f (working tree has uncommitted changes)
-capturedAt: 2026-09-23T08:45:32.541Z
+sourceRevision: main@36936e07f975a8c30a79b07b537fde4b6377e8d7 (working tree has uncommitted changes)
+capturedAt: 2026-09-24T04:30:23.829Z
