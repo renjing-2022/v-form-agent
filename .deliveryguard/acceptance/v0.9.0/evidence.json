@@ -418,34 +418,6 @@
       "title": "v0.7 澄清回归（agent）",
       "status": "pass",
       "evidence": ["docs/evidence/v0.9.0/event-v07-clarify-regression.txt"]
-    },
-    {
-      "id": "event-ui-apply-gate",
-      "title": "v0.8 /event UI 全链路（Breaking 跳过）",
-      "status": "skipped",
-      "note": "v0.9 Breaking：AiChat 统一 /interaction，不再提供「生成交互代码」/event UI；由 interaction-ui-confirm-flow 承接",
-      "evidence": []
-    },
-    {
-      "id": "event-ui-verify-rejects-mismatch",
-      "title": "v0.8 /event UI 验证失败闸（Breaking 跳过）",
-      "status": "skipped",
-      "note": "v0.9 Breaking：旧 /event UI 预览闸已由 /interaction 验证闸替代；API event-apply-* 仍覆盖",
-      "evidence": []
-    },
-    {
-      "id": "event-clarify-ui",
-      "title": "v0.7 /event 澄清 UI（Breaking 跳过）",
-      "status": "skipped",
-      "note": "v0.9 Breaking：AiChat 统一 /interaction；澄清由 interaction need_clarification 承接；API event-clarify-* 仍由 acceptance:cases 覆盖",
-      "evidence": []
-    },
-    {
-      "id": "event-clarify-complete-ui",
-      "title": "v0.7 /event spec_ready UI（Breaking 跳过）",
-      "status": "skipped",
-      "note": "v0.9 Breaking：旧 /event spec_ready UI 已移除；API event-clarify-* 仍由 acceptance:cases 覆盖",
-      "evidence": []
     }
   ]
 }
