@@ -79,6 +79,16 @@ import {
   collectCatalogStrictEditorGaps,
 } from '../src/knowledge/catalogStrictPolicy.js'
 import { PROPERTY_REGISTER_REL } from '../src/knowledge/catalogPolicy.js'
+import {
+  checkInteractionApiReferenceParity,
+  ALL_REFERENCE_APIS,
+  EVENT_CONTEXTS,
+  NETWORK_APIS,
+} from '../src/knowledge/interactionApiReference.js'
+import { loadInteractionFixture } from '../fixtures/interaction/forms.js'
+import { interactionOutputSchema } from '../src/schemas/interactionOutput.js'
+import { generateInteraction } from '../src/services/interactionGenerator.js'
+import { validateInteractionOutput } from '../src/services/interactionValidate.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '../..')
@@ -2687,6 +2697,196 @@ async function main() {
   writeCaseTo(outDirV080, 'frontend-no-secret', 'AiChat/event client contain no DeepSeek API key literals', {
     type: 'static',
   })
+
+  // ---- v0.9.0 interaction API reference + fixtures (deliverable 0) ----
+  const outDirV090 = path.join(root, 'docs/evidence/v0.9.0')
+  fs.mkdirSync(outDirV090, { recursive: true })
+  const apiParity = checkInteractionApiReferenceParity(root)
+  assert(apiParity.length === 0, `interaction-api-reference-parity: ${apiParity.join('; ')}`)
+  assert(NETWORK_APIS.some((a) => a.name === 'executeDataSource'), 'network api lists executeDataSource')
+  assert(EVENT_CONTEXTS.some((c) => c.eventKey === 'onFormValidate'), 'onFormValidate context present')
+  const fw = loadInteractionFixture('F-wizard')
+  const fo = loadInteractionFixture('F-order')
+  const fd = loadInteractionFixture('F-detail')
+  assert((fw.widgetList[0] as { tabs?: unknown[] }).tabs?.length === 3, 'F-wizard has 3 tabs')
+  assert(fo.widgetList.length >= 10, 'F-order has order fields')
+  assert(
+    fd.widgetList.some((w) => (w as { type?: string }).type === 'sub-form') &&
+      fd.widgetList.some((w) => (w as { type?: string }).type === 'vf-dialog'),
+    'F-detail has sub-form and help dialog',
+  )
+  writeCaseTo(
+    outDirV090,
+    'interaction-api-reference-parity',
+    `apis=${ALL_REFERENCE_APIS.length}; events=${EVENT_CONTEXTS.length}; fixtures=F-wizard/F-order/F-detail ok`,
+    { type: 'agent/static' },
+  )
+
+  // ---- v0.9.0 deliverable 1: generate schema / replay / validate ----
+  const badParsed = interactionOutputSchema.safeParse({
+    intent: 'interaction',
+    handlers: [{ target: 'qty', eventKey: 'onChange', code: 123 }],
+  })
+  assert(!badParsed.success, 'invalid handler code type must fail schema')
+  writeCaseTo(outDirV090, 'interaction-output-schema-reject-invalid', 'schema rejects non-string code', {
+    type: 'agent',
+  })
+
+  const unknownRef = interactionOutputSchema.parse({
+    intent: 'interaction',
+    summary: 'x',
+    handlers: [
+      {
+        id: 'h1',
+        target: 'no_such_field',
+        eventKey: 'onChange',
+        code: 'this.getFormRef()',
+        explain: '',
+      },
+    ],
+    scenarios: [
+      {
+        id: 's1',
+        handlerRefs: ['h1'],
+        title: 't',
+        arrange: {},
+        act: [],
+        assert: [{ noError: true }],
+      },
+    ],
+  })
+  const unknownIssues = validateInteractionOutput(unknownRef, fo)
+  assert(
+    unknownIssues.some((i) => i.message.includes('unknown target')),
+    'unknown target must be reported',
+  )
+  writeCaseTo(outDirV090, 'interaction-unknown-ref-rewrite', 'unknown target caught by validate', {
+    type: 'agent',
+  })
+
+  const uncovered = interactionOutputSchema.parse({
+    intent: 'interaction',
+    summary: 'x',
+    handlers: [
+      { id: 'h1', target: 'qty', eventKey: 'onChange', code: '1', explain: '' },
+      { id: 'h2', target: 'price', eventKey: 'onChange', code: '1', explain: '' },
+    ],
+    scenarios: [
+      {
+        id: 's1',
+        handlerRefs: ['h1'],
+        title: 'only h1',
+        arrange: {},
+        act: [],
+        assert: [{ noError: true }],
+      },
+    ],
+  })
+  const coverIssues = validateInteractionOutput(uncovered, fo)
+  assert(
+    coverIssues.some((i) => i.message.includes('not covered')),
+    'uncovered handler must fail',
+  )
+  writeCaseTo(outDirV090, 'interaction-handler-scenario-coverage', 'uncovered handler rejected', {
+    type: 'agent',
+  })
+
+  const savedKey = process.env.DEEPSEEK_API_KEY
+  delete process.env.DEEPSEEK_API_KEY
+  process.env.AGENT_ALLOW_MOCK = '1'
+  const noFixture = await generateInteraction({
+    instruction: '这是一条没有匹配 fixture 的唯一指令 XYZ-NO-FIXTURE-999',
+    currentFormJson: fo,
+  })
+  assert(noFixture.status === 'error', 'no fixture must error')
+  assert(
+    String(noFixture.error || '').includes('no template fallback') ||
+      String(noFixture.error || '').includes('no interaction replay'),
+    'must not fall back to template',
+  )
+  writeCaseTo(outDirV090, 'interaction-no-fixture-no-fallback', 'mock without fixture errors honestly', {
+    type: 'agent',
+  })
+
+  const routeRefine = await generateInteraction({
+    instruction: '把备注改成多行文本',
+    currentFormJson: fo,
+  })
+  assert(routeRefine.status === 'route_refine', 'structure-only → route_refine')
+  assert(routeRefine.output.intent === 'structure_only', 'intent structure_only')
+  writeCaseTo(outDirV090, 'interaction-route-refine-structure-only', 'structure_only maps to route_refine', {
+    type: 'agent',
+  })
+
+  const amount = await generateInteraction({
+    instruction: '数量或单价变化时，金额等于数量乘以单价；实付等于金额减折扣',
+    currentFormJson: fo,
+  })
+  assert(amount.status === 'generated' && amount.usedMock, 'amount calc replay generated')
+  assert(amount.output.handlers.length >= 2, 'amount handlers present')
+  if (savedKey !== undefined) process.env.DEEPSEEK_API_KEY = savedKey
+
+  const { checkInteractionNetworkStatic } = await import('../src/services/interactionNetworkPolicy.js')
+  assert(checkInteractionNetworkStatic('const x=1').ok, 'pure js ok')
+  const blocked = checkInteractionNetworkStatic('await fetch("/x")')
+  assert(!blocked.ok && blocked.reason === 'network', 'fetch static reject')
+  writeCaseTo(outDirV090, 'interaction-network-static-reject', 'fetch rejected by static network policy', {
+    type: 'agent',
+  })
+
+  const { applyInteractionOutput, scenarioFingerprint } = await import('../src/services/interactionMerger.js')
+  const { planInteractionApply, recomputeInteractionVerification } = await import(
+    '../src/services/interactionApply.js'
+  )
+  const wizardGen = await generateInteraction({
+    instruction: '在每个 tab 下新增一个「下一页」按钮，点击时校验当前 tab',
+    currentFormJson: fw,
+  })
+  assert(wizardGen.status === 'generated' && wizardGen.formJsonCandidate, 'wizard candidate')
+  const snap = JSON.stringify(fw)
+  const failTx = applyInteractionOutput(fw, {
+    ...wizardGen.output,
+    handlers: [
+      ...wizardGen.output.handlers,
+      { id: 'x', target: 'nope', eventKey: 'onClick', code: '1', explain: '' },
+    ],
+  })
+  assert(!failTx.ok && snap === JSON.stringify(fw), 'transaction all-or-nothing')
+  writeCaseTo(outDirV090, 'interaction-transaction-all-or-nothing', 'failed merge leaves form unchanged', {
+    type: 'agent',
+  })
+
+  const amountOut = amount.output
+  const forgedApply = planInteractionApply({
+    currentFormJson: fo,
+    output: amountOut,
+    userConfirmed: true,
+    confirmOverwrite: true,
+    verificationReport: {
+      runner: 'designer-preview',
+      pass: true,
+      results: amountOut.scenarios.map((s) => ({ scenarioId: s.id, ok: true, actual: {} })),
+    },
+  })
+  assert(forgedApply.response.applied === false, 'forged report must not apply')
+  writeCaseTo(outDirV090, 'interaction-apply-forged-report-draft', 'forged/incomplete report → draft', {
+    type: 'agent',
+  })
+
+  const fp = scenarioFingerprint(amountOut.scenarios)
+  const tamperedSc = amountOut.scenarios.map((s, i) =>
+    i === 0 ? { ...s, assert: [{ noError: true as const }] } : s,
+  )
+  assert(scenarioFingerprint(tamperedSc) !== fp, 'tamper fingerprint differs')
+  writeCaseTo(outDirV090, 'interaction-repair-scenario-tamper-reject', 'scenario fingerprint detects tamper', {
+    type: 'agent',
+  })
+
+  const { MAX_REPAIR_ROUNDS } = await import('../src/services/interactionRepair.js')
+  assert(MAX_REPAIR_ROUNDS === 2, 'repair limit 2')
+  writeCaseTo(outDirV090, 'interaction-repair-limit-draft', 'max repair rounds = 2', { type: 'agent' })
+
+  void recomputeInteractionVerification
 
   console.log('ACCEPTANCE_CASES_PASSED')
 }

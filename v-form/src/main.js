@@ -23,6 +23,8 @@ import {Popup, Picker, PickerGroup, DatePicker, TimePicker, Cascader, Checkbox} 
 
 if (typeof window !== 'undefined') {
   window.axios = axios
+  // e2e / 验收：在真实预览中复用 interactionRunner
+  window.__vfaLoadInteractionRunner = () => import('@/utils/interactionRunner')
 }
 
 const vfApp = createApp(App)

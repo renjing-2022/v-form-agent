@@ -1,0 +1,19 @@
+{
+  "match": {
+    "scenarioId": "nl-neg-api",
+    "instructionIncludes": ["调用接口查询客户信息"]
+  },
+  "output": {
+    "intent": "unsupported",
+    "summary": "需要网络请求，本管线不支持",
+    "structure": [],
+    "handlers": [],
+    "scenarios": [],
+    "unsupported": [
+      {
+        "text": "调用接口查询客户信息并回填",
+        "reason": "纯前端交互管线禁止网络请求"
+      }
+    ]
+  }
+}

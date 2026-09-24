@@ -1,0 +1,79 @@
+{
+  "match": {
+    "scenarioId": "nl-other-required",
+    "instructionIncludes": [
+      "选「其他」时显示其他说明"
+    ]
+  },
+  "output": {
+    "intent": "interaction",
+    "summary": "类型其他时显示必填说明",
+    "structure": [],
+    "handlers": [
+      {
+        "id": "h-type",
+        "target": "type",
+        "eventKey": "onChange",
+        "code": "const f=this.getFormRef();const v=f.getFieldValue('type');const other=v==='other';f[other?'showWidgets':'hideWidgets']('otherDesc');f.setWidgetsRequired('otherDesc',other);",
+        "explain": "联动"
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s-other",
+        "handlerRefs": [
+          "h-type"
+        ],
+        "title": "选其他",
+        "arrange": {},
+        "act": [
+          {
+            "input": "type",
+            "value": "other"
+          }
+        ],
+        "assert": [
+          {
+            "field": "otherDesc",
+            "hidden": false
+          },
+          {
+            "field": "otherDesc",
+            "required": true
+          },
+          {
+            "noError": true
+          }
+        ]
+      },
+      {
+        "id": "s-person",
+        "handlerRefs": [
+          "h-type"
+        ],
+        "title": "选个人",
+        "arrange": {},
+        "act": [
+          {
+            "input": "type",
+            "value": "personal"
+          }
+        ],
+        "assert": [
+          {
+            "field": "otherDesc",
+            "hidden": true
+          },
+          {
+            "field": "otherDesc",
+            "required": false
+          },
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

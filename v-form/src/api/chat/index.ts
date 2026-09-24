@@ -142,7 +142,7 @@ export async function refineFormByAgent(payload: {
   return data;
 }
 
-/** v0.7+：交互澄清（默认 action=clarify） */
+/** v0.7+：交互澄清（默认 action=clarify）；v0.9 UI 主路径改用 interactionFormByAgent */
 export async function eventFormByAgent(payload: {
   instruction: string;
   currentFormJson: AgentGenerateResponse['formJson'];
@@ -161,6 +161,110 @@ export async function eventFormByAgent(payload: {
     eventSpec: payload.eventSpec,
     patches: payload.patches,
     executionReport: payload.executionReport,
+    confirmOverwrite: payload.confirmOverwrite,
+  });
+}
+
+export type AgentInteractionOutput = {
+  intent?: string;
+  summary?: string;
+  structure?: unknown[];
+  handlers?: Array<{ id?: string; target: string; eventKey: string; code: string; explain?: string }>;
+  scenarios?: Array<{
+    id: string;
+    handlerRefs: string[];
+    title: string;
+    arrange?: Record<string, unknown>;
+    act?: Array<Record<string, unknown>>;
+    assert: Array<Record<string, unknown>>;
+  }>;
+  unsupported?: Array<{ text: string; reason: string }>;
+  questions?: string[];
+};
+
+export type AgentInteractionResponse = {
+  status:
+    | 'generated'
+    | 'need_clarification'
+    | 'route_refine'
+    | 'unsupported'
+    | 'applied'
+    | 'draft'
+    | 'failed'
+    | 'tamper'
+    | 'error';
+  summary: string;
+  warnings?: string[];
+  questions?: string[];
+  unsupported?: Array<{ text: string; reason: string }>;
+  output?: AgentInteractionOutput;
+  formJsonCandidate?: AgentGenerateResponse['formJson'];
+  formJson: AgentGenerateResponse['formJson'];
+  applied: boolean;
+  scenarioNarration?: string[];
+  scenarioFingerprint?: string;
+  verificationReport?: {
+    runner: 'designer-preview' | 'playwright';
+    results: Array<{
+      scenarioId: string;
+      ok: boolean;
+      actual?: Record<string, unknown>;
+      error?: string;
+      unverifiable?: boolean;
+    }>;
+    pass: boolean;
+    networkHits?: string[];
+    errors?: string[];
+  };
+  round?: number;
+  usedMock?: boolean;
+  error?: string;
+  message?: string;
+};
+
+async function postInteraction(body: Record<string, unknown>): Promise<AgentInteractionResponse> {
+  const base = import.meta.env.VITE_APP_AGENT_API || '/api/agent';
+  const res = await fetch(`${base}/v1/interaction`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    const issueHint = Array.isArray(data?.issues)
+      ? `：${data.issues
+          .slice(0, 3)
+          .map((i: any) => i.message)
+          .join('；')}`
+      : '';
+    throw new Error((data?.message || data?.summary || `交互请求失败 (${res.status})`) + issueHint);
+  }
+  return data;
+}
+
+/** v0.9：自然语言 → 直出 JS 交互（generate / repair / apply） */
+export async function interactionFormByAgent(payload: {
+  action: 'generate' | 'repair' | 'apply';
+  instruction: string;
+  currentFormJson: AgentGenerateResponse['formJson'];
+  messages?: Array<{ role: 'user' | 'assistant'; content: string }>;
+  output?: AgentInteractionOutput;
+  verificationReport?: AgentInteractionResponse['verificationReport'];
+  round?: number;
+  expectedScenarioFingerprint?: string;
+  userConfirmed?: boolean;
+  confirmOverwrite?: boolean;
+}): Promise<AgentInteractionResponse> {
+  return postInteraction({
+    action: payload.action,
+    instruction: payload.instruction,
+    currentFormJson: payload.currentFormJson,
+    messages: payload.messages || [],
+    output: payload.output,
+    verificationReport: payload.verificationReport,
+    round: payload.round,
+    expectedScenarioFingerprint: payload.expectedScenarioFingerprint,
+    userConfirmed: payload.userConfirmed,
     confirmOverwrite: payload.confirmOverwrite,
   });
 }

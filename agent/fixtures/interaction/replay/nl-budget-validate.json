@@ -1,0 +1,51 @@
+{
+  "match": {
+    "scenarioId": "nl-budget-validate",
+    "instructionIncludes": [
+      "实付不能超过预算"
+    ]
+  },
+  "output": {
+    "intent": "interaction",
+    "summary": "预算校验",
+    "structure": [],
+    "handlers": [
+      {
+        "id": "h-val",
+        "target": "form",
+        "eventKey": "onFormValidate",
+        "code": "if(Number(formModel.pay||0)>Number(formModel.budget||0)){const w=this.getWidgetRef('pay');if(w&&w.focus)w.focus();return false;}return true;",
+        "explain": ""
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": [
+          "h-val"
+        ],
+        "title": "超预算",
+        "arrange": {
+          "values": {
+            "pay": 200,
+            "budget": 100
+          }
+        },
+        "act": [
+          {
+            "submit": true
+          }
+        ],
+        "assert": [
+          {
+            "valid": false
+          },
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

@@ -1,0 +1,7 @@
+case: nl-neg-ambiguous
+status: pass
+observed: nl-neg-ambiguous: status=need_clarification; canvas unchanged
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: feat/v0.9.0-nl-interaction-js@0e3c8bae17fc (working tree has uncommitted changes)
+capturedAt: 2026-09-23T09:31:57.492Z
+durationMs: 20

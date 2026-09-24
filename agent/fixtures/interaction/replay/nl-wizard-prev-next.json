@@ -1,0 +1,91 @@
+{
+  "match": {
+    "scenarioId": "nl-wizard-prev-next",
+    "instructionIncludes": [
+      "加上一页和下一页"
+    ]
+  },
+  "output": {
+    "intent": "mixed",
+    "summary": "每页上一页/下一页按钮",
+    "structure": [
+      {
+        "op": "addButton",
+        "label": "上一页",
+        "name": "btnPrev",
+        "eachTabPane": true
+      },
+      {
+        "op": "addButton",
+        "label": "下一页",
+        "name": "btnNext",
+        "eachTabPane": true
+      }
+    ],
+    "handlers": [
+      {
+        "id": "h-prev",
+        "target": "btnPrev",
+        "eventKey": "onClick",
+        "code": "const f=this.getFormRef();const t=f.getWidgetRef('wizardTab');const i=t.getActiveTabIndex();if(i>0)t.activeTab(i-1);",
+        "explain": "上一页"
+      },
+      {
+        "id": "h-next",
+        "target": "btnNext",
+        "eventKey": "onClick",
+        "code": "const f=this.getFormRef();const t=f.getWidgetRef('wizardTab');const i=t.getActiveTabIndex();if(i<t.widget.tabs.length-1)t.activeTab(i+1);",
+        "explain": "下一页"
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": [
+          "h-next"
+        ],
+        "title": "下一页前进",
+        "arrange": {
+          "activeTab": 0
+        },
+        "act": [
+          {
+            "click": "btnNext__tab1"
+          }
+        ],
+        "assert": [
+          {
+            "activeTab": 1
+          },
+          {
+            "noError": true
+          }
+        ]
+      },
+      {
+        "id": "s2",
+        "handlerRefs": [
+          "h-prev"
+        ],
+        "title": "上一页回退",
+        "arrange": {
+          "activeTab": 1
+        },
+        "act": [
+          {
+            "click": "btnPrev__tab2"
+          }
+        ],
+        "assert": [
+          {
+            "activeTab": 0
+          },
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

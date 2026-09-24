@@ -1,0 +1,48 @@
+{
+  "match": {
+    "scenarioId": "nl-disable-when-empty",
+    "instructionIncludes": [
+      "单价为空时禁用折扣"
+    ]
+  },
+  "output": {
+    "intent": "interaction",
+    "summary": "单价空则禁用折扣",
+    "structure": [],
+    "handlers": [
+      {
+        "id": "h-price",
+        "target": "price",
+        "eventKey": "onChange",
+        "code": "const f=this.getFormRef();const p=f.getFieldValue('price');const empty=p===null||p===undefined||p==='';f[empty?'disableWidgets':'enableWidgets']('discount');",
+        "explain": ""
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": [
+          "h-price"
+        ],
+        "title": "空禁用",
+        "arrange": {},
+        "act": [
+          {
+            "input": "price",
+            "value": null
+          }
+        ],
+        "assert": [
+          {
+            "field": "discount",
+            "disabled": true
+          },
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

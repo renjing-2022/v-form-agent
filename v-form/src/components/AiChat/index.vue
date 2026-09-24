@@ -1,7 +1,7 @@
 <template>
   <div class="ai-agent-panel">
     <div class="hint">
-      空画布可「生成表单」；已有表单可多轮「优化当前表」。交互经 /event：澄清 → 生成代码 → 预览验证 → 确认写入。
+      空画布可「生成表单」；已有表单用自然语言描述结构或交互。交互由模型直接写 JS → 真实预览验证 → 确认后写入画布。
     </div>
 
     <div class="mode-row">
@@ -57,35 +57,34 @@
 
     <div class="actions">
       <el-button type="primary" :loading="loading" @click="onSubmit">
-        {{ effectiveMode === 'refine' ? '优化当前表' : '生成表单' }}
+        {{ effectiveMode === 'refine' ? '发送' : '生成表单' }}
       </el-button>
       <el-button
         type="success"
         :disabled="!canApply"
         @click="onApply"
       >应用到设计器（整表覆盖）</el-button>
-      <el-button size="small" text :disabled="loading || (!messages.length && !lastResult && !lastEvent)" @click="onReset">
+      <el-button size="small" text :disabled="loading || (!messages.length && !lastResult && !lastInteraction)" @click="onReset">
         清空会话
       </el-button>
     </div>
 
-    <div class="actions event-actions" v-if="lastEvent">
+    <div class="actions event-actions" v-if="lastInteraction">
       <el-button
         size="small"
-        type="primary"
-        :disabled="loading || lastEvent.status !== 'spec_ready'"
-        @click="onGenerateEventCode"
-      >生成交互代码</el-button>
-      <el-button
-        size="small"
-        :disabled="loading || lastEvent.status !== 'code_preview' || !lastEvent.formJsonCandidate"
-        @click="onVerifyInPreview"
+        :disabled="loading || lastInteraction.status !== 'generated' || !lastInteraction.formJsonCandidate"
+        @click="onVerifyInteraction"
       >在预览中验证</el-button>
       <el-button
         size="small"
+        :disabled="loading || !canRepairInteraction"
+        @click="onRepairInteraction"
+      >自动修正（{{ repairRound }}/2）</el-button>
+      <el-button
+        size="small"
         type="success"
-        :disabled="!canApplyEvent"
-        @click="onApplyEvent"
+        :disabled="!canApplyInteraction"
+        @click="onApplyInteraction"
       >确认写入画布</el-button>
     </div>
 
@@ -99,23 +98,49 @@
     />
 
     <el-alert
-      v-if="lastEvent"
+      v-if="lastInteraction"
       class="mt"
-      :type="eventAlertType"
-      :title="lastEvent.summary"
+      :type="interactionAlertType"
+      :title="lastInteraction.summary"
       show-icon
       :closable="false"
     />
 
-    <div v-if="lastEvent?.code" class="code-preview mt">
+    <div v-if="handlerCodePreview" class="code-preview mt">
       <div class="warnings-title">候选事件代码</div>
-      <pre>{{ lastEvent.code }}</pre>
+      <pre>{{ handlerCodePreview }}</pre>
     </div>
 
-    <div v-if="lastEvent?.questions?.length" class="warnings mt">
+    <div v-if="lastInteraction?.scenarioNarration?.length" class="warnings mt">
+      <div class="warnings-title">验证场景（请确认）</div>
+      <ul>
+        <li v-for="(line, i) in lastInteraction.scenarioNarration" :key="i">{{ line }}</li>
+      </ul>
+    </div>
+
+    <div v-if="lastInteraction?.verificationReport?.results?.length" class="warnings mt">
+      <div class="warnings-title">预览执行结果</div>
+      <ul>
+        <li
+          v-for="(r, i) in lastInteraction.verificationReport.results"
+          :key="i"
+        >
+          {{ r.scenarioId }}：{{ r.ok ? '通过' : `失败 ${r.error || ''}` }}
+        </li>
+      </ul>
+    </div>
+
+    <div v-if="lastInteraction?.questions?.length" class="warnings mt">
       <div class="warnings-title">澄清问题</div>
       <ul>
-        <li v-for="(q, i) in lastEvent.questions" :key="i">{{ q }}</li>
+        <li v-for="(q, i) in lastInteraction.questions" :key="i">{{ q }}</li>
+      </ul>
+    </div>
+
+    <div v-if="lastInteraction?.unsupported?.length" class="warnings mt">
+      <div class="warnings-title">不支持项</div>
+      <ul>
+        <li v-for="(u, i) in lastInteraction.unsupported" :key="i">{{ u.text }} — {{ u.reason }}</li>
       </ul>
     </div>
 
@@ -147,11 +172,11 @@ import { ElMessage } from 'element-plus'
 import {
   generateFormByAgent,
   refineFormByAgent,
-  eventFormByAgent,
+  interactionFormByAgent,
   type AgentGenerateResponse,
-  type AgentEventResponse,
+  type AgentInteractionResponse,
 } from '@/api/chat'
-import { runEventExamplesOnPreview } from '@/utils/eventPreviewRunner'
+import { runInteractionScenariosOnPreview } from '@/utils/interactionRunner'
 
 const props = defineProps<{
   getCurrentFormJson?: () => { widgetList: any[]; formConfig: Record<string, any> } | null
@@ -173,34 +198,46 @@ const fileInputRef = ref<HTMLInputElement | null>(null)
 const loading = ref(false)
 const error = ref('')
 const lastResult = ref<AgentGenerateResponse | null>(null)
-const lastEvent = ref<AgentEventResponse | null>(null)
-const lastEventInstruction = ref('')
-const eventVerifiedPass = ref(false)
+const lastInteraction = ref<AgentInteractionResponse | null>(null)
+const lastInteractionInstruction = ref('')
+const interactionVerifiedPass = ref(false)
+const repairRound = ref(0)
 const messages = ref<ChatTurn[]>([])
 
 const previewCount = computed(() => lastResult.value?.formJson?.widgetList?.length || 0)
 const canApply = computed(
-  () => Boolean(lastResult.value?.formJson) && !lastEvent.value && !loading.value,
+  () => Boolean(lastResult.value?.formJson) && !lastInteraction.value && !loading.value,
 )
-const canApplyEvent = computed(
+const canApplyInteraction = computed(
   () =>
-    Boolean(lastEvent.value?.status === 'code_preview' || lastEvent.value?.status === 'applied') &&
-    eventVerifiedPass.value &&
+    Boolean(lastInteraction.value?.status === 'generated' || lastInteraction.value?.status === 'applied') &&
+    interactionVerifiedPass.value &&
+    !loading.value,
+)
+const canRepairInteraction = computed(
+  () =>
+    Boolean(lastInteraction.value?.status === 'generated') &&
+    Boolean(lastInteraction.value?.verificationReport) &&
+    !interactionVerifiedPass.value &&
+    repairRound.value < 2 &&
     !loading.value,
 )
 
-const eventAlertType = computed(() => {
-  const s = lastEvent.value?.status
-  if (s === 'applied' || s === 'code_preview') return 'success'
-  if (s === 'spec_ready') return 'info'
-  return 'warning'
+const interactionAlertType = computed(() => {
+  const s = lastInteraction.value?.status
+  if (s === 'applied' || s === 'generated') return 'success'
+  if (s === 'need_clarification') return 'warning'
+  if (s === 'unsupported' || s === 'failed' || s === 'error') return 'error'
+  return 'info'
 })
 
-function looksLikeEventIntent(text: string): boolean {
-  return /联动|交互|事件|onChange|onClick|onMounted|onCreated|onForm|子表|增行|挂载|打开表单时|提交前|校验规则|计分|加权|显示|隐藏|禁用|启用/.test(
-    text,
-  )
-}
+const handlerCodePreview = computed(() => {
+  const handlers = lastInteraction.value?.output?.handlers
+  if (!handlers?.length) return ''
+  return handlers
+    .map((h) => `// ${h.target}.${h.eventKey}\n${h.code}`)
+    .join('\n\n')
+})
 
 const canvasWidgetCount = computed(() => {
   const json = props.getCurrentFormJson?.()
@@ -214,12 +251,12 @@ const effectiveMode = computed<'generate' | 'refine'>(() => {
 })
 
 const resolvedModeLabel = computed(() =>
-  effectiveMode.value === 'refine' ? '当前：优化已有表' : '当前：整表生成',
+  effectiveMode.value === 'refine' ? '当前：优化 / 交互（统一入口）' : '当前：整表生成',
 )
 
 const inputPlaceholder = computed(() =>
   effectiveMode.value === 'refine'
-    ? '例如：加两个 tab（基本信息/评估题目）；或把单选题选项改成 0/2/4 分；或增加总分公式；或描述字段联动'
+    ? '例如：把备注改成多行；或每个 tab 加下一页并校验；或数量×单价算金额'
     : '例如：生成老年人认知评估表，包含时间定向、人物定向等评分题',
 )
 
@@ -240,9 +277,10 @@ function clearFile() {
 function onReset() {
   messages.value = []
   lastResult.value = null
-  lastEvent.value = null
-  lastEventInstruction.value = ''
-  eventVerifiedPass.value = false
+  lastInteraction.value = null
+  lastInteractionInstruction.value = ''
+  interactionVerifiedPass.value = false
+  repairRound.value = 0
   error.value = ''
   prompt.value = ''
   clearFile()
@@ -260,178 +298,214 @@ async function onSubmit() {
     return
   }
   if (!text) {
-    error.value = '请输入优化指令'
+    error.value = '请输入指令'
     return
   }
-  if (looksLikeEventIntent(text)) {
-    await runEvent(text)
-    return
-  }
-  await runRefine(text)
+  // 统一入口：不再用关键词分流，由 /interaction 判定意图
+  await runInteraction(text)
 }
 
-async function runEvent(text: string) {
+async function runInteraction(text: string) {
   const current = props.getCurrentFormJson?.()
   if (!current?.widgetList?.length) {
     error.value = '当前画布无表单，请先生成/拖拽控件，或切换到「整表生成」'
     return
   }
   loading.value = true
-  lastEvent.value = null
-  eventVerifiedPass.value = false
+  lastInteraction.value = null
+  interactionVerifiedPass.value = false
+  repairRound.value = 0
   try {
     const history = messages.value.slice(-20)
-    const data = await eventFormByAgent({
+    const data = await interactionFormByAgent({
+      action: 'generate',
       instruction: text,
       currentFormJson: current,
       messages: history,
-      action: 'clarify',
     })
-    lastEvent.value = data
-    lastEventInstruction.value = text
+
+    if (data.status === 'route_refine') {
+      messages.value.push({ role: 'user', content: text })
+      messages.value.push({ role: 'assistant', content: '判定为纯结构优化，改走 /refine…' })
+      prompt.value = ''
+      loading.value = false
+      await runRefine(text)
+      return
+    }
+
+    lastInteraction.value = data
+    lastInteractionInstruction.value = text
     lastResult.value = null
     messages.value.push({ role: 'user', content: text })
-    const q = Array.isArray(data.questions) && data.questions.length
-      ? `\n追问：\n- ${data.questions.join('\n- ')}`
-      : ''
-    const specHint =
-      data.status === 'spec_ready'
-        ? '\n（EventSpec 已就绪：请点「生成交互代码」→「在预览中验证」→「确认写入画布」）'
+    const q =
+      Array.isArray(data.questions) && data.questions.length
+        ? `\n追问：\n- ${data.questions.join('\n- ')}`
+        : ''
+    const nextHint =
+      data.status === 'generated'
+        ? '\n（请核对场景 →「在预览中验证」→「确认写入画布」）'
         : ''
     messages.value.push({
       role: 'assistant',
-      content: `${data.summary}${q}${specHint}`,
+      content: `${data.summary || data.status}${q}${nextHint}`,
     })
     prompt.value = ''
     if (data.status === 'need_clarification') {
-      ElMessage.info('请根据追问继续补充交互细节')
-    } else {
-      ElMessage.success('交互意图已澄清')
+      ElMessage.info('请根据追问继续补充')
+    } else if (data.status === 'unsupported') {
+      ElMessage.warning('需求超出纯前端范围，未写入')
+    } else if (data.status === 'generated') {
+      ElMessage.success('已生成交互方案，请验证后写入')
+    } else if (data.status === 'error') {
+      ElMessage.error(data.error || data.summary || '交互生成失败')
     }
   } catch (e: any) {
-    error.value = e?.message || '交互澄清失败'
+    error.value = e?.message || '交互生成失败'
     emit('AiError')
   } finally {
     loading.value = false
   }
 }
 
-async function onGenerateEventCode() {
-  if (!lastEvent.value?.eventSpec) return
-  const current = props.getCurrentFormJson?.()
-  if (!current) return
-  loading.value = true
-  eventVerifiedPass.value = false
-  try {
-    const data = await eventFormByAgent({
-      instruction: lastEventInstruction.value || 'generate',
-      currentFormJson: current,
-      action: 'generate',
-      eventSpec: lastEvent.value.eventSpec,
-    })
-    lastEvent.value = data
-    if (data.status === 'code_preview') {
-      ElMessage.success('已生成候选代码，请在预览中验证')
-    } else {
-      ElMessage.warning(data.summary || '生成未通过')
-    }
-  } catch (e: any) {
-    error.value = e?.message || '生成交互代码失败'
-    emit('AiError')
-  } finally {
-    loading.value = false
+async function mountPreviewAndRun() {
+  if (!lastInteraction.value?.formJsonCandidate || !lastInteraction.value.output?.scenarios?.length) {
+    throw new Error('缺少候选表单或验证场景')
   }
-}
-
-async function onVerifyInPreview() {
-  if (!lastEvent.value?.formJsonCandidate || !lastEvent.value.eventSpec) return
-  loading.value = true
-  let host: HTMLDivElement | null = null
+  const VFormRender = (await import('@/components/form-render/index')).default
+  const host = document.createElement('div')
+  host.style.cssText =
+    'position:fixed;left:-9999px;top:0;width:800px;height:600px;opacity:0;pointer-events:none;'
+  document.body.appendChild(host)
   try {
-    // 动态挂载，避免 AiChat ↔ VFormRender 静态循环依赖导致设计器白屏
-    const VFormRender = (await import('@/components/form-render/index')).default
-    host = document.createElement('div')
-    host.style.cssText = 'position:fixed;left:-9999px;top:0;width:800px;height:600px;opacity:0;pointer-events:none;'
-    document.body.appendChild(host)
-
-    // 必须复用设计器 appContext：控件与 Element Plus 组件都是全局注册的
     const vnode = createVNode(VFormRender, {
-      formJson: JSON.parse(JSON.stringify(lastEvent.value.formJsonCandidate)),
+      formJson: JSON.parse(JSON.stringify(lastInteraction.value.formJsonCandidate)),
       previewState: true,
     })
     vnode.appContext = appContext
     renderVNode(vnode, host)
     await nextTick()
-    const formRef: any = vnode.component?.proxy
     await new Promise((r) => setTimeout(r, 350))
-    if (!formRef) {
-      throw new Error('预览 VFormRender 未就绪')
-    }
+    const formRef: any = vnode.component?.proxy
+    if (!formRef) throw new Error('预览 VFormRender 未就绪')
 
-    const spec = lastEvent.value.eventSpec as any
-    const examples = Array.isArray(spec.examples) ? spec.examples : []
-    const eventKey = String(spec.trigger?.eventKey || spec.sink?.eventKey || 'onChange')
-    const report = await runEventExamplesOnPreview({
+    const report = await runInteractionScenariosOnPreview({
       formRef,
-      formJson: lastEvent.value.formJsonCandidate,
-      examples,
-      eventKey,
-      triggerName: spec.trigger?.widgetRef?.name || spec.trigger?.widgetRef?.id,
+      formJson: lastInteraction.value.formJsonCandidate,
+      scenarios: lastInteraction.value.output.scenarios as any,
+      handlers: lastInteraction.value.output.handlers,
       runner: 'designer-preview',
     })
-    lastEvent.value = {
-      ...lastEvent.value,
-      executionReport: report,
-      summary: report.pass
-        ? `${lastEvent.value.summary}（预览验证通过）`
-        : `${lastEvent.value.summary}（预览验证未通过）`,
-    }
-    eventVerifiedPass.value = report.pass
-    if (report.pass) {
-      ElMessage.success('预览验证通过，可确认写入画布')
-    } else {
-      ElMessage.warning('预览验证未通过，不能写入画布')
-    }
-  } catch (e: any) {
-    eventVerifiedPass.value = false
-    error.value = e?.message || '预览验证失败'
-    emit('AiError')
+    return report
   } finally {
     try {
-      if (host) renderVNode(null, host)
+      renderVNode(null, host)
     } catch {
       /* ignore */
     }
-    host?.remove()
+    host.remove()
+  }
+}
+
+async function onVerifyInteraction() {
+  if (!lastInteraction.value?.formJsonCandidate) return
+  loading.value = true
+  try {
+    const report = await mountPreviewAndRun()
+    lastInteraction.value = {
+      ...lastInteraction.value,
+      verificationReport: report,
+      summary: report.pass
+        ? `${lastInteraction.value.summary}（预览验证通过）`
+        : `${lastInteraction.value.summary}（预览验证未通过）`,
+    }
+    interactionVerifiedPass.value = report.pass
+    if (report.pass) {
+      ElMessage.success('预览验证通过，可确认写入画布')
+    } else {
+      ElMessage.warning('预览验证未通过，可点「自动修正」或改描述重试')
+    }
+  } catch (e: any) {
+    interactionVerifiedPass.value = false
+    error.value = e?.message || '预览验证失败'
+    emit('AiError')
+  } finally {
     loading.value = false
   }
 }
 
-async function onApplyEvent() {
-  if (!lastEvent.value?.eventSpec || !eventVerifiedPass.value) return
+async function onRepairInteraction() {
+  if (!lastInteraction.value?.output || !lastInteraction.value.verificationReport) return
+  if (repairRound.value >= 2) {
+    ElMessage.warning('修正次数已用尽')
+    return
+  }
   const current = props.getCurrentFormJson?.()
   if (!current) return
   loading.value = true
   try {
-    const data = await eventFormByAgent({
-      instruction: lastEventInstruction.value || 'apply',
+    const nextRound = repairRound.value + 1
+    const data = await interactionFormByAgent({
+      action: 'repair',
+      instruction: lastInteractionInstruction.value || 'repair',
       currentFormJson: current,
+      output: lastInteraction.value.output,
+      verificationReport: lastInteraction.value.verificationReport,
+      round: nextRound,
+      expectedScenarioFingerprint: lastInteraction.value.scenarioFingerprint,
+    })
+    repairRound.value = nextRound
+    if (data.status === 'tamper') {
+      ElMessage.error('修正试图改动验证场景，已拒绝')
+      return
+    }
+    if (data.status !== 'generated' || !data.output) {
+      ElMessage.warning(data.summary || '修正失败')
+      lastInteraction.value = { ...lastInteraction.value, ...data, status: data.status }
+      return
+    }
+    lastInteraction.value = {
+      ...data,
+      formJson: current,
+      applied: false,
+    }
+    interactionVerifiedPass.value = false
+    ElMessage.info(`第 ${nextRound} 轮修正已返回，正在重新验证…`)
+    loading.value = false
+    await onVerifyInteraction()
+  } catch (e: any) {
+    error.value = e?.message || '自动修正失败'
+    emit('AiError')
+    loading.value = false
+  }
+}
+
+async function onApplyInteraction() {
+  if (!lastInteraction.value?.output || !interactionVerifiedPass.value || !lastInteraction.value.verificationReport) {
+    return
+  }
+  const current = props.getCurrentFormJson?.()
+  if (!current) return
+  loading.value = true
+  try {
+    const data = await interactionFormByAgent({
       action: 'apply',
-      eventSpec: lastEvent.value.eventSpec,
-      patches: lastEvent.value.patches,
-      executionReport: lastEvent.value.executionReport,
+      instruction: lastInteractionInstruction.value || 'apply',
+      currentFormJson: current,
+      output: lastInteraction.value.output,
+      verificationReport: lastInteraction.value.verificationReport,
+      userConfirmed: true,
       confirmOverwrite: true,
     })
-    lastEvent.value = data
+    lastInteraction.value = { ...lastInteraction.value, ...data }
     if (data.status === 'applied' && data.applied && data.formJson) {
       emit('apply', data.formJson)
-      ElMessage.success('事件已写入画布')
-      eventVerifiedPass.value = false
+      ElMessage.success('交互已写入画布')
+      interactionVerifiedPass.value = false
     } else {
       ElMessage.warning(data.summary || '写入被拒绝')
     }
   } catch (e: any) {
-    error.value = e?.message || '写入事件失败'
+    error.value = e?.message || '写入交互失败'
     emit('AiError')
   } finally {
     loading.value = false
@@ -450,7 +524,7 @@ async function runGenerate(text: string) {
       throw new Error('返回结果缺少 formJson')
     }
     lastResult.value = data
-    lastEvent.value = null
+    lastInteraction.value = null
     if (text) {
       messages.value.push({ role: 'user', content: text })
       messages.value.push({ role: 'assistant', content: data.summary })
@@ -471,7 +545,7 @@ async function runRefine(text: string) {
     return
   }
   loading.value = true
-  lastEvent.value = null
+  lastInteraction.value = null
   try {
     const history = messages.value.slice(-20)
     const data = await refineFormByAgent({
@@ -483,7 +557,11 @@ async function runRefine(text: string) {
       throw new Error('返回结果缺少 formJson')
     }
     lastResult.value = data
-    messages.value.push({ role: 'user', content: text })
+    // runInteraction 已推送 user 消息时避免重复
+    const last = messages.value[messages.value.length - 1]
+    if (!(last?.role === 'user' && last.content === text)) {
+      messages.value.push({ role: 'user', content: text })
+    }
     messages.value.push({ role: 'assistant', content: data.summary })
     prompt.value = ''
     const hasWarnings = Array.isArray(data.warnings) && data.warnings.length > 0
@@ -587,10 +665,11 @@ function onApply() {
     border-radius: 6px;
     padding: 8px 10px;
     font-size: 12px;
-    color: #ad6800;
+    color: #606266;
     .warnings-title {
       font-weight: 600;
       margin-bottom: 4px;
+      color: #ad6800;
     }
     ul {
       margin: 0;
@@ -600,8 +679,9 @@ function onApply() {
       margin: 0;
       white-space: pre-wrap;
       word-break: break-all;
-      max-height: 120px;
+      max-height: 200px;
       overflow: auto;
+      font-size: 11px;
     }
   }
   .preview {

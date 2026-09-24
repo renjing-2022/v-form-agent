@@ -1,0 +1,423 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.9.0",
+  "documents": [
+    {
+      "documentId": "ai-form-nl-interaction-compiler-prd",
+      "requirementIds": [
+        "fr-1-unified-entry",
+        "fr-2-llm-direct-js",
+        "fr-3-structure-event-transaction",
+        "fr-4-model-scenarios",
+        "fr-5-network-ban",
+        "fr-6-verify-repair-apply",
+        "fr-7-confirm-before-write",
+        "fr-8-honest-failure",
+        "fr-9-bank-acceptance",
+        "fr-10-regression"
+      ]
+    },
+    {
+      "documentId": "ai-form-nl-interaction-compiler-design",
+      "requirementIds": [
+        "td-api-reference",
+        "td-generate-replay",
+        "td-network-policy",
+        "td-merge-apply",
+        "td-ui-interaction",
+        "td-smoke-regression"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-unified-entry",
+      "description": "AiChat 统一 /interaction；纯结构 route_refine→/refine；不再关键词分流 /event",
+      "caseIds": [
+        "interaction-ui-confirm-flow",
+        "interaction-ui-route-refine",
+        "interaction-route-refine-structure-only",
+        "nl-structure-only"
+      ]
+    },
+    {
+      "id": "fr-2-llm-direct-js",
+      "description": "模型直接写 handlers JS；mock 无 fixture 不落模板；输出契约校验",
+      "caseIds": [
+        "interaction-output-schema-reject-invalid",
+        "interaction-unknown-ref-rewrite",
+        "interaction-handler-scenario-coverage",
+        "interaction-no-fixture-no-fallback",
+        "interaction-llm-smoke"
+      ]
+    },
+    {
+      "id": "fr-3-structure-event-transaction",
+      "description": "结构+事件同一事务；失败整单不写",
+      "caseIds": ["interaction-transaction-all-or-nothing"]
+    },
+    {
+      "id": "fr-4-model-scenarios",
+      "description": "模型给出 scenarios；handler 必须被覆盖",
+      "caseIds": ["interaction-handler-scenario-coverage", "nl-amount-calc", "nl-wizard-next"]
+    },
+    {
+      "id": "fr-5-network-ban",
+      "description": "静态禁网络；负例含接口/上传不可 apply",
+      "caseIds": [
+        "interaction-network-static-reject",
+        "nl-neg-api",
+        "nl-neg-submit-api",
+        "nl-neg-upload",
+        "nl-neg-partial"
+      ]
+    },
+    {
+      "id": "fr-6-verify-repair-apply",
+      "description": "服务端重判 verificationReport；伪造/缺报 draft；场景指纹与修正上限",
+      "caseIds": [
+        "interaction-apply-forged-report-draft",
+        "interaction-repair-scenario-tamper-reject",
+        "interaction-repair-limit-draft"
+      ]
+    },
+    {
+      "id": "fr-7-confirm-before-write",
+      "description": "UI 展示场景后验证，确认前不可写入",
+      "caseIds": ["interaction-ui-confirm-flow"]
+    },
+    {
+      "id": "fr-8-honest-failure",
+      "description": "不支持与需澄清诚实返回；画布不变",
+      "caseIds": ["nl-neg-ambiguous", "nl-neg-api", "interaction-no-fixture-no-fallback"]
+    },
+    {
+      "id": "fr-9-bank-acceptance",
+      "description": "题库正例 generate→apply；负例不可 apply；独立断言复验子集",
+      "caseIds": [
+        "nl-wizard-next",
+        "nl-wizard-prev-next",
+        "nl-wizard-submit-locate",
+        "nl-amount-calc",
+        "nl-other-required",
+        "nl-disable-when-empty",
+        "nl-date-range-validate",
+        "nl-budget-validate",
+        "nl-reset-button",
+        "nl-fill-default",
+        "nl-open-help",
+        "nl-subform-row-calc",
+        "nl-subform-default",
+        "nl-init-defaults",
+        "nl-init-active-tab",
+        "nl-neg-api",
+        "nl-neg-submit-api",
+        "nl-neg-upload",
+        "nl-neg-ambiguous",
+        "nl-neg-partial",
+        "nl-structure-only"
+      ]
+    },
+    {
+      "id": "fr-10-regression",
+      "description": "v0.8 agent 用例、formula、strict sweep、frontend-no-secret；v0.7/v0.6 e2e 可跑子集",
+      "caseIds": [
+        "catalog-full-strict-sweep",
+        "frontend-no-secret",
+        "event-formula-still-preferred",
+        "refine-v06-regression",
+        "event-v07-clarify-regression"
+      ]
+    },
+    {
+      "id": "td-api-reference",
+      "description": "interactionApiReference 与设计 §4 对齐",
+      "caseIds": ["interaction-api-reference-parity"]
+    },
+    {
+      "id": "td-generate-replay",
+      "description": "生成契约、回放与路由",
+      "caseIds": [
+        "interaction-output-schema-reject-invalid",
+        "interaction-route-refine-structure-only",
+        "interaction-no-fixture-no-fallback"
+      ]
+    },
+    {
+      "id": "td-network-policy",
+      "description": "静态网络策略",
+      "caseIds": ["interaction-network-static-reject"]
+    },
+    {
+      "id": "td-merge-apply",
+      "description": "合入事务与 apply 闸",
+      "caseIds": [
+        "interaction-transaction-all-or-nothing",
+        "interaction-apply-forged-report-draft"
+      ]
+    },
+    {
+      "id": "td-ui-interaction",
+      "description": "统一入口 UI 与 route_refine",
+      "caseIds": ["interaction-ui-confirm-flow", "interaction-ui-route-refine"]
+    },
+    {
+      "id": "td-smoke-regression",
+      "description": "真实 Key 冒烟与回归契约",
+      "caseIds": [
+        "interaction-llm-smoke",
+        "catalog-full-strict-sweep",
+        "frontend-no-secret"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "interaction-api-reference-parity",
+      "title": "API 参考手册静态对齐",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-api-reference-parity.txt"]
+    },
+    {
+      "id": "interaction-output-schema-reject-invalid",
+      "title": "非法 output schema 拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-output-schema-reject-invalid.txt"]
+    },
+    {
+      "id": "interaction-unknown-ref-rewrite",
+      "title": "未知引用触发校验/重写路径",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-unknown-ref-rewrite.txt"]
+    },
+    {
+      "id": "interaction-handler-scenario-coverage",
+      "title": "handler 场景覆盖校验",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-handler-scenario-coverage.txt"]
+    },
+    {
+      "id": "interaction-no-fixture-no-fallback",
+      "title": "mock 无 fixture 诚实报错（无模板回退）",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-no-fixture-no-fallback.txt"]
+    },
+    {
+      "id": "interaction-route-refine-structure-only",
+      "title": "structure_only → route_refine",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-route-refine-structure-only.txt"]
+    },
+    {
+      "id": "interaction-network-static-reject",
+      "title": "静态网络检查拒绝 fetch",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-network-static-reject.txt"]
+    },
+    {
+      "id": "interaction-transaction-all-or-nothing",
+      "title": "合入失败整单回滚",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-transaction-all-or-nothing.txt"]
+    },
+    {
+      "id": "interaction-apply-forged-report-draft",
+      "title": "伪造报告保持 draft",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-apply-forged-report-draft.txt"]
+    },
+    {
+      "id": "interaction-repair-scenario-tamper-reject",
+      "title": "场景指纹篡改拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-repair-scenario-tamper-reject.txt"]
+    },
+    {
+      "id": "interaction-repair-limit-draft",
+      "title": "修正最多 2 轮",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-repair-limit-draft.txt"]
+    },
+    {
+      "id": "interaction-ui-confirm-flow",
+      "title": "UI generate→场景可见→确认闸",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.9.0/interaction-ui-confirm-flow.txt",
+        "docs/evidence/v0.9.0/interaction-ui-confirm-flow.png"
+      ]
+    },
+    {
+      "id": "interaction-ui-route-refine",
+      "title": "UI route_refine 后走 /refine",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.9.0/interaction-ui-route-refine.txt",
+        "docs/evidence/v0.9.0/interaction-ui-route-refine.png"
+      ]
+    },
+    {
+      "id": "interaction-llm-smoke",
+      "title": "真实 DeepSeek 冒烟子集 6/6",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/interaction-llm-smoke.txt"]
+    },
+    {
+      "id": "nl-wizard-next",
+      "title": "题库正例：每 tab 下一页",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-wizard-next.txt"]
+    },
+    {
+      "id": "nl-wizard-prev-next",
+      "title": "题库正例：上一页/下一页分布",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-wizard-prev-next.txt"]
+    },
+    {
+      "id": "nl-wizard-submit-locate",
+      "title": "题库正例：提交定位出错页",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-wizard-submit-locate.txt"]
+    },
+    {
+      "id": "nl-amount-calc",
+      "title": "题库正例：金额/实付计算",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-amount-calc.txt"]
+    },
+    {
+      "id": "nl-other-required",
+      "title": "题库正例：其他说明显隐必填",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-other-required.txt"]
+    },
+    {
+      "id": "nl-disable-when-empty",
+      "title": "题库正例：空单价禁用折扣",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-disable-when-empty.txt"]
+    },
+    {
+      "id": "nl-date-range-validate",
+      "title": "题库正例：日期区间校验",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-date-range-validate.txt"]
+    },
+    {
+      "id": "nl-budget-validate",
+      "title": "题库正例：预算校验",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-budget-validate.txt"]
+    },
+    {
+      "id": "nl-reset-button",
+      "title": "题库正例：重置按钮",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-reset-button.txt"]
+    },
+    {
+      "id": "nl-fill-default",
+      "title": "题库正例：填入示例",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-fill-default.txt"]
+    },
+    {
+      "id": "nl-open-help",
+      "title": "题库正例：帮助弹窗",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-open-help.txt"]
+    },
+    {
+      "id": "nl-subform-row-calc",
+      "title": "题库正例：子表行计算",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-subform-row-calc.txt"]
+    },
+    {
+      "id": "nl-subform-default",
+      "title": "题库正例：增行默认数量",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-subform-default.txt"]
+    },
+    {
+      "id": "nl-init-defaults",
+      "title": "题库正例：打开默认值",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-init-defaults.txt"]
+    },
+    {
+      "id": "nl-init-active-tab",
+      "title": "题库正例：默认第二页",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-init-active-tab.txt"]
+    },
+    {
+      "id": "nl-neg-api",
+      "title": "题库负例：接口回填",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-neg-api.txt"]
+    },
+    {
+      "id": "nl-neg-submit-api",
+      "title": "题库负例：提交发后端",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-neg-submit-api.txt"]
+    },
+    {
+      "id": "nl-neg-upload",
+      "title": "题库负例：上传附件",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-neg-upload.txt"]
+    },
+    {
+      "id": "nl-neg-ambiguous",
+      "title": "题库负例：指代不清",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-neg-ambiguous.txt"]
+    },
+    {
+      "id": "nl-neg-partial",
+      "title": "题库负例：部分含网络",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-neg-partial.txt"]
+    },
+    {
+      "id": "nl-structure-only",
+      "title": "题库：纯结构 route_refine",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/nl-structure-only.txt"]
+    },
+    {
+      "id": "catalog-full-strict-sweep",
+      "title": "Catalog full strict sweep 回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/catalog-full-strict-sweep.txt"]
+    },
+    {
+      "id": "frontend-no-secret",
+      "title": "frontend-no-secret 回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/frontend-no-secret.txt"]
+    },
+    {
+      "id": "event-formula-still-preferred",
+      "title": "formula 仍优先 refine 回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/event-formula-still-preferred.txt"]
+    },
+    {
+      "id": "refine-v06-regression",
+      "title": "v0.6 重型容器回归（agent）",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/refine-v06-regression.txt"]
+    },
+    {
+      "id": "event-v07-clarify-regression",
+      "title": "v0.7 澄清回归（agent）",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.9.0/event-v07-clarify-regression.txt"]
+    }
+  ]
+}

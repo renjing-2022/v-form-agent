@@ -2,7 +2,7 @@ case: widget-catalog-sync
 status: pass
 observed: catalog types=37; fingerprint=ec21450c548af95dc62f1daa78c8baa9a66d02ec91851524d97c2abef2abbc23; input writable=36 forbidden=8; cssCode writable; events forbidden; drift diffs=0
 environment: local-windows; agent acceptance-cases script; AGENT_ALLOW_MOCK=1
-sourceRevision: feature/v0.7.0-event-interaction-js@016dcc70b5cd2663cd5e5dcf3edd637cd829e81b (working tree has uncommitted changes)
-capturedAt: 2026-09-22T08:33:29.587Z
+sourceRevision: feat/v0.9.0-nl-interaction-js@0e3c8bae17fc5d1fb28f402866f9bb531cc6491f (working tree has uncommitted changes)
+capturedAt: 2026-09-23T08:45:30.036Z
 type: agent/static
 source: widgetsConfig.js + getDefaultFormConfig()

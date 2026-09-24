@@ -1,0 +1,57 @@
+{
+  "match": {
+    "scenarioId": "nl-reset-button",
+    "instructionIncludes": [
+      "「重置」按钮"
+    ]
+  },
+  "output": {
+    "intent": "mixed",
+    "summary": "重置按钮",
+    "structure": [
+      {
+        "op": "addButton",
+        "label": "重置",
+        "name": "btnReset"
+      }
+    ],
+    "handlers": [
+      {
+        "id": "h-reset",
+        "target": "btnReset",
+        "eventKey": "onClick",
+        "code": "this.getFormRef().resetForm(true);",
+        "explain": ""
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": [
+          "h-reset"
+        ],
+        "title": "重置",
+        "arrange": {
+          "values": {
+            "qty": 3
+          }
+        },
+        "act": [
+          {
+            "click": "btnReset"
+          }
+        ],
+        "assert": [
+          {
+            "field": "qty",
+            "value": null
+          },
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

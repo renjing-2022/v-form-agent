@@ -1,0 +1,8 @@
+case: interaction-llm-smoke
+status: pass
+observed: smoke_pass_rate=6/6
+details: nl-wizard-next:generated:pass; nl-amount-calc:generated:pass; nl-other-required:generated:pass; nl-date-range-validate:generated:pass; nl-subform-row-calc:generated:pass; nl-neg-api:unsupported:pass
+environment: local Node; real DeepSeek; AGENT_ALLOW_MOCK unset; evidence contains no API key
+sourceRevision: feat/v0.9.0-nl-interaction-js@0e3c8bae17fc
+capturedAt: 2026-09-23T09:39:36.181Z
+note: evidence contains no API key or request headers

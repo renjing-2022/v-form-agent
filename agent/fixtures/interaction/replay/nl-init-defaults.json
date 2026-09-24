@@ -1,0 +1,55 @@
+{
+  "match": {
+    "scenarioId": "nl-init-defaults",
+    "instructionIncludes": [
+      "打开表单时类型默认选个人"
+    ]
+  },
+  "output": {
+    "intent": "interaction",
+    "summary": "装载默认值",
+    "structure": [],
+    "handlers": [
+      {
+        "id": "h-m",
+        "target": "form",
+        "eventKey": "onFormMounted",
+        "code": "this.setFieldValue('type','personal',true);this.setFieldValue('discount',0,true);this.disableWidgets('pay');",
+        "explain": ""
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": [
+          "h-m"
+        ],
+        "title": "装载",
+        "arrange": {},
+        "act": [
+          {
+            "mount": true
+          }
+        ],
+        "assert": [
+          {
+            "field": "type",
+            "value": "personal"
+          },
+          {
+            "field": "discount",
+            "value": 0
+          },
+          {
+            "field": "pay",
+            "disabled": true
+          },
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

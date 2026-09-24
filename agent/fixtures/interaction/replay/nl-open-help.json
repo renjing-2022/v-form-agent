@@ -1,0 +1,53 @@
+{
+  "match": {
+    "scenarioId": "nl-open-help",
+    "instructionIncludes": [
+      "帮助弹窗"
+    ]
+  },
+  "output": {
+    "intent": "mixed",
+    "summary": "打开帮助弹窗",
+    "structure": [
+      {
+        "op": "addButton",
+        "label": "帮助",
+        "name": "btnHelp"
+      }
+    ],
+    "handlers": [
+      {
+        "id": "h-help",
+        "target": "btnHelp",
+        "eventKey": "onClick",
+        "code": "this.getFormRef().showDialog('helpDialog');",
+        "explain": ""
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s1",
+        "handlerRefs": [
+          "h-help"
+        ],
+        "title": "打开",
+        "arrange": {},
+        "act": [
+          {
+            "click": "btnHelp"
+          }
+        ],
+        "assert": [
+          {
+            "dialogVisible": "helpDialog",
+            "value": true
+          },
+          {
+            "noError": true
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}
