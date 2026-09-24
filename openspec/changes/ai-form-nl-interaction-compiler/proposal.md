@@ -4,7 +4,7 @@
 |---|---|
 | Change ID | `ai-form-nl-interaction-compiler`（名称沿用；语义已改为「模型直出 JS」，不含 DSL 编译器） |
 | Target version | `v0.9.0` |
-| Primary document | `docs/requirements/ai-form-nl-interaction-compiler.md`（revision 3） |
+| Primary document | `docs/requirements/ai-form-nl-interaction-compiler.md`（revision 4） |
 | Supporting design | `docs/design/ai-form-nl-interaction-compiler.md`（revision 3） |
 | Acceptance bank | `openspec/changes/ai-form-nl-interaction-compiler/scenarios.md`（用户已审阅） |
 | Affected repository | `app`（`.`） |
@@ -98,4 +98,4 @@ AiChat 去关键词分流；`/interaction` generate → 验证 → 修正 → �
 
 ## Lifecycle note
 
-OpenSpec status 仍为 `proposed`。实现发生在专用 worktree；**source / acceptance 在提交与验收前保持空 / pending**，不得提前写成 passed。
+OpenSpec status 为 `applied`。DeliveryGuard `v0.9.0` 已 published：source merged（`f9e5244`，`main`）、acceptance passed、release published（`2026-09-24T02:24:32Z`，锚点 `https://github.com/renjing-2022/v-form-agent/tree/v0.9.0`）。本文件只同步已存在事实，不回写未发生的 source / acceptance / release。

@@ -5,8 +5,8 @@
 | 文档 ID | `ai-form-nl-interaction-compiler-prd` |
 | 类型 | product-requirement |
 | 目标版本 | `v0.9.0` |
-| 修订 | 3（2026-09-23：题库已审阅；明确复杂场景靠多轮澄清后直出 JS） |
-| 状态 | proposed（未实现；source / acceptance 均为空） |
+| 修订 | 4（2026-09-24：对齐 DeliveryGuard 已发布事实，不再写 proposed） |
+| 状态 | released（DeliveryGuard `release.published`；acceptance passed；OpenSpec `applied`） |
 | 关联 OpenSpec | `ai-form-nl-interaction-compiler`（ID 沿用修订 1） |
 | 前置版本 | `v0.8.0` released — `/event` 状态机、真实预览执行闸、服务端重判、覆盖保护 |
 | 验收题库 | `openspec/changes/ai-form-nl-interaction-compiler/scenarios.md` |

@@ -9,7 +9,7 @@
       "type": "product-requirement",
       "title": "自然语言直出交互 JS（v0.9.0）产品需求",
       "ref": "docs/requirements/ai-form-nl-interaction-compiler.md",
-      "revision": 3,
+      "revision": 4,
       "primary": true
     },
     {

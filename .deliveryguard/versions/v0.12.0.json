@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/version.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.12.0",
+  "title": "复合组件、上传远程与运行时扩展创建",
+  "documents": [
+    {
+      "id": "ai-form-composite-extension-create-prd",
+      "type": "product-requirement",
+      "title": "复合组件、上传远程与运行时扩展创建（v0.12.0）产品需求",
+      "ref": "docs/requirements/ai-form-composite-extension-create.md",
+      "revision": 1,
+      "primary": true
+    }
+  ],
+  "openSpec": {
+    "changeId": "ai-form-composite-extension-create",
+    "path": "openspec/changes/ai-form-composite-extension-create",
+    "status": "proposed"
+  },
+  "sources": [],
+  "acceptance": {
+    "status": "pending"
+  },
+  "deployments": [],
+  "release": {
+    "status": "pending"
+  }
+}

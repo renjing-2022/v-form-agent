@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/version.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.10.0",
+  "title": "Ask-before-act 澄清、风险分级与事件冲突治理",
+  "documents": [
+    {
+      "id": "ai-form-ask-before-act-governance-prd",
+      "type": "product-requirement",
+      "title": "Ask-before-act 澄清与高风险动作治理（v0.10.0）产品需求",
+      "ref": "docs/requirements/ai-form-ask-before-act-governance.md",
+      "revision": 1,
+      "primary": true
+    }
+  ],
+  "openSpec": {
+    "changeId": "ai-form-ask-before-act-governance",
+    "path": "openspec/changes/ai-form-ask-before-act-governance",
+    "status": "proposed"
+  },
+  "sources": [],
+  "acceptance": {
+    "status": "pending"
+  },
+  "deployments": [],
+  "release": {
+    "status": "pending"
+  }
+}
