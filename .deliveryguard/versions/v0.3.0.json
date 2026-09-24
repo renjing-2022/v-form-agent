@@ -9,7 +9,7 @@
       "type": "product-requirement",
       "title": "v-form AI 组件知识库与厚 P1 优化（v0.3.0）产品需求",
       "ref": "docs/requirements/ai-form-widget-catalog-refine.md",
-      "revision": 1,
+      "revision": 2,
       "primary": true
     },
     {

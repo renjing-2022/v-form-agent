@@ -108,3 +108,7 @@ CSS 操作应尽量增量合并并绑定 `customClass`，避免覆盖用户已�
 | `refine-property-policy` | FR-1 FR-2 | agent | 未知键、事件键、类型错误被校验阻断 |
 | `refine-p1-regression` | FR-5 | playwright | generate、tab/options/formula、显式文案路径回归 |
 
+## Lifecycle note
+
+OpenSpec status 为 `applied`。DeliveryGuard `v0.3.0` 已 published：source merged（`2c910d17`，`main`）、acceptance passed、release published（`2026-09-18T09:45:00Z`，锚点 `https://github.com/renjing-2022/v-form-agent/releases/tag/v0.3.0`）。本段只同步已存在事实。
+

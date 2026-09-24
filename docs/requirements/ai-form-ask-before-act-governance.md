@@ -5,7 +5,7 @@
 | 文档 ID | `ai-form-ask-before-act-governance-prd` |
 | 类型 | product-requirement |
 | 目标版本 | `v0.10.0` |
-| 状态 | proposed |
+| 状态 | proposed（DeliveryGuard planned；source / acceptance / release 未发生） |
 | 关联 OpenSpec | `ai-form-ask-before-act-governance` |
 | 前置版本 | `v0.9.0` released |
 

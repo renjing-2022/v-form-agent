@@ -83,3 +83,7 @@
 
 本提案只推进到 OpenSpec `ready`。  
 `sources` / `acceptance` / `deployments` / `release` 保持空或 `pending`，直到真实实现与验收证据存在后另行登记。
+
+## Lifecycle note
+
+OpenSpec status 为 `archived`。DeliveryGuard `v0.1.0` 已 published：source merged（`cf32b3a`，`main`）、acceptance passed、release published（`2026-08-27T07:57:59Z`，锚点 `https://github.com/renjing-2022/v-form-agent/releases/tag/v0.1.0`）。本段只同步已存在事实。

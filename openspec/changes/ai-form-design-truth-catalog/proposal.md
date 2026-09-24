@@ -130,3 +130,7 @@
 | `refine-honest-summary` | FR-4 | agent/ui | 诚实完成语义 |
 | `refine-v03-regression` | FR-5 | agent/playwright | v0.3 主路径 |
 | `frontend-no-secret` | security | static | 前端无密钥 |
+
+## Lifecycle note
+
+OpenSpec status 为 `applied`。DeliveryGuard `v0.4.0` 已 published：source merged（`b520365`，`main`）、acceptance passed、release published（`2026-09-18T09:45:00Z`，锚点 `https://github.com/renjing-2022/v-form-agent/releases/tag/v0.4.0`）。本段只同步已存在事实。

@@ -5,7 +5,7 @@
 | 文档 ID | `ai-form-event-interaction-js-design` |
 | 类型 | technical-design |
 | 目标版本 | `v0.7.0` |
-| 修订 | 3（2026-09-22：纯前端事件全覆盖预留 `writableIn=v0.8`；接口类 never） |
+| 修订 | 4（2026-09-24：后续版 `v0.8.0` 已 released，不再写 proposed） |
 | 关联 PRD | `docs/requirements/ai-form-event-interaction-js.md` |
 | 关联 OpenSpec | `ai-form-event-interaction-js` |
 
@@ -17,7 +17,7 @@
 2. 新端口产出完备 EventSpec 或定向追问；
 3. **不**生成 JS、**不**合入事件键、**不**跑执行 harness。
 
-后续版 `v0.8.0`（`ai-form-event-js-execution`，已 proposed）再接：EventSpec → 受约束生成 → AST 护栏 → 设计器真实预览执行 + Playwright 验收 → 合入 / applied。
+后续版 `v0.8.0`（`ai-form-event-js-execution`，已 released）再接：EventSpec → 受约束生成 → AST 护栏 → 设计器真实预览执行 + Playwright 验收 → 合入 / applied。
 
 ## 2. 拍板锁定（原开放问题）
 

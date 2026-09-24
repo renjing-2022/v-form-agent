@@ -9,7 +9,7 @@
       "type": "product-requirement",
       "title": "Truth Strict 全量收敛 + Refine 删/排/复制（v0.5.0）产品需求",
       "ref": "docs/requirements/ai-form-truth-strict-refine-structure.md",
-      "revision": 1,
+      "revision": 2,
       "primary": true
     },
     {

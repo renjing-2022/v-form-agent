@@ -9,7 +9,7 @@
       "type": "product-requirement",
       "title": "重型容器第一刀 — data-table 列 / sub-form / vf-dialog（v0.6.0）产品需求",
       "ref": "docs/requirements/ai-form-heavy-container-refine.md",
-      "revision": 1,
+      "revision": 2,
       "primary": true
     },
     {

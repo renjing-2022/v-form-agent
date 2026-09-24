@@ -177,3 +177,7 @@
 ## Out of scope reminder
 
 不宣称「重型容器全覆盖」；OpenSpec 勾选 ≠ source merged ≠ acceptance passed ≠ release。
+
+## Lifecycle note
+
+OpenSpec status 为 `applied`。DeliveryGuard `v0.6.0` 已 published：source merged（`8cb90a57`，`main`）、acceptance passed、release published（`2026-09-21T08:05:00Z`，锚点 `https://github.com/renjing-2022/v-form-agent/releases/tag/v0.6.0`）。本段只同步已存在事实。

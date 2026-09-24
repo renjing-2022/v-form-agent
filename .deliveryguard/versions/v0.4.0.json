@@ -9,7 +9,7 @@
       "type": "product-requirement",
       "title": "设计真源 Catalog 与自然语言高精度对齐手动操作（v0.4.0）产品需求",
       "ref": "docs/requirements/ai-form-design-truth-catalog.md",
-      "revision": 1,
+      "revision": 2,
       "primary": true
     },
     {

@@ -5,10 +5,10 @@
 | 文档 ID | `ai-form-event-js-execution-prd` |
 | 类型 | product-requirement |
 | 目标版本 | `v0.8.0` |
-| 修订 | 2（2026-09-22：可写面 = 全部纯前端事件，含生命周期与子表行；接口类仍禁） |
-| 状态 | proposed（未实现；source / acceptance 均为空） |
+| 修订 | 3（2026-09-24：对齐 DeliveryGuard 已发布事实，不再写 proposed） |
+| 状态 | released（DeliveryGuard `release.published`；acceptance passed；OpenSpec `applied`） |
 | 关联 OpenSpec | `ai-form-event-js-execution` |
-| 前置版本 | `v0.7.0` planned — shape 登记 + `/event` 澄清闭环 + EventSpec（含可判定示例契约） |
+| 前置版本 | `v0.7.0` released — shape 登记 + `/event` 澄清闭环 + EventSpec（含可判定示例契约） |
 | 依赖 | v0.7 的 EventSpec / shape / `/event` 契约已落地后再实现本版合入路径 |
 
 ## 1. 背景与问题

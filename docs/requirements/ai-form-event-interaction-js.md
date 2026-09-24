@@ -5,11 +5,11 @@
 | 文档 ID | `ai-form-event-interaction-js-prd` |
 | 类型 | product-requirement |
 | 目标版本 | `v0.7.0` |
-| 修订 | 3（2026-09-22：纯前端事件全覆盖预留写权限；接口类仍禁；本版仍不合入 JS） |
-| 状态 | proposed（未实现；source / acceptance 均为空） |
+| 修订 | 4（2026-09-24：对齐 DeliveryGuard 已发布事实，不再写 proposed） |
+| 状态 | released（DeliveryGuard `release.published`；acceptance passed；OpenSpec `applied`） |
 | 关联 OpenSpec | `ai-form-event-interaction-js` |
 | 前置版本 | `v0.6.0` released — 重型容器扁平列 / sub-form / vf-dialog 壳层 |
-| 后续版本 | `v0.8.0` planned — OpenSpec `ai-form-event-js-execution`（生成 + 护栏 + 真实渲染 applied） |
+| 后续版本 | `v0.8.0` released — OpenSpec `ai-form-event-js-execution`（生成 + 护栏 + 真实渲染 applied） |
 
 ## 1. 背景与问题
 

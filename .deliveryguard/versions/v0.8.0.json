@@ -9,7 +9,7 @@
       "type": "product-requirement",
       "title": "交互执行面第二刀 — 受约束事件 JS 生成 + 真实渲染 applied（v0.8.0）产品需求",
       "ref": "docs/requirements/ai-form-event-js-execution.md",
-      "revision": 2,
+      "revision": 3,
       "primary": true
     },
     {

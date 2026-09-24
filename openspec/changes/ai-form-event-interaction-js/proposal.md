@@ -8,7 +8,7 @@
 | Supporting design | `docs/design/ai-form-event-interaction-js.md` |
 | Affected repository | `app`（`.` / 本仓库） |
 | Predecessor | `v0.6.0` released — 重型容器扁平列 / sub-form / vf-dialog 壳层 |
-| 文档修订 | 3 — 2026-09-22 纯前端事件全覆盖预留；接口类禁 |
+| 文档修订 | 4 — 2026-09-24 对齐 DeliveryGuard 已发布事实 |
 
 ## Problem
 
@@ -137,3 +137,7 @@ v0.7：**知识 + 澄清**。产出 EventSpec（含可判定示例契约），�
 ## Out of scope reminder
 
 不宣称交互执行面已交付。后续版才允许写 JS，且必须以 Playwright 真实渲染断言为 applied 闸。
+
+## Lifecycle note
+
+OpenSpec status 为 `applied`。DeliveryGuard `v0.7.0` 已 published：source merged（`ac28445e`，`main`）、acceptance passed、release published（`2026-09-22T09:03:58Z`，锚点 `https://github.com/renjing-2022/v-form-agent/releases/tag/v0.7.0`）。本段只同步已存在事实。后续写 JS 已由 `v0.8.0` / `v0.9.0` 承接。

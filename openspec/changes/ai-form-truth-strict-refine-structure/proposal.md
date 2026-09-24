@@ -94,3 +94,7 @@
 | `refine-structure-ambiguous-reject` | FR-5 | agent |
 | `refine-v04-regression` | FR-6 | agent/playwright |
 | `frontend-no-secret` | security | static |
+
+## Lifecycle note
+
+OpenSpec status 为 `applied`。DeliveryGuard `v0.5.0` 已 published：source merged（`ce976e8d`，`main`）、acceptance passed、release published（`2026-09-21T03:11:30Z`，锚点 `https://github.com/renjing-2022/v-form-agent/releases/tag/v0.5.0`）。本段只同步已存在事实。

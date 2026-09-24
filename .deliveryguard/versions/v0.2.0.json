@@ -9,7 +9,7 @@
       "type": "product-requirement",
       "title": "v-form AI 多轮表单优化（v0.2.0 / P0）产品需求",
       "ref": "docs/requirements/ai-form-multiturn-refine.md",
-      "revision": 1,
+      "revision": 2,
       "primary": true
     },
     {

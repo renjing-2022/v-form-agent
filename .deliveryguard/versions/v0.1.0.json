@@ -9,7 +9,7 @@
       "type": "product-requirement",
       "title": "v-form AI 表单生成 Agent（MVP）产品需求",
       "ref": "docs/requirements/ai-form-agent-mvp.md",
-      "revision": 1,
+      "revision": 2,
       "primary": true
     },
     {

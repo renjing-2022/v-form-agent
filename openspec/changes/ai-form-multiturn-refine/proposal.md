@@ -67,3 +67,7 @@
 3. 至少验证：结构（含 tab 或等价）、options、公式三类变更之一组可复现成功路径。
 4. 校验失败 / 未确认时不破坏现有画布。
 5. 密钥仍仅存 Agent 服务端。
+
+## Lifecycle note
+
+OpenSpec status 为 `applied`。DeliveryGuard `v0.2.0` 已 published：source merged（`3a45a51`，`main`）、acceptance passed、release published（`2026-09-02T06:27:10Z`，锚点 `https://github.com/renjing-2022/v-form-agent/releases/tag/v0.2.0`）。本段只同步已存在事实。

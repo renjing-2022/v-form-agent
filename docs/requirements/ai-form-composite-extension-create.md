@@ -5,7 +5,7 @@
 | 文档 ID | `ai-form-composite-extension-create-prd` |
 | 类型 | product-requirement |
 | 目标版本 | `v0.12.0` |
-| 状态 | proposed |
+| 状态 | proposed（DeliveryGuard planned；source / acceptance / release 未发生） |
 | 关联 OpenSpec | `ai-form-composite-extension-create` |
 | 前置版本 | `v0.11.0` planned |
 

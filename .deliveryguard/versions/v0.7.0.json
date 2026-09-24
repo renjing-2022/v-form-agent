@@ -9,7 +9,7 @@
       "type": "product-requirement",
       "title": "交互执行面第一刀 — 事件 shape 登记 + 澄清闭环（v0.7.0）产品需求",
       "ref": "docs/requirements/ai-form-event-interaction-js.md",
-      "revision": 3,
+      "revision": 4,
       "primary": true
     },
     {
@@ -17,7 +17,7 @@
       "type": "technical-design",
       "title": "交互执行面第一刀 — 事件 shape 登记 + 澄清闭环（v0.7.0）技术设计",
       "ref": "docs/design/ai-form-event-interaction-js.md",
-      "revision": 3
+      "revision": 4
     }
   ],
   "openSpec": {

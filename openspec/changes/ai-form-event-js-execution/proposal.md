@@ -7,7 +7,7 @@
 | Primary document | `docs/requirements/ai-form-event-js-execution.md` |
 | Supporting design | `docs/design/ai-form-event-js-execution.md` |
 | Affected repository | `app`（`.`） |
-| Predecessor | `v0.7.0` planned — `ai-form-event-interaction-js`（shape + 澄清；不合入 JS） |
+| Predecessor | `v0.7.0` released — `ai-form-event-interaction-js`（shape + 澄清；不合入 JS） |
 
 ## Problem
 
@@ -115,3 +115,7 @@ EventSpec → 生成 → AST 护栏 → `code_preview` → 真实 VForm 跑 exam
 ## Out of scope reminder
 
 不宣称任意 NL 都能生成任意 JS（尤其接口类）。保证：**纯前端事件属性均可作为落点** + **已执行 examples 的运行时正确**。
+
+## Lifecycle note
+
+OpenSpec status 为 `applied`。DeliveryGuard `v0.8.0` 已 published：source merged（`cd81e52d`，`main`）、acceptance passed、release published（`2026-09-23T06:16:16Z`，锚点 `https://github.com/renjing-2022/v-form-agent/tree/v0.8.0`）。本段只同步已存在事实。
