@@ -1,0 +1,8 @@
+case: ask-l1-no-clarify-ui
+status: pass
+observed: L1 generated without clarify-panel
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@0a458b0cfcbf (working tree has uncommitted changes)
+capturedAt: 2026-09-30T06:29:26.139Z
+durationMs: 3604
+screenshot: docs/evidence/v0.10.0/ask-l1-no-clarify-ui.png

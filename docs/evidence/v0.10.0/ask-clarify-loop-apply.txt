@@ -1,0 +1,8 @@
+case: ask-clarify-loop-apply
+status: pass
+observed: need_clarification→clarify→generated→verify→applied; plan=plan_munq60sh_og0mn23r; handlers=1
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@0a458b0cfcbf (working tree has uncommitted changes)
+capturedAt: 2026-09-30T06:29:15.022Z
+durationMs: 13374
+screenshot: docs/evidence/v0.10.0/ask-clarify-loop-apply.png

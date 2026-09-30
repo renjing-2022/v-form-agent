@@ -1,5 +1,43 @@
 import { z } from 'zod'
 import { chatTurnSchema, formJsonSchema, targetRefSchema } from './refinePlan.js'
+import {
+  clarificationPayloadSchema,
+  deriveQuestionsFromClarification,
+  eventResolutionSchema,
+  interactionClarifyRequestSchema,
+  pendingPlanViewSchema,
+  riskFactSchema,
+  riskLevelSchema,
+} from './clarification.js'
+
+export {
+  clarificationPayloadSchema,
+  clarificationQuestionSchema,
+  clarificationAnswerSchema,
+  pendingPlanViewSchema,
+  riskFactSchema,
+  riskLevelSchema,
+  eventResolutionSchema,
+  eventConflictSchema,
+  interactionClarifyRequestSchema,
+  deriveQuestionsFromClarification,
+  makeConfirmQuestion,
+  validateClarificationAnswers,
+  isConfirmRejected,
+  RISK_CODES,
+} from './clarification.js'
+export type {
+  ClarificationPayload,
+  ClarificationQuestion,
+  ClarificationAnswer,
+  PendingPlanView,
+  RiskFact,
+  RiskLevel,
+  EventResolution,
+  EventConflict,
+  InteractionClarifyRequest,
+  RiskCode,
+} from './clarification.js'
 
 export const interactionIntentSchema = z.enum([
   'interaction',
@@ -140,13 +178,43 @@ export const interactionApplyRequestSchema = z.object({
   verificationReport: interactionVerificationReportSchema,
   userConfirmed: z.boolean(),
   confirmOverwrite: z.boolean().optional(),
+  eventResolutions: z.array(eventResolutionSchema).max(80).optional(),
+})
+
+/** 按 eventResolutions 重建预览候选（切换合并模式后重验） */
+export const interactionPreviewRequestSchema = z.object({
+  action: z.literal('preview'),
+  currentFormJson: formJsonSchema,
+  output: interactionOutputSchema,
+  eventResolutions: z.array(eventResolutionSchema).max(80).optional(),
+  confirmOverwrite: z.boolean().optional(),
 })
 
 export const interactionRequestSchema = z.discriminatedUnion('action', [
   interactionGenerateRequestSchema,
   interactionRepairRequestSchema,
   interactionApplyRequestSchema,
+  interactionClarifyRequestSchema,
+  interactionPreviewRequestSchema,
 ])
+
+/** 顶层治理字段（响应用；非模型 output 必填） */
+export const interactionGovernanceFieldsSchema = z.object({
+  clarification: clarificationPayloadSchema.optional(),
+  pendingPlan: pendingPlanViewSchema.optional(),
+  riskLevel: riskLevelSchema.optional(),
+  riskFacts: z.array(riskFactSchema).max(40).optional(),
+  formFingerprint: z.string().min(1).max(128).optional(),
+})
+
+export function withDerivedQuestions(
+  output: InteractionOutput,
+  clarification?: z.infer<typeof clarificationPayloadSchema>,
+): InteractionOutput {
+  const derived = deriveQuestionsFromClarification(clarification)
+  if (!derived?.length) return output
+  return { ...output, questions: derived }
+}
 
 export type InteractionOutput = z.infer<typeof interactionOutputSchema>
 export type InteractionHandler = z.infer<typeof interactionHandlerSchema>

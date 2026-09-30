@@ -9,6 +9,7 @@
     "smoke": "tsx scripts/smoke.ts",
     "acceptance:cases": "tsx scripts/acceptance-cases.ts",
     "interaction:check": "tsx scripts/interaction-d0-d1-check.ts",
+    "ask-before-act:check": "tsx scripts/ask-before-act-check.ts",
     "interaction:record": "tsx scripts/interaction-record.ts",
     "interaction:smoke": "tsx scripts/interaction-smoke.ts",
     "interaction:stub-fixtures": "tsx scripts/interaction-stub-fixtures.ts",

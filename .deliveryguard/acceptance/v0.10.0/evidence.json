@@ -1,0 +1,147 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.10.0",
+  "documents": [
+    {
+      "documentId": "ai-form-ask-before-act-governance-prd",
+      "requirementIds": [
+        "fr-1-structured-clarify",
+        "fr-2-pending-plan",
+        "fr-3-risk-levels",
+        "fr-4-ask-ui",
+        "fr-5-multiturn-loop",
+        "fr-6-event-conflict",
+        "fr-7-regression"
+      ]
+    },
+    {
+      "documentId": "ai-form-ask-before-act-governance-design",
+      "requirementIds": [
+        "td-schema-fingerprint",
+        "td-risk-policy",
+        "td-clarify-state",
+        "td-event-ast-merge",
+        "td-option-rewrite",
+        "td-aichat-panels"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-structured-clarify",
+      "description": "结构化澄清问题（单选/多选/文本/确认）可由 UI 完成回答",
+      "caseIds": ["ask-clarify-loop-apply", "ask-l2-upload-clarify", "ask-before-act-agent-check"]
+    },
+    {
+      "id": "fr-2-pending-plan",
+      "description": "pendingPlan + fingerprint；漂移后 plan_expired，画布不变",
+      "caseIds": ["ask-plan-expired-drift", "ask-before-act-agent-check"]
+    },
+    {
+      "id": "fr-3-risk-levels",
+      "description": "L1 不追问；L2 确认；L3 拒绝",
+      "caseIds": ["ask-l1-no-clarify-ui", "ask-l2-upload-clarify", "ask-before-act-agent-check"]
+    },
+    {
+      "id": "fr-4-ask-ui",
+      "description": "AiChat 澄清面板与风险展示",
+      "caseIds": ["ask-clarify-loop-apply", "ask-l2-upload-clarify"]
+    },
+    {
+      "id": "fr-5-multiturn-loop",
+      "description": "ambiguous → clarify → generated → preview → applied",
+      "caseIds": ["ask-clarify-loop-apply"]
+    },
+    {
+      "id": "fr-6-event-conflict",
+      "description": "事件合并/覆盖/取消；未确认或 cancel 不写入",
+      "caseIds": ["ask-conflict-cancel-unchanged", "ask-before-act-agent-check"]
+    },
+    {
+      "id": "fr-7-regression",
+      "description": "v0.9 interaction / refine 路径与 frontend-no-secret 不退化",
+      "caseIds": ["ask-v09-interaction-regression", "ask-frontend-no-secret"]
+    },
+    {
+      "id": "td-schema-fingerprint",
+      "description": "澄清契约与 formFingerprint",
+      "caseIds": ["ask-before-act-agent-check"]
+    },
+    {
+      "id": "td-risk-policy",
+      "description": "L0–L3 重判与 parity fixtures",
+      "caseIds": ["ask-before-act-agent-check"]
+    },
+    {
+      "id": "td-clarify-state",
+      "description": "clarify 状态机与 plan_expired",
+      "caseIds": ["ask-plan-expired-drift", "ask-before-act-agent-check"]
+    },
+    {
+      "id": "td-event-ast-merge",
+      "description": "eventAstMerge + eventResolutions",
+      "caseIds": ["ask-conflict-cancel-unchanged", "ask-before-act-agent-check"]
+    },
+    {
+      "id": "td-option-rewrite",
+      "description": "Catalog/表单 options 真源重写",
+      "caseIds": ["ask-before-act-agent-check", "ask-clarify-loop-apply"]
+    },
+    {
+      "id": "td-aichat-panels",
+      "description": "澄清与冲突面板",
+      "caseIds": ["ask-clarify-loop-apply", "ask-l1-no-clarify-ui", "ask-l2-upload-clarify"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "ask-before-act-agent-check",
+      "title": "Ask-before-act 服务端契约/风险/合并快速校验",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.10.0/ask-before-act-agent-check.txt"]
+    },
+    {
+      "id": "ask-clarify-loop-apply",
+      "title": "含糊指令澄清闭环到 applied",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.10.0/ask-clarify-loop-apply.txt"]
+    },
+    {
+      "id": "ask-plan-expired-drift",
+      "title": "画布漂移后 plan_expired",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.10.0/ask-plan-expired-drift.txt"]
+    },
+    {
+      "id": "ask-conflict-cancel-unchanged",
+      "title": "事件冲突 cancel 画布不变",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.10.0/ask-conflict-cancel-unchanged.txt"]
+    },
+    {
+      "id": "ask-l1-no-clarify-ui",
+      "title": "明确 L1 不强制澄清 UI",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.10.0/ask-l1-no-clarify-ui.txt"]
+    },
+    {
+      "id": "ask-l2-upload-clarify",
+      "title": "上传 L2 进入澄清",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.10.0/ask-l2-upload-clarify.txt"]
+    },
+    {
+      "id": "ask-v09-interaction-regression",
+      "title": "v0.9 interaction:check 回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.10.0/ask-v09-interaction-regression.txt"]
+    },
+    {
+      "id": "ask-frontend-no-secret",
+      "title": "frontend-no-secret 静态检查",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.10.0/ask-frontend-no-secret.txt"]
+    }
+  ]
+}

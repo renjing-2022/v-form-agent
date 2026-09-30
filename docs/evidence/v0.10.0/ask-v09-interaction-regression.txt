@@ -1,0 +1,7 @@
+﻿case: ask-v09-interaction-regression
+status: pass
+observed: interaction:check → INTERACTION_D0_D4_OK
+environment: local-windows; agent npm run interaction:check; AGENT_ALLOW_MOCK=1
+sourceRevision: main@0a458b0cfcbf (working tree has uncommitted v0.10.0 changes)
+capturedAt: 2026-09-30T06:27:44.839Z
+type: agent-script

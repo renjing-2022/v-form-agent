@@ -5,18 +5,207 @@ import { buildFormSummary } from './formSummary.js'
 import { renderInteractionApiReferenceMarkdown } from '../knowledge/interactionApiReference.js'
 import {
   interactionOutputSchema,
+  makeConfirmQuestion,
+  withDerivedQuestions,
+  type ClarificationPayload,
+  type EventConflict,
   type InteractionOutput,
+  type PendingPlanView,
+  type RiskFact,
 } from '../schemas/interactionOutput.js'
+import { clarificationPayloadSchema, L2_CLARIFY_BEFORE_GENERATE } from '../schemas/clarification.js'
 import type { FormJson as RefineFormJson } from '../schemas/refinePlan.js'
+import type { RiskLevel } from '../schemas/clarification.js'
 import { validateInteractionOutput } from './interactionValidate.js'
 import { checkHandlersNetworkStatic } from './interactionNetworkPolicy.js'
 import { buildInteractionCandidate } from './interactionApply.js'
+import { buildPreGenerateRiskGate } from './interactionRiskGate.js'
+import { assessInteractionRisk } from './interactionRiskPolicy.js'
+import { computeFormFingerprint } from './formFingerprint.js'
+import { createPendingPlan, updatePendingPlanQuestions } from './pendingPlanStore.js'
+import {
+  buildClarificationFromNeedClarification,
+  rewriteClarificationPayload,
+} from './clarificationOptionRewrite.js'
+
+function attachRewrittenClarification(
+  formJson: RefineFormJson,
+  base: GenerateInteractionResult,
+  opts?: {
+    instruction?: string
+    messages?: Array<{ role: 'user' | 'assistant'; content: string }>
+    confirmedRiskCodes?: string[]
+  },
+): GenerateInteractionResult {
+  if (base.status !== 'need_clarification') return base
+
+  const instruction = opts?.instruction || ''
+  const clarification = buildClarificationFromNeedClarification({
+    formJson,
+    instruction,
+    questions: base.output.questions || base.questions,
+    clarification: base.clarification,
+  })
+  const output = withDerivedQuestions(
+    {
+      ...base.output,
+      intent: 'need_clarification',
+      summary: base.output.summary || '需要澄清',
+    },
+    clarification,
+  )
+
+  let pendingPlan = base.pendingPlan
+  if (pendingPlan?.id) {
+    updatePendingPlanQuestions(pendingPlan.id, clarification.questions)
+  } else {
+    pendingPlan = createPendingPlan({
+      formFingerprint: computeFormFingerprint(formJson),
+      goal: instruction.slice(0, 200) || output.summary || '交互澄清',
+      ambiguities: clarification.questions.map((q) => q.prompt),
+      plannedStructure: { summary: '', opKinds: [] },
+      plannedHandlers: [],
+      riskLevel: (base.riskLevel as RiskLevel | undefined) || 'L1',
+      riskFacts: base.riskFacts || [],
+      nextStepsAfterAnswer: ['回答澄清问题', '生成候选', '预览验证'],
+      resume: {
+        instruction,
+        messages: opts?.messages,
+        questionSnapshot: clarification.questions,
+        slotValues: {},
+        confirmedRiskCodes: opts?.confirmedRiskCodes || [],
+      },
+    })
+  }
+
+  return {
+    ...base,
+    output,
+    clarification,
+    pendingPlan,
+    questions: output.questions,
+    formFingerprint: computeFormFingerprint(formJson),
+  }
+}
 
 function withCandidate(
   formJson: RefineFormJson,
   base: GenerateInteractionResult,
+  opts?: {
+    instruction?: string
+    messages?: Array<{ role: 'user' | 'assistant'; content: string }>
+    confirmedRiskCodes?: string[]
+  },
 ): GenerateInteractionResult {
-  if (base.status !== 'generated') return base
+  if (base.status === 'need_clarification') {
+    return attachRewrittenClarification(formJson, base, opts)
+  }
+  if (base.status !== 'generated') {
+    return {
+      ...base,
+      formFingerprint: base.formFingerprint || computeFormFingerprint(formJson),
+    }
+  }
+
+  const instruction = opts?.instruction || ''
+  const confirmed = new Set(opts?.confirmedRiskCodes || [])
+  const risk = assessInteractionRisk({
+    instruction,
+    formJson,
+    output: base.output,
+  })
+
+  if (risk.reject) {
+    return {
+      ...base,
+      status: 'unsupported',
+      riskLevel: risk.riskLevel,
+      riskFacts: risk.riskFacts,
+      formFingerprint: computeFormFingerprint(formJson),
+      output: {
+        ...base.output,
+        intent: 'unsupported',
+        unsupported: [
+          ...(base.output.unsupported || []),
+          ...risk.riskFacts
+            .filter((f) => f.level === 'L3')
+            .map((f) => ({ text: f.code, reason: f.message })),
+        ],
+      },
+    }
+  }
+
+  const stillNeed = risk.riskFacts.filter(
+    (f) =>
+      f.level === 'L2' &&
+      L2_CLARIFY_BEFORE_GENERATE.has(f.code) &&
+      !confirmed.has(f.code),
+  )
+  if (stillNeed.length) {
+    const clarification = rewriteClarificationPayload(
+      clarificationPayloadSchema.parse({
+        protocol: 'structured-clarify-v1',
+        questions: stillNeed.map((f, i) =>
+          makeConfirmQuestion({
+            id: `q_risk_${f.code}_${i}`,
+            prompt: `高风险动作需要确认：${f.message}`,
+            riskNote: f.message,
+            riskCode: f.code,
+          }),
+        ),
+      }),
+      formJson,
+      instruction,
+    )
+    const pendingPlan = createPendingPlan({
+      formFingerprint: computeFormFingerprint(formJson),
+      goal: instruction.slice(0, 200) || base.output.summary || '交互生成',
+      ambiguities: stillNeed.map((f) => f.message),
+      plannedStructure: {
+        summary: base.output.structure?.map((s) => s.op).join(',') || '',
+        opKinds: (base.output.structure || []).map((s) => s.op),
+      },
+      plannedHandlers: (base.output.handlers || []).map((h) => ({
+        target: h.target,
+        eventKey: h.eventKey,
+        action: 'create' as const,
+      })),
+      riskLevel: risk.riskLevel,
+      riskFacts: risk.riskFacts,
+      nextStepsAfterAnswer: ['确认风险后生成', '预览验证'],
+      resume: {
+        instruction,
+        messages: opts?.messages,
+        questionSnapshot: clarification.questions,
+        slotValues: {},
+        confirmedRiskCodes: [...confirmed],
+      },
+    })
+    const output = withDerivedQuestions(
+      {
+        intent: 'need_clarification',
+        summary: '检测到高风险动作，请先确认',
+        structure: [],
+        handlers: [],
+        scenarios: [],
+        unsupported: [],
+      },
+      clarification,
+    )
+    return {
+      ...base,
+      status: 'need_clarification',
+      output,
+      clarification,
+      pendingPlan,
+      riskLevel: risk.riskLevel,
+      riskFacts: risk.riskFacts,
+      questions: output.questions,
+      formFingerprint: computeFormFingerprint(formJson),
+      formJsonCandidate: undefined,
+    }
+  }
+
   const preview = buildInteractionCandidate(formJson, base.output)
   if (!preview.ok) {
     return {
@@ -24,6 +213,9 @@ function withCandidate(
       status: 'error',
       error: preview.error,
       issues: [{ path: 'merge', message: preview.error }],
+      riskLevel: risk.riskLevel,
+      riskFacts: risk.riskFacts,
+      formFingerprint: computeFormFingerprint(formJson),
     }
   }
   return {
@@ -32,6 +224,10 @@ function withCandidate(
     scenarioNarration: preview.scenarioNarration,
     scenarioFingerprint: preview.scenarioFingerprint,
     mergeWarnings: preview.warnings,
+    eventConflicts: preview.eventConflicts,
+    riskLevel: risk.riskLevel,
+    riskFacts: risk.riskFacts,
+    formFingerprint: computeFormFingerprint(formJson),
   }
 }
 
@@ -194,6 +390,49 @@ function loadReplayFixture(instruction: string, root = resolveRepoRoot()): Repla
  * 以便 AiChat 仍能 route_refine → /refine（v0.7/v0.6 回归路径）。
  * 未识别的交互类指令仍返回 null，由调用方诚实报错（禁止模板回退）。
  */
+function parseConfirmedSlots(instruction: string): Record<string, unknown> {
+  const m = instruction.match(/已确认槽位：(\{[\s\S]*?\})(?:\n|$)/)
+  if (!m) return {}
+  try {
+    return JSON.parse(m[1]) as Record<string, unknown>
+  } catch {
+    return {}
+  }
+}
+
+function buildMockAfterClarify(instruction: string): InteractionOutput | null {
+  const slots = parseConfirmedSlots(instruction)
+  const target = String(slots['target.widget'] || '').trim()
+  if (!target || target === 'form') return null
+  const eventKey = String(slots['target.eventKey'] || 'onChange').trim() || 'onChange'
+  const hid = 'h_clarify_1'
+  return interactionOutputSchema.parse({
+    intent: 'interaction',
+    summary: `已根据澄清为 ${target}.${eventKey} 生成本地联动候选（mock）`,
+    structure: [],
+    handlers: [
+      {
+        id: hid,
+        target,
+        eventKey,
+        code: `const form = this.getFormRef();\nform.setFieldValue('${target}', form.getFieldValue('${target}'));`,
+        explain: '澄清后 mock 候选',
+      },
+    ],
+    scenarios: [
+      {
+        id: 's_clarify_1',
+        handlerRefs: [hid],
+        title: '澄清后本地重入',
+        arrange: { values: {} },
+        act: [{ input: target, value: 1 }],
+        assert: [{ noError: true }, { noNetwork: true }],
+      },
+    ],
+    unsupported: [],
+  })
+}
+
 function localIntentFallback(instruction: string): InteractionOutput | null {
   const text = String(instruction || '').trim()
   if (!text) {
@@ -202,6 +441,11 @@ function localIntentFallback(instruction: string): InteractionOutput | null {
       summary: '请描述要做的交互或结构变更',
       questions: ['你想改结构属性，还是写字段联动/按钮/校验？'],
     })
+  }
+  // clarify 续跑：已填槽后给出可验证 mock 候选（禁止再卡在「那个字段」）
+  if (/已确认槽位：|已确认风险：/.test(text)) {
+    const built = buildMockAfterClarify(text)
+    if (built) return built
   }
   if (/接口|调用api|fetch|axios|上传|附件|数据源|executeDataSource|发到后端|保存到服务器|网络请求/i.test(text)) {
     return interactionOutputSchema.parse({
@@ -285,6 +529,13 @@ export type GenerateInteractionResult = {
   scenarioNarration?: string[]
   scenarioFingerprint?: string
   mergeWarnings?: string[]
+  clarification?: ClarificationPayload
+  pendingPlan?: PendingPlanView
+  riskLevel?: string
+  riskFacts?: RiskFact[]
+  formFingerprint?: string
+  eventConflicts?: EventConflict[]
+  questions?: string[]
 }
 
 function mapStatus(output: InteractionOutput): GenerateInteractionResult['status'] {
@@ -327,9 +578,44 @@ export async function generateInteraction(params: {
   instruction: string
   currentFormJson: RefineFormJson
   messages?: Array<{ role: 'user' | 'assistant'; content: string }>
+  /** clarify 续跑时跳过指令级门禁（仍做产物后重判） */
+  skipRiskGate?: boolean
+  confirmedRiskCodes?: string[]
 }): Promise<GenerateInteractionResult> {
   const apiKey = process.env.DEEPSEEK_API_KEY?.trim()
   const allowMock = process.env.AGENT_ALLOW_MOCK === '1'
+  const confirmedRiskCodes = params.confirmedRiskCodes || []
+
+  if (!params.skipRiskGate) {
+    const gate = buildPreGenerateRiskGate({
+      instruction: params.instruction,
+      formJson: params.currentFormJson,
+      confirmedRiskCodes,
+      messages: params.messages,
+    })
+    if (!gate.ok) {
+      const gated: GenerateInteractionResult = {
+        output: gate.output,
+        status: gate.kind,
+        usedMock: false,
+        rewriteCount: 0,
+        clarification: gate.clarification,
+        pendingPlan: gate.pendingPlan,
+        riskLevel: gate.risk.riskLevel,
+        riskFacts: gate.risk.riskFacts,
+        questions: gate.output.questions,
+        formFingerprint: computeFormFingerprint(params.currentFormJson),
+      }
+      if (gate.kind === 'need_clarification') {
+        return attachRewrittenClarification(params.currentFormJson, gated, {
+          instruction: params.instruction,
+          messages: params.messages,
+          confirmedRiskCodes,
+        })
+      }
+      return gated
+    }
+  }
 
   if (!apiKey) {
     if (!allowMock) {
@@ -349,12 +635,20 @@ export async function generateInteraction(params: {
     if (!replay) {
       const local = localIntentFallback(params.instruction)
       if (local) {
-        return {
-          output: local,
-          status: mapStatus(local),
-          usedMock: true,
-          rewriteCount: 0,
-        }
+        return withCandidate(
+          params.currentFormJson,
+          {
+            output: local,
+            status: mapStatus(local),
+            usedMock: true,
+            rewriteCount: 0,
+          },
+          {
+            instruction: params.instruction,
+            messages: params.messages,
+            confirmedRiskCodes,
+          },
+        )
       }
       return {
         output: interactionOutputSchema.parse({
@@ -385,12 +679,16 @@ export async function generateInteraction(params: {
         error: 'replay fixture failed validation',
       }
     }
-    return withCandidate(params.currentFormJson, {
-      output: checked.output,
-      status: mapStatus(checked.output),
-      usedMock: true,
-      rewriteCount: 0,
-    })
+    return withCandidate(
+      params.currentFormJson,
+      {
+        output: checked.output,
+        status: mapStatus(checked.output),
+        usedMock: true,
+        rewriteCount: 0,
+      },
+      { instruction: params.instruction, confirmedRiskCodes },
+    )
   }
 
   const history = (params.messages || []).slice(-12).map((m) => ({
@@ -439,12 +737,16 @@ export async function generateInteraction(params: {
 
     const checked = parseAndValidate(normalizeInteractionRaw(raw), params.currentFormJson)
     if (checked.ok) {
-      return withCandidate(params.currentFormJson, {
-        output: checked.output,
-        status: mapStatus(checked.output),
-        usedMock: false,
-        rewriteCount,
-      })
+      return withCandidate(
+        params.currentFormJson,
+        {
+          output: checked.output,
+          status: mapStatus(checked.output),
+          usedMock: false,
+          rewriteCount,
+        },
+        { instruction: params.instruction, confirmedRiskCodes },
+      )
     }
     lastIssues = checked.issues
     if (rewriteCount >= 1) {

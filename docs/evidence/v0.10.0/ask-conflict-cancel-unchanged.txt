@@ -1,0 +1,8 @@
+case: ask-conflict-cancel-unchanged
+status: pass
+observed: single conflict cancel → preview 422 + apply not applied; canvas unchanged; onChange handwritten
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@0a458b0cfcbf (working tree has uncommitted changes)
+capturedAt: 2026-09-30T06:29:22.563Z
+durationMs: 3237
+screenshot: docs/evidence/v0.10.0/ask-conflict-cancel-unchanged.png

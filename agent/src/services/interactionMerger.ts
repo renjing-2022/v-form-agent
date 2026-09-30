@@ -1,10 +1,13 @@
 import { createHash } from 'node:crypto'
 import type { FormJson } from '../schemas/refinePlan.js'
 import type { InteractionOutput, InteractionScenario, InteractionStructureOp } from '../schemas/interactionOutput.js'
+import type { EventMergeMode, EventResolution } from '../schemas/clarification.js'
 import { buildWidgetFromCatalogDefaults } from '../knowledge/widgetDefaults.js'
 import { checkHandlersNetworkStatic } from './interactionNetworkPolicy.js'
 import { isInterfaceEventKey } from '../knowledge/eventAllowlist.js'
 import { INTERACTION_EVENT_KEYS } from './interactionValidate.js'
+import { applyMergeMode, buildEventConflict } from './eventAstMerge.js'
+import type { EventConflict } from '../schemas/clarification.js'
 
 type WidgetNode = {
   type?: string
@@ -149,19 +152,35 @@ function writeHandler(
   target: string,
   eventKey: string,
   code: string,
-  opts?: { confirmOverwrite?: boolean },
-): { error?: string; warnings: string[] } {
+  opts?: { confirmOverwrite?: boolean; mergeMode?: 'prepend' | 'append' | 'overwrite' },
+): { error?: string; warnings: string[]; skipped?: boolean } {
   const warnings: string[] = []
   if (isInterfaceEventKey(eventKey) || !INTERACTION_EVENT_KEYS.has(eventKey)) {
     return { error: `禁写事件键：${eventKey}`, warnings }
   }
 
+  const mode = opts?.mergeMode || (opts?.confirmOverwrite ? 'overwrite' : undefined)
+
   if (target === 'form') {
     const existing = String((formJson.formConfig || {})[eventKey] || '')
-    if (existing.trim() && !opts?.confirmOverwrite) {
-      return { error: `form.${eventKey} 已有代码，需 confirmOverwrite`, warnings }
+    if (existing.trim()) {
+      if (!mode) {
+        return { error: `form.${eventKey} 已有代码，需 eventResolutions 或 confirmOverwrite`, warnings }
+      }
+      if (mode === 'overwrite') {
+        warnings.push(`overwrite:form.${eventKey}`)
+        formJson.formConfig = { ...(formJson.formConfig || {}), [eventKey]: code }
+        return { warnings }
+      }
+      const merged = applyMergeMode(mode, existing, code)
+      if (!merged.ok) {
+        if ('skip' in merged && merged.skip) return { warnings, skipped: true }
+        return { error: 'error' in merged ? merged.error : 'merge failed', warnings }
+      }
+      warnings.push(`${mode}:form.${eventKey}`)
+      formJson.formConfig = { ...(formJson.formConfig || {}), [eventKey]: merged.code }
+      return { warnings }
     }
-    if (existing.trim()) warnings.push(`overwrite:form.${eventKey}`)
     formJson.formConfig = { ...(formJson.formConfig || {}), [eventKey]: code }
     return { warnings }
   }
@@ -171,13 +190,30 @@ function writeHandler(
 
   for (const w of targets) {
     const existing = String((w.options || {})[eventKey] || '')
-    if (existing.trim() && !opts?.confirmOverwrite) {
-      return {
-        error: `${w.options?.name || w.id}.${eventKey} 已有代码，需 confirmOverwrite`,
-        warnings,
+    if (existing.trim()) {
+      if (!mode) {
+        return {
+          error: `${w.options?.name || w.id}.${eventKey} 已有代码，需 eventResolutions 或 confirmOverwrite`,
+          warnings,
+        }
       }
+      if (mode === 'overwrite') {
+        warnings.push(`overwrite:${w.options?.name}.${eventKey}`)
+        w.options = { ...(w.options || {}), [eventKey]: code }
+        continue
+      }
+      const merged = applyMergeMode(mode, existing, code)
+      if (!merged.ok) {
+        if ('skip' in merged && merged.skip) {
+          warnings.push(`cancel:${w.options?.name}.${eventKey}`)
+          continue
+        }
+        return { error: 'error' in merged ? merged.error : 'merge failed', warnings }
+      }
+      warnings.push(`${mode}:${w.options?.name}.${eventKey}`)
+      w.options = { ...(w.options || {}), [eventKey]: merged.code }
+      continue
     }
-    if (existing.trim()) warnings.push(`overwrite:${w.options?.name}.${eventKey}`)
     w.options = { ...(w.options || {}), [eventKey]: code }
   }
   return { warnings }
@@ -194,7 +230,12 @@ export type InteractionMergeResult =
 export function applyInteractionOutput(
   currentFormJson: FormJson,
   output: InteractionOutput,
-  opts?: { confirmOverwrite?: boolean },
+  opts?: {
+    confirmOverwrite?: boolean
+    eventResolutions?: EventResolution[]
+    /** 预览：冲突键临时按 overwrite 写入候选，同时仍应下发 eventConflicts */
+    previewForceOverwrite?: boolean
+  },
 ): InteractionMergeResult {
   if (output.intent !== 'interaction' && output.intent !== 'mixed') {
     return { ok: false, error: `intent=${output.intent} 不可合入`, httpStatus: 422 }
@@ -207,6 +248,10 @@ export function applyInteractionOutput(
 
   const next = cloneForm(currentFormJson)
   const warnings: string[] = []
+  const resolutionMap = new Map<string, EventMergeMode>()
+  for (const r of opts?.eventResolutions || []) {
+    resolutionMap.set(`${r.target}::${r.eventKey}`, r.mode)
+  }
 
   for (const op of output.structure) {
     if (op.op === 'addButton') {
@@ -221,13 +266,88 @@ export function applyInteractionOutput(
     }
   }
 
+  let structureWrote = false
+  for (const op of output.structure) {
+    if (op.op === 'addButton') {
+      const r = applyAddButton(next, op as Extract<InteractionStructureOp, { op: 'addButton' }>, warnings)
+      if (r.error) return { ok: false, error: r.error, httpStatus: 422 }
+      structureWrote = true
+    } else {
+      return {
+        ok: false,
+        error: `交互合入暂不支持 structure.op=${op.op}（仅 addButton；纯结构请走 /refine）`,
+        httpStatus: 422,
+      }
+    }
+  }
+
+  let handlerWrote = false
+  let handlerSkippedAll = (output.handlers?.length || 0) > 0
   for (const h of output.handlers) {
-    const r = writeHandler(next, h.target, h.eventKey, h.code, opts)
+    const key = `${h.target}::${h.eventKey}`
+    const existing = readExistingHandlerCode(currentFormJson, h.target, h.eventKey)
+    let mergeMode: EventMergeMode | undefined = resolutionMap.get(key)
+    if (existing.trim()) {
+      if (mergeMode === 'cancel') {
+        warnings.push(`cancel:${h.target}.${h.eventKey}`)
+        continue
+      }
+      if (!mergeMode && opts?.confirmOverwrite) mergeMode = 'overwrite'
+      if (!mergeMode && opts?.previewForceOverwrite) mergeMode = 'overwrite'
+      if (!mergeMode) {
+        return {
+          ok: false,
+          error: `${h.target}.${h.eventKey} 已有代码，需 eventResolutions 或 confirmOverwrite`,
+          httpStatus: 422,
+        }
+      }
+    }
+    const r = writeHandler(next, h.target, h.eventKey, h.code, {
+      confirmOverwrite: mergeMode === 'overwrite' || opts?.confirmOverwrite,
+      mergeMode: mergeMode === 'prepend' || mergeMode === 'append' || mergeMode === 'overwrite' ? mergeMode : undefined,
+    })
     if (r.error) return { ok: false, error: r.error, httpStatus: 422 }
+    if (!r.skipped) {
+      handlerWrote = true
+      handlerSkippedAll = false
+    }
     warnings.push(...r.warnings)
   }
 
+  if (handlerSkippedAll && !structureWrote && !handlerWrote) {
+    return { ok: false, error: '全部事件冲突已取消，无写入', httpStatus: 422 }
+  }
+
   return { ok: true, formJson: next, warnings }
+}
+
+export function readExistingHandlerCode(formJson: FormJson, target: string, eventKey: string): string {
+  if (target === 'form') {
+    return String((formJson.formConfig || {})[eventKey] || '')
+  }
+  const targets = resolveHandlerTargets(formJson, target)
+  for (const w of targets) {
+    const c = String((w.options || {})[eventKey] || '')
+    if (c.trim()) return c
+  }
+  return ''
+}
+
+export function collectEventConflicts(formJson: FormJson, output: InteractionOutput): EventConflict[] {
+  const conflicts: EventConflict[] = []
+  for (const h of output.handlers || []) {
+    const existing = readExistingHandlerCode(formJson, h.target, h.eventKey)
+    if (!existing.trim()) continue
+    conflicts.push(
+      buildEventConflict({
+        target: h.target,
+        eventKey: h.eventKey,
+        existingCode: existing,
+        incomingCode: h.code,
+      }),
+    )
+  }
+  return conflicts
 }
 
 /** 场景指纹：修正轮不得改动断言 */

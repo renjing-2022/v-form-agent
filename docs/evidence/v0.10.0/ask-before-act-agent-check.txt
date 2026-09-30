@@ -1,0 +1,7 @@
+﻿case: ask-before-act-agent-check
+status: pass
+observed: ask-before-act:check ok (schema, fingerprint, risk parity, L1/L2/L3, merge, plan_expired, option rewrite)
+environment: local-windows; agent npm run ask-before-act:check; AGENT_ALLOW_MOCK=1
+sourceRevision: main@0a458b0cfcbf (working tree has uncommitted v0.10.0 changes)
+capturedAt: 2026-09-30T06:27:44.839Z
+type: agent-script

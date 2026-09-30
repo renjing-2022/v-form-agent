@@ -1,7 +1,7 @@
 import type { FormJson } from '../schemas/refinePlan.js'
 import type { InteractionOutput, InteractionScenario } from '../schemas/interactionOutput.js'
 import { valuesMatch } from './eventApply.js'
-import { applyInteractionOutput, scenarioFingerprint } from './interactionMerger.js'
+import { applyInteractionOutput, scenarioFingerprint, collectEventConflicts } from './interactionMerger.js'
 import { interactionOutputSchema } from '../schemas/interactionOutput.js'
 import { validateInteractionOutput } from './interactionValidate.js'
 import { checkHandlersNetworkStatic } from './interactionNetworkPolicy.js'
@@ -119,6 +119,7 @@ export type InteractionApplyParams = {
   verificationReport?: InteractionVerificationReport
   userConfirmed?: boolean
   confirmOverwrite?: boolean
+  eventResolutions?: import('../schemas/clarification.js').EventResolution[]
 }
 
 export type InteractionApplyResponse = {
@@ -188,6 +189,7 @@ export function planInteractionApply(params: InteractionApplyParams): {
 
   const merged = applyInteractionOutput(formJson, output, {
     confirmOverwrite: params.confirmOverwrite,
+    eventResolutions: params.eventResolutions,
   })
   if (!merged.ok) {
     return {
@@ -222,6 +224,10 @@ export function planInteractionApply(params: InteractionApplyParams): {
 export function buildInteractionCandidate(
   currentFormJson: FormJson,
   output: InteractionOutput,
+  opts?: {
+    eventResolutions?: import('../schemas/clarification.js').EventResolution[]
+    confirmOverwrite?: boolean
+  },
 ): InteractionMergePreview {
   const issues = validateInteractionOutput(output, currentFormJson)
   if (issues.length) {
@@ -229,7 +235,12 @@ export function buildInteractionCandidate(
   }
   const net = checkHandlersNetworkStatic(output.handlers)
   if (!net.ok) return { ok: false, error: net.message }
-  const merged = applyInteractionOutput(currentFormJson, output, { confirmOverwrite: true })
+  const eventConflicts = collectEventConflicts(currentFormJson, output)
+  const merged = applyInteractionOutput(currentFormJson, output, {
+    confirmOverwrite: opts?.confirmOverwrite,
+    eventResolutions: opts?.eventResolutions,
+    previewForceOverwrite: !opts?.confirmOverwrite && !(opts?.eventResolutions?.length),
+  })
   if (!merged.ok) return { ok: false, error: merged.error }
   return {
     ok: true,
@@ -237,6 +248,7 @@ export function buildInteractionCandidate(
     warnings: merged.warnings,
     scenarioFingerprint: scenarioFingerprint(output.scenarios),
     scenarioNarration: narrateScenarios(output.scenarios),
+    eventConflicts,
   }
 }
 
@@ -247,5 +259,6 @@ export type InteractionMergePreview =
       warnings: string[]
       scenarioFingerprint: string
       scenarioNarration: string[]
+      eventConflicts?: import('../schemas/clarification.js').EventConflict[]
     }
   | { ok: false; error: string }

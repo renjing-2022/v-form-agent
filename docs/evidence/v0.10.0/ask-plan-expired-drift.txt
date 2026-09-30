@@ -1,0 +1,8 @@
+case: ask-plan-expired-drift
+status: pass
+observed: plan_expired after canvas drift; canvas unchanged vs mid; plan=plan_munq64st_cj7txzvc
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: main@0a458b0cfcbf (working tree has uncommitted changes)
+capturedAt: 2026-09-30T06:29:19.279Z
+durationMs: 4261
+screenshot: docs/evidence/v0.10.0/ask-plan-expired-drift.png

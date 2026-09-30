@@ -6,6 +6,8 @@ import { buildInteractionCandidate } from '../services/interactionApply.js'
 import { repairInteraction, MAX_REPAIR_ROUNDS } from '../services/interactionRepair.js'
 import { scenarioFingerprint } from '../services/interactionMerger.js'
 import { narrateScenarios } from '../services/scenarioNarrator.js'
+import { clarifyInteraction } from '../services/interactionClarify.js'
+import { computeFormFingerprint } from '../services/formFingerprint.js'
 
 export async function registerInteractionRoutes(app: FastifyInstance) {
   app.post('/api/agent/v1/interaction', async (request, reply) => {
@@ -36,6 +38,7 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
             applied: false,
             formJson: data.currentFormJson,
             output: result.output,
+            formFingerprint: computeFormFingerprint(data.currentFormJson),
           })
         }
         return reply.code(200).send({
@@ -52,7 +55,41 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
           rewriteCount: result.rewriteCount,
           issues: result.issues,
           error: result.error,
-          questions: result.output.questions,
+          questions: result.questions || result.output.questions,
+          unsupported: result.output.unsupported,
+          clarification: result.clarification,
+          pendingPlan: result.pendingPlan,
+          riskLevel: result.riskLevel,
+          riskFacts: result.riskFacts,
+          formFingerprint: result.formFingerprint || computeFormFingerprint(data.currentFormJson),
+          eventConflicts: result.eventConflicts,
+        })
+      }
+
+      if (data.action === 'clarify') {
+        const result = await clarifyInteraction({
+          pendingPlanId: data.pendingPlanId,
+          formFingerprint: data.formFingerprint,
+          currentFormJson: data.currentFormJson,
+          answers: data.answers,
+          messages: data.messages,
+        })
+        return reply.code(result.httpStatus).send({
+          status: result.status,
+          summary: result.summary,
+          applied: false,
+          formJson: result.formJson,
+          formJsonCandidate: result.formJsonCandidate,
+          output: result.output,
+          questions: result.questions || result.output.questions,
+          clarification: result.clarification,
+          pendingPlan: result.pendingPlan,
+          riskLevel: result.riskLevel,
+          riskFacts: result.riskFacts,
+          formFingerprint: result.formFingerprint,
+          eventConflicts: result.eventConflicts,
+          error: result.error,
+          usedMock: result.usedMock,
           unsupported: result.output.unsupported,
         })
       }
@@ -112,6 +149,38 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
           round: result.round,
           usedMock: result.usedMock,
           mergeError: preview.ok ? undefined : preview.error,
+          eventConflicts: preview.ok ? preview.eventConflicts : undefined,
+          formFingerprint: computeFormFingerprint(data.currentFormJson),
+        })
+      }
+
+      if (data.action === 'preview') {
+        const preview = buildInteractionCandidate(data.currentFormJson, data.output, {
+          eventResolutions: data.eventResolutions,
+          confirmOverwrite: data.confirmOverwrite,
+        })
+        if (!preview.ok) {
+          return reply.code(422).send({
+            status: 'draft',
+            summary: preview.error,
+            applied: false,
+            formJson: data.currentFormJson,
+            output: data.output,
+            formFingerprint: computeFormFingerprint(data.currentFormJson),
+          })
+        }
+        return reply.code(200).send({
+          status: 'generated',
+          summary: '已按合并决议重建预览候选',
+          applied: false,
+          formJson: data.currentFormJson,
+          formJsonCandidate: preview.formJsonCandidate,
+          output: data.output,
+          scenarioNarration: preview.scenarioNarration,
+          scenarioFingerprint: preview.scenarioFingerprint,
+          warnings: preview.warnings,
+          eventConflicts: preview.eventConflicts,
+          formFingerprint: computeFormFingerprint(data.currentFormJson),
         })
       }
 
@@ -122,8 +191,12 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
         verificationReport: data.verificationReport,
         userConfirmed: data.userConfirmed,
         confirmOverwrite: data.confirmOverwrite,
+        eventResolutions: data.eventResolutions,
       })
-      return reply.code(httpStatus).send(response)
+      return reply.code(httpStatus).send({
+        ...response,
+        formFingerprint: computeFormFingerprint(data.currentFormJson),
+      })
     } catch (err) {
       request.log.error(err)
       return reply.code(500).send({

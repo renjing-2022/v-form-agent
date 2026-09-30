@@ -182,6 +182,86 @@ export type AgentInteractionOutput = {
   questions?: string[];
 };
 
+export type ClarificationOption = {
+  id: string;
+  label: string;
+  description?: string;
+  recommended?: boolean;
+  riskLevel?: 'L0' | 'L1' | 'L2' | 'L3';
+  value: string | boolean | number | Record<string, unknown>;
+};
+
+export type ClarificationQuestion = {
+  id: string;
+  type: 'single_choice' | 'multiple_choice' | 'text' | 'confirm';
+  prompt: string;
+  options?: ClarificationOption[];
+  allowCustom?: boolean;
+  defaultOptionIds?: string[];
+  recommendedOptionIds?: string[];
+  required: boolean;
+  riskNote?: string;
+  binds?: { slot: string };
+};
+
+export type ClarificationPayload = {
+  questions: ClarificationQuestion[];
+  protocol: 'structured-clarify-v1';
+};
+
+export type ClarificationAnswer = {
+  questionId: string;
+  optionIds?: string[];
+  text?: string;
+  confirmed?: boolean;
+};
+
+export type RiskFact = {
+  level: 'L0' | 'L1' | 'L2' | 'L3';
+  code: string;
+  message: string;
+  relatedTargets?: string[];
+};
+
+export type PendingPlanView = {
+  id: string;
+  formFingerprint: string;
+  createdAt: string;
+  expiresAt: string;
+  goal: string;
+  ambiguities: string[];
+  assumed?: string[];
+  plannedStructure: { summary: string; opKinds: string[] };
+  plannedHandlers: Array<{ target: string; eventKey: string; action: 'create' | 'merge' | 'overwrite' }>;
+  plannedDeletes?: string[];
+  riskLevel: 'L0' | 'L1' | 'L2' | 'L3';
+  riskFacts: RiskFact[];
+  nextStepsAfterAnswer: string[];
+};
+
+export type EventMergeMode = 'prepend' | 'append' | 'overwrite' | 'cancel';
+
+export type EventResolution = {
+  target: string;
+  eventKey: string;
+  mode: EventMergeMode;
+};
+
+export type EventConflict = {
+  target: string;
+  eventKey: string;
+  existingCode: string;
+  incomingCode: string;
+  mergeSafe: boolean;
+  suggestedModes: EventMergeMode[];
+  diffPreview?: {
+    old: string;
+    mergedPrepend?: string;
+    mergedAppend?: string;
+    incoming: string;
+  };
+};
+
 export type AgentInteractionResponse = {
   status:
     | 'generated'
@@ -192,7 +272,9 @@ export type AgentInteractionResponse = {
     | 'draft'
     | 'failed'
     | 'tamper'
-    | 'error';
+    | 'error'
+    | 'plan_expired'
+    | 'cancelled';
   summary: string;
   warnings?: string[];
   questions?: string[];
@@ -220,6 +302,12 @@ export type AgentInteractionResponse = {
   usedMock?: boolean;
   error?: string;
   message?: string;
+  clarification?: ClarificationPayload;
+  pendingPlan?: PendingPlanView;
+  riskLevel?: 'L0' | 'L1' | 'L2' | 'L3';
+  riskFacts?: RiskFact[];
+  formFingerprint?: string;
+  eventConflicts?: EventConflict[];
 };
 
 async function postInteraction(body: Record<string, unknown>): Promise<AgentInteractionResponse> {
@@ -242,10 +330,10 @@ async function postInteraction(body: Record<string, unknown>): Promise<AgentInte
   return data;
 }
 
-/** v0.9：自然语言 → 直出 JS 交互（generate / repair / apply） */
+/** v0.9+：自然语言 → 直出 JS 交互（generate / repair / apply / clarify / preview） */
 export async function interactionFormByAgent(payload: {
-  action: 'generate' | 'repair' | 'apply';
-  instruction: string;
+  action: 'generate' | 'repair' | 'apply' | 'clarify' | 'preview';
+  instruction?: string;
   currentFormJson: AgentGenerateResponse['formJson'];
   messages?: Array<{ role: 'user' | 'assistant'; content: string }>;
   output?: AgentInteractionOutput;
@@ -254,6 +342,10 @@ export async function interactionFormByAgent(payload: {
   expectedScenarioFingerprint?: string;
   userConfirmed?: boolean;
   confirmOverwrite?: boolean;
+  eventResolutions?: EventResolution[];
+  pendingPlanId?: string;
+  formFingerprint?: string;
+  answers?: ClarificationAnswer[];
 }): Promise<AgentInteractionResponse> {
   return postInteraction({
     action: payload.action,
@@ -266,5 +358,9 @@ export async function interactionFormByAgent(payload: {
     expectedScenarioFingerprint: payload.expectedScenarioFingerprint,
     userConfirmed: payload.userConfirmed,
     confirmOverwrite: payload.confirmOverwrite,
+    eventResolutions: payload.eventResolutions,
+    pendingPlanId: payload.pendingPlanId,
+    formFingerprint: payload.formFingerprint,
+    answers: payload.answers,
   });
 }
