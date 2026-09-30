@@ -50,5 +50,6 @@
 - [x] 注册完整 acceptance manifest（映射设计 §9 / PRD FR）
   - evidence：`.deliveryguard/acceptance/v0.10.0/evidence.json`；report：`docs/acceptance/v0.10.0.md`
   - 8/8 cases pass；`acceptance validate` ok
-- [ ] 记录真实 source revision 后再更新 sources（工作树未提交；禁止虚构 commit）
-- [ ] 在 sources 登记后将版本 `acceptance.status` 从 pending 升为 passed（当前受 `acceptance.before-source` 约束）
+- [x] 记录真实 source revision 后再更新 sources
+  - `app` / `main` @ `1f28563225169197080467f1b6b3a934ef83e5eb`
+- [x] 在 sources 登记后将版本 `acceptance.status` 升为 passed
