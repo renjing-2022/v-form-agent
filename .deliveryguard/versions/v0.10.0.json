@@ -22,8 +22,8 @@
   ],
   "openSpec": {
     "changeId": "ai-form-ask-before-act-governance",
-    "path": "openspec/changes/ai-form-ask-before-act-governance",
-    "status": "ready"
+    "path": "openspec/changes/archive/2026-09-30-ai-form-ask-before-act-governance",
+    "status": "archived"
   },
   "sources": [
     {
