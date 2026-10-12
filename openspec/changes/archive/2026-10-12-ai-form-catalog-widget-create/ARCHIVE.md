@@ -1,6 +1,6 @@
 # Archive note: ai-form-catalog-widget-create
 
-Archived against DeliveryGuard version `v0.11.0` after tasks, source, and acceptance were closed. Production tag `v0.11.0` and release facts are recorded separately on the version record after push.
+Archived against DeliveryGuard version `v0.11.0` after tasks, source, and acceptance were closed. Production tag `v0.11.0` and release facts were recorded after archive (see version record).
 
 ## Pre-archive checklist
 
@@ -8,11 +8,11 @@ Archived against DeliveryGuard version `v0.11.0` after tasks, source, and accept
 |---|---|
 | Tasks all checked | Yes (`tasks.md` §1–§5) |
 | Proposal / tasks artifacts exist | Yes (`proposal.md`, `tasks.md`) |
-| Linked version validates | `v0.11.0` → `verified` at archive time |
+| Linked version validates | `v0.11.0` → `verified` at archive time；release facts added post-archive |
 | Source | `merged` @ `14f7b2b5bac2a77414fec02dbec4c2ddc8d76887` (`app` / `main`) |
 | Acceptance | `passed`（11/11 cases；manifest + report） |
-| Production deployment | pending at archive commit；recorded after tag push |
-| Release | pending at archive commit |
+| Production deployment | `succeeded` @ `c23f222f84416b39b59a6525436920313e951da8`（GitHub tree `v0.11.0`） |
+| Release | `published` |
 
 ## Proposal vs implemented (deliberate notes)
 
@@ -29,3 +29,4 @@ Visible residual / intentional limits:
 - Move change to `openspec/changes/archive/2026-10-12-ai-form-catalog-widget-create`.
 - No OpenSpec `specs/` delta in this change directory.
 - DeliveryGuard `openSpec.status` → `archived`，path 更新为上述归档目录。
+- Post-archive: `main` + annotated tag `v0.11.0` pushed to `origin`；deployment/release facts recorded on the version record.
