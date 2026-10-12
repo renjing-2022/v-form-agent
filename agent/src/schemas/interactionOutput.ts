@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { chatTurnSchema, formJsonSchema, targetRefSchema } from './refinePlan.js'
+import { createWidgetOpSchema } from './createWidget.js'
 import {
   clarificationPayloadSchema,
   deriveQuestionsFromClarification,
@@ -62,8 +63,16 @@ const arrangeSchema = z
   })
   .default({})
 
+/** v0.11 普通组件预览动作（与 Catalog create.previewCapabilities.acts 对齐） */
 const actSchema = z.union([
   z.object({ input: z.string(), value: z.unknown() }),
+  z.object({ clear: z.string() }),
+  z.object({ select: z.string(), value: z.unknown() }),
+  z.object({ toggle: z.string(), value: z.boolean().optional() }),
+  z.object({ rate: z.string(), value: z.number() }),
+  z.object({ slide: z.string(), value: z.number() }),
+  z.object({ pickDate: z.string(), value: z.unknown() }),
+  z.object({ pickTime: z.string(), value: z.unknown() }),
   z.object({ click: z.string() }),
   z.object({ switchTab: z.union([z.string(), z.number()]) }),
   z.object({ mount: z.literal(true) }),
@@ -77,6 +86,7 @@ const actSchema = z.union([
 
 const assertSchema = z.union([
   z.object({ field: z.string(), value: z.unknown() }),
+  z.object({ field: z.string(), text: z.unknown() }),
   z.object({ field: z.string(), hidden: z.boolean() }),
   z.object({ field: z.string(), disabled: z.boolean() }),
   z.object({ field: z.string(), required: z.boolean() }),
@@ -109,8 +119,9 @@ export const addButtonOpSchema = z.object({
   optionOverrides: z.record(z.unknown()).optional(),
 })
 
-/** 结构操作：addButton + 透传 refine 风格 op（合入阶段再严格校验） */
+/** 结构操作：createWidget / addButton（兼容）+ 透传其它 refine 风格 op */
 export const interactionStructureOpSchema = z.union([
+  createWidgetOpSchema,
   addButtonOpSchema,
   z
     .object({

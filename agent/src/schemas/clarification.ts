@@ -46,7 +46,8 @@ export type ClarificationOption = z.infer<typeof clarificationOptionSchema>
 const clarificationSlotSchema = z.union([
   z.literal('target.widget'),
   z.literal('target.eventKey'),
-  z.string().regex(/^risk\.confirm:[a-z0-9_]+$/, 'binds.slot must be target.* or risk.confirm:<code>'),
+  z.literal('create.type'),
+  z.string().regex(/^risk\.confirm:[a-z0-9_]+$/, 'binds.slot must be target.* / create.type / risk.confirm:<code>'),
 ])
 
 export const clarificationQuestionSchema = z

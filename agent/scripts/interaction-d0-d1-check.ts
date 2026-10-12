@@ -198,6 +198,100 @@ async function main() {
   assert(scenarioFingerprint(tampered.scenarios) !== fp1, 'tamper changes fingerprint')
   assert(MAX_REPAIR_ROUNDS === 2, 'max repair rounds')
 
+  // v0.11 §4：结构先于事件 + tempRef 解析 + Catalog eventKeys + 禁网 + 原子合入
+  const mixedOut = interactionOutputSchema.parse({
+    intent: 'mixed',
+    summary: 'create number + onChange',
+    structure: [
+      {
+        op: 'createWidget',
+        type: 'number',
+        tempRef: 't_qty',
+        name: 'qty_new',
+        label: '数量',
+      },
+    ],
+    handlers: [
+      {
+        id: 'h_qty',
+        target: 't_qty',
+        eventKey: 'onChange',
+        code: 'this.getFormRef().setFieldValue("qty_new", 1)',
+        explain: 'change',
+      },
+    ],
+    scenarios: [
+      {
+        id: 'sc_qty',
+        handlerRefs: ['h_qty'],
+        title: 'input qty',
+        arrange: {},
+        act: [{ input: 't_qty', value: 3 }],
+        assert: [{ field: 't_qty', value: 3 }, { noNetwork: true }, { noError: true }],
+      },
+    ],
+  })
+  const mixedIssues = validateInteractionOutput(mixedOut, { widgetList: [] })
+  assert(
+    !mixedIssues.some((i) => i.path.includes('eventKey') && i.message.includes('不在')),
+    `eventKeys ok: ${mixedIssues.map((i) => i.message).join('; ')}`,
+  )
+  const badEvent = interactionOutputSchema.parse({
+    ...mixedOut,
+    handlers: [{ ...mixedOut.handlers[0], eventKey: 'onClick' }],
+    scenarios: [
+      {
+        ...mixedOut.scenarios[0],
+        handlerRefs: ['qty_new:onClick'],
+      },
+    ],
+  })
+  // target still t_qty type number — onClick not in number.eventKeys
+  assert(
+    validateInteractionOutput(badEvent, { widgetList: [] }).some((i) =>
+      /create\.eventKeys|onClick/.test(i.message),
+    ),
+    'reject onClick on number',
+  )
+  const netBad = interactionOutputSchema.parse({
+    ...mixedOut,
+    handlers: [
+      {
+        ...mixedOut.handlers[0],
+        code: 'fetch("/api/x")',
+      },
+    ],
+  })
+  assert(
+    validateInteractionOutput(netBad, { widgetList: [] }).some((i) => /network|fetch/i.test(i.message)),
+    'network blocked in validate',
+  )
+
+  const mixedMerge = applyInteractionOutput({ widgetList: [], formConfig: {} }, mixedOut)
+  assert(mixedMerge.ok, `mixed merge: ${!mixedMerge.ok ? mixedMerge.error : ''}`)
+  if (mixedMerge.ok) {
+    assert(mixedMerge.outputResolved.handlers[0].target === 'qty_new', 'tempRef → name in handlers')
+    assert(
+      (mixedMerge.outputResolved.scenarios[0].act[0] as { input?: string }).input === 'qty_new',
+      'tempRef → name in scenario act',
+    )
+    const created = (mixedMerge.formJson.widgetList as { type?: string; options?: { name?: string; onChange?: string } }[])[0]
+    assert(created?.type === 'number' && created.options?.name === 'qty_new', 'structure created')
+    assert(String(created?.options?.onChange || '').includes('setFieldValue'), 'handler bound after structure')
+  }
+
+  const noConfirmMixed = planInteractionApply({
+    currentFormJson: { widgetList: [], formConfig: {} },
+    output: mixedMerge.ok ? mixedMerge.outputResolved : mixedOut,
+    userConfirmed: false,
+    verificationReport: {
+      runner: 'designer-preview',
+      pass: true,
+      results: [{ scenarioId: 'sc_qty', ok: true, actual: { 'field:qty_new': 3, noNetwork: true, noError: true } }],
+    },
+  })
+  assert(noConfirmMixed.response.status === 'draft', '§4 confirm required for apply')
+
   if (savedKey !== undefined) process.env.DEEPSEEK_API_KEY = savedKey
   console.log('INTERACTION_D0_D4_OK')
 }

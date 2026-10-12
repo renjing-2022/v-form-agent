@@ -142,6 +142,11 @@ function readActual(formRef: VFormLike, asserts: Array<Record<string, unknown>>,
       const ref = formRef.getWidgetRef?.(name)
       if (!ref) missing.push(name)
       else actual[`field:${name}`] = readWidgetDisplayValue(ref)
+    } else if ('field' in a && 'text' in a) {
+      const name = String(a.field)
+      const ref = formRef.getWidgetRef?.(name)
+      if (!ref) missing.push(`text:${name}`)
+      else actual[`text:${name}`] = readWidgetDisplayValue(ref)
     } else if ('field' in a && 'hidden' in a) {
       const ref = formRef.getWidgetRef?.(String(a.field))
       const v = ref?.field?.options?.hidden ?? ref?.options?.hidden
@@ -251,6 +256,25 @@ export async function runInteractionScenariosOnPreview(params: {
         for (const step of sc.act || []) {
           if ('input' in step) {
             params.formRef.setFieldValue?.(String(step.input), step.value, false)
+          } else if ('clear' in step) {
+            params.formRef.setFieldValue?.(String(step.clear), '', false)
+          } else if ('select' in step) {
+            params.formRef.setFieldValue?.(String(step.select), step.value, false)
+          } else if ('toggle' in step) {
+            const name = String(step.toggle)
+            const next =
+              typeof step.value === 'boolean'
+                ? step.value
+                : !params.formRef.getFieldValue?.(name)
+            params.formRef.setFieldValue?.(name, next, false)
+          } else if ('rate' in step) {
+            params.formRef.setFieldValue?.(String(step.rate), step.value, false)
+          } else if ('slide' in step) {
+            params.formRef.setFieldValue?.(String(step.slide), step.value, false)
+          } else if ('pickDate' in step) {
+            params.formRef.setFieldValue?.(String(step.pickDate), step.value, false)
+          } else if ('pickTime' in step) {
+            params.formRef.setFieldValue?.(String(step.pickTime), step.value, false)
           } else if ('click' in step) {
             const btn = params.formRef.getWidgetRef?.(String(step.click))
             if (!btn?.handleButtonWidgetClick) throw new Error(`按钮不可点: ${step.click}`)
@@ -297,6 +321,8 @@ export async function runInteractionScenariosOnPreview(params: {
           if ('noError' in a) continue
           if ('field' in a && 'value' in a) {
             if (!valuesMatch(actual[`field:${a.field}`], a.value)) failed.push(String(a.field))
+          } else if ('field' in a && 'text' in a) {
+            if (!valuesMatch(actual[`text:${a.field}`], a.text)) failed.push(`text:${a.field}`)
           } else if ('activeTab' in a) {
             if (!valuesMatch(actual.activeTab, a.activeTab)) failed.push('activeTab')
           } else if ('valid' in a) {

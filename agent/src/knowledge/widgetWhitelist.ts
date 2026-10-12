@@ -30,7 +30,7 @@ type FieldTemplate = {
 }
 
 type ContainerTemplate = {
-  type: ContainerCreateType
+  type: string
   icon: string
   category: 'container'
   formItemFlag?: boolean
@@ -64,7 +64,8 @@ const commonFieldOptions = {
  * @deprecated 新建节点请使用 `widgetDefaults.ts`（Catalog/widgetsConfig 克隆）。
  * 保留仅供历史对照；refine/assembler 已不再引用。
  */
-export const widgetTemplates: Record<FieldType, FieldTemplate> = {
+/** 仅保留历史 8 类对照；新 type 请用 Catalog defaults，勿再扩展本表 */
+export const widgetTemplates: Record<string, FieldTemplate> = {
   input: {
     type: 'input',
     icon: 'text-field',
@@ -240,8 +241,11 @@ export const widgetTemplates: Record<FieldType, FieldTemplate> = {
   },
 }
 
-/** @deprecated 新建容器请使用 `widgetDefaults.ts`（Catalog/widgetsConfig 克隆） */
-export const containerTemplates: Record<ContainerCreateType, ContainerTemplate> = {
+/**
+ * @deprecated 新建容器请使用 `widgetDefaults.ts`（Catalog/widgetsConfig 克隆）。
+ * grid/grid-col 仅作历史对照；v0.11 起不在 CONTAINER_CREATE_WHITELIST。
+ */
+export const containerTemplates: Record<string, ContainerTemplate> = {
   tab: {
     type: 'tab',
     icon: 'tab',

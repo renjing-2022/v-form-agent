@@ -1,0 +1,7 @@
+case: cat-v09-interaction-regression
+status: pass
+observed: interaction:check INTERACTION_D0_D4_OK (incl. v0.11 mixed createWidget+tempRef+eventKeys)
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: main@d455d3fad91b (working tree has uncommitted changes)
+capturedAt: 2026-10-12T03:07:39.508Z
+type: agent-script

@@ -69,6 +69,12 @@ import {
   extensionBoundaryCatalogBlock,
 } from './extensionBoundaryPolicy.js'
 import {
+  applyCreateCapability,
+  checkCreateCapabilityParity,
+  checkCreateOpWhitelistParity,
+  checkSemanticAliasRegistryParity,
+} from './createCapabilityPolicy.js'
+import {
   checkCatalogSampleParity,
   checkPolicyEnumConvergence,
   resolveCatalogEnumFromGraph,
@@ -319,31 +325,33 @@ function buildEntry(
     editorGraph,
     editorMap,
   )
-  return applyExtensionBoundaryWidgetNotes({
-    type,
-    category,
-    formItem: schemas.some((s) => s.formItemFlag === true),
-    variants: schemas.map((schema) => ({
-      alias: typeof schema.alias === 'string' && schema.alias ? schema.alias : null,
-      icon: typeof schema.icon === 'string' ? schema.icon : null,
-      defaultOptions: jsonSafe(schema.options || {}) as Record<string, unknown>,
-      structure: {
-        internal: schema.internal === true,
-        childCollections: detectChildCollections(schema),
+  return applyCreateCapability(
+    applyExtensionBoundaryWidgetNotes({
+      type,
+      category,
+      formItem: schemas.some((s) => s.formItemFlag === true),
+      variants: schemas.map((schema) => ({
+        alias: typeof schema.alias === 'string' && schema.alias ? schema.alias : null,
+        icon: typeof schema.icon === 'string' ? schema.icon : null,
+        defaultOptions: jsonSafe(schema.options || {}) as Record<string, unknown>,
+        structure: {
+          internal: schema.internal === true,
+          childCollections: detectChildCollections(schema),
+        },
+      })),
+      writableKeys: writable,
+      applicableKeys,
+      ...(category === 'container'
+        ? { containerLevelKeys: containerLevelKeysForType(type, applicableKeys) }
+        : {}),
+      forbiddenKeys: forbidden,
+      constraints,
+      notes: {
+        structureSurgery: structureSurgeryFor(type),
+        highPrecisionReady: highPrecisionReady(constraints, options),
       },
-    })),
-    writableKeys: writable,
-    applicableKeys,
-    ...(category === 'container'
-      ? { containerLevelKeys: containerLevelKeysForType(type, applicableKeys) }
-      : {}),
-    forbiddenKeys: forbidden,
-    constraints,
-    notes: {
-      structureSurgery: structureSurgeryFor(type),
-      highPrecisionReady: highPrecisionReady(constraints, options),
-    },
-  })
+    }),
+  )
 }
 
 export function assertEditorEnumsMatchDesignTruth(root: string): string[] {
@@ -591,8 +599,19 @@ export function checkWidgetsConfigCatalogTypeParity(
 }
 
 export function checkCreateWhitelistPolicy(catalog: WidgetCatalog): string[] {
-  return checkCreateWhitelistCatalogParity(catalog)
+  return [
+    ...checkCreateWhitelistCatalogParity(catalog),
+    ...checkCreateOpWhitelistParity(catalog),
+    ...checkCreateCapabilityParity(catalog),
+    ...checkSemanticAliasRegistryParity(catalog),
+  ]
 }
+
+export {
+  checkCreateCapabilityParity,
+  checkCreateOpWhitelistParity,
+  checkSemanticAliasRegistryParity,
+} from './createCapabilityPolicy.js'
 
 export { checkFormFieldDualTrackParity } from './formFieldDualTrackPolicy.js'
 export { checkIdentityForbiddenParity } from './identityForbiddenPolicy.js'

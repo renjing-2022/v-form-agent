@@ -1,5 +1,8 @@
 import { EVENT_KEYS_NEVER } from '../knowledge/eventShapeRegistry.js'
+import { getWidgetCatalog } from '../knowledge/widgetCatalogStore.js'
+import type { PreviewAct } from '../knowledge/createCapabilityPolicy.js'
 import type { InteractionOutput } from '../schemas/interactionOutput.js'
+import { checkHandlersNetworkStatic } from './interactionNetworkPolicy.js'
 
 type WidgetNode = {
   type?: string
@@ -11,7 +14,7 @@ type WidgetNode = {
   rows?: Array<WidgetNode & { cells?: WidgetNode[] }>
 }
 
-/** 纯前端可写事件键（排除接口类） */
+/** 纯前端可写事件键（排除接口类）；须与 Catalog create.eventKeys 取交集 */
 export const INTERACTION_EVENT_KEYS = new Set([
   'onFormCreated',
   'onFormMounted',
@@ -32,6 +35,32 @@ export const INTERACTION_EVENT_KEYS = new Set([
   'onSubFormRowDelete',
   'onSubFormRowChange',
 ])
+
+const FORM_EVENT_KEYS = new Set([
+  'onFormCreated',
+  'onFormMounted',
+  'onFormDataChange',
+  'onFormValidate',
+])
+
+/** scenario act 键 → Catalog previewCapabilities.acts */
+const ACT_TO_PREVIEW: Record<string, PreviewAct | 'global'> = {
+  input: 'input',
+  clear: 'clear',
+  select: 'select',
+  toggle: 'toggle',
+  rate: 'rate',
+  slide: 'slide',
+  pickDate: 'pickDate',
+  pickTime: 'pickTime',
+  click: 'click',
+  mount: 'mount',
+  switchTab: 'switchTab',
+  observeText: 'observeText',
+  submit: 'global',
+  wait: 'global',
+  addSubFormRow: 'global',
+}
 
 export function collectFormNames(formJson: { widgetList?: unknown[] }): {
   names: Set<string>
@@ -65,15 +94,77 @@ export function collectFormNames(formJson: { widgetList?: unknown[] }): {
   return { names, ids, typesByName }
 }
 
-/** 计划中将新建的按钮 name */
-export function plannedButtonNames(output: InteractionOutput): Set<string> {
+/** 计划中将新建的控件 name / tempRef → type */
+export function collectPlannedCreates(output: InteractionOutput): {
+  names: Set<string>
+  typesByTarget: Map<string, string>
+} {
   const names = new Set<string>()
+  const typesByTarget = new Map<string, string>()
   for (const op of output.structure) {
-    if (op.op !== 'addButton') continue
-    const btn = op as { name?: string }
-    if (btn.name) names.add(btn.name)
+    if (op.op === 'addButton') {
+      const btn = op as { name?: string; eachTabPane?: boolean }
+      if (btn.name) {
+        names.add(btn.name)
+        typesByTarget.set(btn.name, 'button')
+      }
+      continue
+    }
+    if (op.op === 'createWidget') {
+      const cw = op as { name?: string; tempRef?: string; type: string }
+      if (cw.name) {
+        names.add(cw.name)
+        typesByTarget.set(cw.name, cw.type)
+      }
+      if (cw.tempRef) {
+        names.add(cw.tempRef)
+        typesByTarget.set(cw.tempRef, cw.type)
+      }
+    }
   }
-  return names
+  return { names, typesByTarget }
+}
+
+/** @deprecated 使用 collectPlannedCreates().names */
+export function plannedButtonNames(output: InteractionOutput): Set<string> {
+  return collectPlannedCreates(output).names
+}
+
+export function catalogEventKeysForType(type: string): string[] {
+  const entry = getWidgetCatalog().widgets.find((w) => w.type === type)
+  return entry?.create?.eventKeys ? [...entry.create.eventKeys] : []
+}
+
+export function catalogPreviewActsForType(type: string): string[] {
+  const entry = getWidgetCatalog().widgets.find((w) => w.type === type)
+  return entry?.create?.previewCapabilities?.acts
+    ? [...entry.create.previewCapabilities.acts]
+    : []
+}
+
+function resolveTargetType(
+  target: string,
+  typesByName: Map<string, string>,
+  plannedTypes: Map<string, string>,
+): string | undefined {
+  return typesByName.get(target) || plannedTypes.get(target)
+}
+
+function fieldNameFromAct(step: Record<string, unknown>): string | undefined {
+  for (const key of [
+    'input',
+    'clear',
+    'select',
+    'toggle',
+    'rate',
+    'slide',
+    'pickDate',
+    'pickTime',
+    'click',
+  ] as const) {
+    if (key in step && typeof step[key] === 'string') return String(step[key])
+  }
+  return undefined
 }
 
 export type InteractionValidationIssue = { path: string; message: string }
@@ -84,8 +175,8 @@ export function validateInteractionOutput(
 ): InteractionValidationIssue[] {
   const issues: InteractionValidationIssue[] = []
   const { names, typesByName } = collectFormNames(formJson)
-  const planned = plannedButtonNames(output)
-  const knownTargets = new Set<string>([...names, ...planned, 'form'])
+  const planned = collectPlannedCreates(output)
+  const knownTargets = new Set<string>([...names, ...planned.names, 'form'])
 
   if (output.intent === 'need_clarification') {
     if (!output.questions || output.questions.length === 0) {
@@ -109,12 +200,17 @@ export function validateInteractionOutput(
     issues.push({ path: 'handlers', message: 'interaction/mixed requires handlers or structure' })
   }
 
+  const net = checkHandlersNetworkStatic(output.handlers)
+  if (!net.ok) {
+    issues.push({ path: 'handlers', message: net.message })
+  }
+
   output.handlers.forEach((h, i) => {
     const hid = h.id || `${h.target}:${h.eventKey}:${i}`
     if (!knownTargets.has(h.target) && h.target !== 'form') {
       issues.push({
         path: `handlers[${i}].target`,
-        message: `unknown target "${h.target}" (not in form and not planned addButton)`,
+        message: `unknown target "${h.target}" (not in form and not planned createWidget/addButton)`,
       })
     }
     if (!INTERACTION_EVENT_KEYS.has(h.eventKey) || EVENT_KEYS_NEVER.has(h.eventKey)) {
@@ -122,14 +218,29 @@ export function validateInteractionOutput(
         path: `handlers[${i}].eventKey`,
         message: `eventKey "${h.eventKey}" not allowed for interaction pipeline`,
       })
-    }
-    if (h.target !== 'form') {
-      const t = typesByName.get(h.target)
-      if (t === 'button' && h.eventKey === 'onChange') {
+    } else if (h.target === 'form') {
+      if (!FORM_EVENT_KEYS.has(h.eventKey)) {
         issues.push({
           path: `handlers[${i}].eventKey`,
-          message: 'button target should use onClick, not onChange',
+          message: `form target 仅允许 ${[...FORM_EVENT_KEYS].join('/')}`,
         })
+      }
+    } else {
+      const type = resolveTargetType(h.target, typesByName, planned.typesByTarget)
+      if (type) {
+        const allowed = catalogEventKeysForType(type)
+        if (allowed.length && !allowed.includes(h.eventKey)) {
+          issues.push({
+            path: `handlers[${i}].eventKey`,
+            message: `eventKey "${h.eventKey}" 不在 type=${type} 的 Catalog create.eventKeys`,
+          })
+        }
+        if (type === 'button' && h.eventKey === 'onChange') {
+          issues.push({
+            path: `handlers[${i}].eventKey`,
+            message: 'button target should use onClick, not onChange',
+          })
+        }
       }
     }
     if (!String(h.code || '').trim()) {
@@ -155,6 +266,39 @@ export function validateInteractionOutput(
         })
       }
     }
+
+    sc.act.forEach((step, ai) => {
+      const rec = step as Record<string, unknown>
+      const actKey = Object.keys(rec).find((k) => k in ACT_TO_PREVIEW)
+      if (!actKey) return
+      const previewAct = ACT_TO_PREVIEW[actKey]
+      if (previewAct === 'global') return
+      const field = fieldNameFromAct(rec)
+      if (!field) return
+      const type = resolveTargetType(field, typesByName, planned.typesByTarget)
+      if (!type) return
+      const allowedActs = catalogPreviewActsForType(type)
+      if (allowedActs.length && !allowedActs.includes(previewAct)) {
+        issues.push({
+          path: `scenarios[${si}].act[${ai}]`,
+          message: `act "${actKey}" 不在 type=${type} 的 previewCapabilities.acts`,
+        })
+      }
+    })
+
+    sc.assert.forEach((a, ai) => {
+      if (!('field' in a && 'text' in a)) return
+      const type = resolveTargetType(String(a.field), typesByName, planned.typesByTarget)
+      if (!type) return
+      const entry = getWidgetCatalog().widgets.find((w) => w.type === type)
+      const asserts = entry?.create?.previewCapabilities?.asserts || []
+      if (asserts.length && !asserts.includes('text')) {
+        issues.push({
+          path: `scenarios[${si}].assert[${ai}]`,
+          message: `assert text 不在 type=${type} 的 previewCapabilities.asserts`,
+        })
+      }
+    })
   }
 
   output.handlers.forEach((h, i) => {

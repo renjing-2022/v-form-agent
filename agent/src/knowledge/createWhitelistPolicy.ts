@@ -1,24 +1,42 @@
 import type { FieldType } from '../schemas/fieldPlan.js'
 import type { WidgetCatalog } from './widgetCatalog.js'
 
-/** generate FieldPlan / 整表生成允许的基础字段 type（Catalog 子集） */
+/**
+ * v0.11 普通字段创建白名单（Catalog 子集）。
+ * 上传 / 重型容器 / 扩展仍为 NON_GOAL（见 CREATE_NON_GOAL）。
+ */
 export const FIELD_CREATE_WHITELIST = [
   'input',
   'textarea',
-  'radio',
-  'select',
   'number',
+  'radio',
+  'checkbox',
+  'select',
+  'cascader',
   'date',
+  'date-range',
+  'time',
+  'time-range',
+  'switch',
+  'rate',
+  'color',
+  'slider',
   'static-text',
+  'html-text',
+  'button',
   'divider',
+  'rich-editor',
 ] as const satisfies readonly FieldType[]
 
-/** refine 可新建的结构容器（Catalog 子集；结构手术能力内） */
-export const CONTAINER_CREATE_WHITELIST = ['tab', 'tab-pane', 'grid', 'grid-col'] as const
+/**
+ * refine 可新建的结构容器（须有实际 create op）。
+ * v0.11：移除 grid/grid-col——白名单曾声明可建但无专用 op（仅 wrapInTabs 覆盖 tab/tab-pane）。
+ */
+export const CONTAINER_CREATE_WHITELIST = ['tab', 'tab-pane'] as const
 
 export type ContainerCreateType = (typeof CONTAINER_CREATE_WHITELIST)[number]
 
-/** refine addField / wrapInTabs 等新建节点允许的全集 */
+/** refine addField / wrapInTabs / createWidget 等新建节点允许的全集 */
 export const REFINE_CREATE_WHITELIST = [
   ...FIELD_CREATE_WHITELIST,
   ...CONTAINER_CREATE_WHITELIST,
@@ -41,9 +59,10 @@ export type CreateNonGoalReason =
   | 'internal-container'
   | 'dialog-shell'
   | 'extension-runtime'
+  | 'structure-no-create-op'
 
 /**
- * Catalog 中存在、但 v0.4 generate/refine **不得新建** 的 type 及原因。
+ * Catalog 中存在、但 generate/refine **不得新建** 的 type 及原因。
  * 与 REFINE_CREATE_WHITELIST 互斥；Catalog 每个 type 必须落在二者之一。
  */
 export const CREATE_NON_GOAL: Record<string, CreateNonGoalReason> = {
@@ -55,31 +74,24 @@ export const CREATE_NON_GOAL: Record<string, CreateNonGoalReason> = {
   tree: 'heavy-structure',
   'vf-dialog': 'dialog-shell',
   'vf-drawer': 'dialog-shell',
+  /** 栅格无专用 create op；既有节点仍可 updateField / structure surgery */
+  grid: 'structure-no-create-op',
   table: 'internal-container',
   'table-cell': 'internal-container',
+  'grid-col': 'internal-container',
   slot: 'extension-runtime',
-  button: 'advanced-field',
-  cascader: 'advanced-field',
-  checkbox: 'advanced-field',
-  color: 'advanced-field',
-  'date-range': 'advanced-field',
+  /** 上传与远程数据源延后至 v0.12 */
   'file-upload': 'advanced-field',
-  'html-text': 'advanced-field',
   'picture-upload': 'advanced-field',
-  rate: 'advanced-field',
-  'rich-editor': 'advanced-field',
-  slider: 'advanced-field',
-  switch: 'advanced-field',
-  time: 'advanced-field',
-  'time-range': 'advanced-field',
 }
 
 export const CREATE_NON_GOAL_REASON_LABEL: Record<CreateNonGoalReason, string> = {
-  'heavy-structure': '重型容器/结构，本版 refine 仅支持 tab/grid 结构手术',
-  'advanced-field': '高级字段，本版 generate/refine 新建未开放（可 refine 既有控件属性）',
-  'internal-container': '表格内部节点，须由 table 结构生成',
+  'heavy-structure': '重型容器/结构，本版 refine 仅支持 tab 结构手术（wrapInTabs）',
+  'advanced-field': '上传/远程类字段本版未开放 NL 新建（可 refine 既有控件属性）',
+  'internal-container': '内部节点，须由父容器结构生成，不得独立 NL 新建',
   'dialog-shell': '弹窗/抽屉壳层，本版不开放 NL 新建',
   'extension-runtime': '扩展/插槽类，运行时注册不在静态 create 范围',
+  'structure-no-create-op': '结构类型无专用 create op；可更新既有节点，不得 NL 新建',
 }
 
 /** REFINE_CREATE_WHITELIST ⊆ Catalog 且 Catalog \ whitelist = REGISTERED NON_GOAL */

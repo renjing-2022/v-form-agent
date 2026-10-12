@@ -1,0 +1,7 @@
+case: cat-alias-ambiguous-clarify
+status: pass
+observed: 文本框→need_clarification(create.type input|textarea)→选 input→generated createWidget; plan=plan_mv4o8zr2_u1hooyu7
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: main@d455d3fad91b (working tree has uncommitted changes)
+capturedAt: 2026-10-12T03:07:37.699Z
+type: agent-script

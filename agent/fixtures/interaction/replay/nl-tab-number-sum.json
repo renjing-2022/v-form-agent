@@ -1,0 +1,105 @@
+{
+  "match": {
+    "scenarioId": "nl-tab-number-sum",
+    "instructionIncludes": [
+      "每个tab末尾加number",
+      "实时汇总"
+    ]
+  },
+  "output": {
+    "intent": "mixed",
+    "summary": "每 tab 末尾加 number + radio，并实时汇总到合计",
+    "structure": [
+      {
+        "op": "createWidget",
+        "type": "number",
+        "tempRef": "t_n1",
+        "name": "tab_score_1",
+        "label": "分值1",
+        "parent": { "kind": "existing", "name": "tab1" },
+        "position": { "kind": "last" }
+      },
+      {
+        "op": "createWidget",
+        "type": "number",
+        "tempRef": "t_n2",
+        "name": "tab_score_2",
+        "label": "分值2",
+        "parent": { "kind": "existing", "name": "tab2" },
+        "position": { "kind": "last" }
+      },
+      {
+        "op": "createWidget",
+        "type": "number",
+        "tempRef": "t_n3",
+        "name": "tab_score_3",
+        "label": "分值3",
+        "parent": { "kind": "existing", "name": "tab3" },
+        "position": { "kind": "last" }
+      },
+      {
+        "op": "createWidget",
+        "type": "radio",
+        "tempRef": "t_mode",
+        "name": "sum_mode",
+        "label": "汇总方式",
+        "parent": { "kind": "existing", "name": "tab3" },
+        "position": { "kind": "last" },
+        "optionOverrides": {
+          "optionItems": [
+            { "label": "全部加总", "value": "all" },
+            { "label": "仅当前页", "value": "current" }
+          ],
+          "defaultValue": "all"
+        }
+      },
+      {
+        "op": "createWidget",
+        "type": "number",
+        "tempRef": "t_total",
+        "name": "tab_score_total",
+        "label": "合计",
+        "parent": { "kind": "root" },
+        "position": { "kind": "last" }
+      }
+    ],
+    "handlers": [
+      {
+        "id": "h-sum-1",
+        "target": "t_n1",
+        "eventKey": "onChange",
+        "code": "const f=this.getFormRef();const a=Number(f.getFieldValue('tab_score_1'))||0;const b=Number(f.getFieldValue('tab_score_2'))||0;const c=Number(f.getFieldValue('tab_score_3'))||0;f.setFieldValue('tab_score_total',a+b+c);",
+        "explain": "分值1变化时汇总"
+      },
+      {
+        "id": "h-sum-2",
+        "target": "t_n2",
+        "eventKey": "onChange",
+        "code": "const f=this.getFormRef();const a=Number(f.getFieldValue('tab_score_1'))||0;const b=Number(f.getFieldValue('tab_score_2'))||0;const c=Number(f.getFieldValue('tab_score_3'))||0;f.setFieldValue('tab_score_total',a+b+c);",
+        "explain": "分值2变化时汇总"
+      },
+      {
+        "id": "h-sum-3",
+        "target": "t_n3",
+        "eventKey": "onChange",
+        "code": "const f=this.getFormRef();const a=Number(f.getFieldValue('tab_score_1'))||0;const b=Number(f.getFieldValue('tab_score_2'))||0;const c=Number(f.getFieldValue('tab_score_3'))||0;f.setFieldValue('tab_score_total',a+b+c);",
+        "explain": "分值3变化时汇总"
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s-sum",
+        "handlerRefs": ["h-sum-1", "h-sum-2", "h-sum-3"],
+        "title": "输入分值后合计",
+        "arrange": { "values": { "tab_score_2": 2, "tab_score_3": 3 } },
+        "act": [{ "input": "t_n1", "value": 1 }],
+        "assert": [
+          { "field": "t_total", "value": 6 },
+          { "noError": true },
+          { "noNetwork": true }
+        ]
+      }
+    ],
+    "unsupported": []
+  }
+}

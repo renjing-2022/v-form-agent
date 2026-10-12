@@ -1,0 +1,140 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.11.0",
+  "documents": [
+    {
+      "documentId": "ai-form-catalog-widget-create-prd",
+      "requirementIds": [
+        "fr-1-create-widget",
+        "fr-2-ordinary-coverage",
+        "fr-3-semantic-alias",
+        "fr-4-atomic-txn",
+        "fr-5-catalog-truth",
+        "fr-6-ordinary-preview",
+        "ac-grid-parity",
+        "ac-regression"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-create-widget",
+      "description": "统一 createWidget/tempRef/parent/position，Catalog 真源",
+      "caseIds": ["cat-create-matrix", "cat-create-reject-honest", "cat-tab-number-sum-txn"]
+    },
+    {
+      "id": "fr-2-ordinary-coverage",
+      "description": "20 类普通字段 create 覆盖矩阵",
+      "caseIds": ["cat-create-matrix", "cat-preview-ordinary"]
+    },
+    {
+      "id": "fr-3-semantic-alias",
+      "description": "中文语义别名；多 type 歧义走 Ask-before-act",
+      "caseIds": ["cat-alias-ambiguous-clarify", "cat-alias-ambiguous-clarify-e2e"]
+    },
+    {
+      "id": "fr-4-atomic-txn",
+      "description": "结构→tempRef→handlers→scenarios→确认原子写入；失败不写",
+      "caseIds": [
+        "cat-tab-number-sum-txn",
+        "cat-tab-number-sum-e2e",
+        "cat-create-rollback-neg"
+      ]
+    },
+    {
+      "id": "fr-5-catalog-truth",
+      "description": "defaults/overrides/eventKeys；未知 type/非法 parent/属性/事件诚实失败；禁网",
+      "caseIds": ["cat-create-reject-honest", "cat-grid-whitelist-parity"]
+    },
+    {
+      "id": "fr-6-ordinary-preview",
+      "description": "普通组件 preview act/assert 覆盖",
+      "caseIds": ["cat-preview-ordinary", "cat-tab-number-sum-txn"]
+    },
+    {
+      "id": "ac-grid-parity",
+      "description": "grid/grid-col 白名单与 create op 漂移消除",
+      "caseIds": ["cat-grid-whitelist-parity"]
+    },
+    {
+      "id": "ac-regression",
+      "description": "v0.10 Ask-before-act 与 v0.9 interaction 回归",
+      "caseIds": ["cat-v010-regression", "cat-v09-interaction-regression"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "cat-create-matrix",
+      "title": "普通字段 create 矩阵（create-compiler:check）",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.11.0/cat-create-matrix.txt"]
+    },
+    {
+      "id": "cat-grid-whitelist-parity",
+      "title": "Catalog createAllowed=22 与 grid/grid-col NON_GOAL 漂移消除",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.11.0/cat-grid-whitelist-parity.txt"]
+    },
+    {
+      "id": "cat-alias-ambiguous-clarify",
+      "title": "「文本框」歧义 → create.type 澄清 → createWidget input",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.11.0/cat-alias-ambiguous-clarify.txt"]
+    },
+    {
+      "id": "cat-alias-ambiguous-clarify-e2e",
+      "title": "别名歧义 Ask-before-act UI（Playwright）",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.11.0/cat-alias-ambiguous-clarify-e2e.txt",
+        "docs/evidence/v0.11.0/cat-alias-ambiguous-clarify-e2e.png"
+      ]
+    },
+    {
+      "id": "cat-tab-number-sum-txn",
+      "title": "每 tab number + radio 求和混合事务（agent）",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.11.0/cat-tab-number-sum-txn.txt"]
+    },
+    {
+      "id": "cat-tab-number-sum-e2e",
+      "title": "每 tab number + radio 求和 → 预览 → applied（Playwright）",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.11.0/cat-tab-number-sum-e2e.txt",
+        "docs/evidence/v0.11.0/cat-tab-number-sum-e2e.png"
+      ]
+    },
+    {
+      "id": "cat-create-reject-honest",
+      "title": "非法事件/网络 JS 诚实拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.11.0/cat-create-reject-honest.txt"]
+    },
+    {
+      "id": "cat-create-rollback-neg",
+      "title": "验证失败/未确认不写入（原子回滚负例）",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.11.0/cat-create-rollback-neg.txt"]
+    },
+    {
+      "id": "cat-preview-ordinary",
+      "title": "普通组件预览能力与矩阵覆盖",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.11.0/cat-preview-ordinary.txt"]
+    },
+    {
+      "id": "cat-v010-regression",
+      "title": "v0.10 ask-before-act:check 回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.11.0/cat-v010-regression.txt"]
+    },
+    {
+      "id": "cat-v09-interaction-regression",
+      "title": "v0.9 interaction:check 回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.11.0/cat-v09-interaction-regression.txt"]
+    }
+  ]
+}

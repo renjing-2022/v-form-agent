@@ -137,15 +137,16 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
           })
         }
         const preview = buildInteractionCandidate(data.currentFormJson, result.output)
+        const out = preview.ok ? preview.outputResolved : result.output
         return reply.code(200).send({
           status: 'generated',
-          summary: result.output.summary,
+          summary: out.summary,
           applied: false,
           formJson: data.currentFormJson,
           formJsonCandidate: preview.ok ? preview.formJsonCandidate : undefined,
-          output: result.output,
-          scenarioNarration: narrateScenarios(result.output.scenarios),
-          scenarioFingerprint: scenarioFingerprint(result.output.scenarios),
+          output: out,
+          scenarioNarration: narrateScenarios(out.scenarios),
+          scenarioFingerprint: scenarioFingerprint(out.scenarios),
           round: result.round,
           usedMock: result.usedMock,
           mergeError: preview.ok ? undefined : preview.error,
@@ -175,7 +176,7 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
           applied: false,
           formJson: data.currentFormJson,
           formJsonCandidate: preview.formJsonCandidate,
-          output: data.output,
+          output: preview.outputResolved,
           scenarioNarration: preview.scenarioNarration,
           scenarioFingerprint: preview.scenarioFingerprint,
           warnings: preview.warnings,

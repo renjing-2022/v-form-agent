@@ -2,12 +2,16 @@ import { createHash } from 'node:crypto'
 import type { FormJson } from '../schemas/refinePlan.js'
 import type { InteractionOutput, InteractionScenario, InteractionStructureOp } from '../schemas/interactionOutput.js'
 import type { EventMergeMode, EventResolution } from '../schemas/clarification.js'
-import { buildWidgetFromCatalogDefaults } from '../knowledge/widgetDefaults.js'
 import { checkHandlersNetworkStatic } from './interactionNetworkPolicy.js'
 import { isInterfaceEventKey } from '../knowledge/eventAllowlist.js'
-import { INTERACTION_EVENT_KEYS } from './interactionValidate.js'
+import { catalogEventKeysForType, INTERACTION_EVENT_KEYS } from './interactionValidate.js'
 import { applyMergeMode, buildEventConflict } from './eventAstMerge.js'
 import type { EventConflict } from '../schemas/clarification.js'
+import {
+  applyCreateBatchInPlace,
+  createSpecFromAddButton,
+} from './createCompiler.js'
+import type { CreateWidgetOp, CreateWidgetSpec } from '../schemas/createWidget.js'
 
 type WidgetNode = {
   type?: string
@@ -67,84 +71,122 @@ function slugName(label: string, fallback: string): string {
   return `${fallback}_${raw}`.slice(0, 48)
 }
 
-function uniqueButtonName(formJson: FormJson, base: string): string {
-  const used = new Set(
-    walkWidgets(formJson.widgetList as WidgetNode[]).map((w) => String(w.options?.name || '')),
-  )
-  if (!used.has(base)) return base
-  for (let i = 2; i < 1000; i++) {
-    const n = `${base}_${i}`
-    if (!used.has(n)) return n
-  }
-  return `${base}_${Date.now()}`
-}
-
-function makeButton(formJson: FormJson, label: string, nameHint: string, overrides?: Record<string, unknown>) {
-  const name = uniqueButtonName(formJson, nameHint)
-  const id = `btn_${name}`
-  return buildWidgetFromCatalogDefaults('button', {
-    id,
-    name,
-    label,
-    optionOverrides: {
-      ...(overrides || {}),
-      name,
-      label,
-    },
-  }) as WidgetNode
-}
-
 function findTabPanes(formJson: FormJson): WidgetNode[] {
   return walkWidgets(formJson.widgetList as WidgetNode[]).filter((w) => w.type === 'tab-pane')
 }
 
-function appendToList(list: WidgetNode[] | undefined, node: WidgetNode): WidgetNode[] {
-  const next = list ? [...list] : []
-  next.push(node)
-  return next
+function applyCreateWidgetStructure(
+  formJson: FormJson,
+  specs: CreateWidgetSpec[],
+  warnings: string[],
+): { error?: string; tempRefMap: Map<string, { tempRef: string; id: string; name: string; type: string }> } {
+  const result = applyCreateBatchInPlace(formJson, specs)
+  warnings.push(...result.warnings)
+  if (!result.ok) {
+    return {
+      error: result.errors.map((e) => e.message).join('; ') || 'createWidget 失败',
+      tempRefMap: result.tempRefMap,
+    }
+  }
+  return { tempRefMap: result.tempRefMap }
 }
 
-function applyAddButton(
+/** 将 handler/scenario 中的 tempRef 解析为真实 name（结构候选完成后） */
+export function rewriteTempRefsInOutput(
+  output: InteractionOutput,
+  tempRefMap: Map<string, { name: string }>,
+): InteractionOutput {
+  if (!tempRefMap.size) return output
+  const resolve = (hint: string) => tempRefMap.get(hint)?.name || hint
+  const handlers = output.handlers.map((h) => ({
+    ...h,
+    target: resolve(h.target),
+  }))
+  const scenarios = output.scenarios.map((sc) => ({
+    ...sc,
+    handlerRefs: sc.handlerRefs.map((ref) => {
+      // id / target:eventKey / target
+      if (tempRefMap.has(ref)) return resolve(ref)
+      const colon = ref.indexOf(':')
+      if (colon > 0) {
+        const left = ref.slice(0, colon)
+        const right = ref.slice(colon + 1)
+        if (tempRefMap.has(left)) return `${resolve(left)}:${right}`
+      }
+      return ref
+    }),
+    arrange: {
+      ...sc.arrange,
+      values: sc.arrange?.values
+        ? Object.fromEntries(
+            Object.entries(sc.arrange.values).map(([k, v]) => [resolve(k), v]),
+          )
+        : sc.arrange?.values,
+    },
+    act: sc.act.map((step) => {
+      const next: Record<string, unknown> = { ...(step as object) }
+      for (const key of [
+        'input',
+        'clear',
+        'select',
+        'toggle',
+        'rate',
+        'slide',
+        'pickDate',
+        'pickTime',
+        'click',
+      ]) {
+        if (typeof next[key] === 'string') next[key] = resolve(String(next[key]))
+      }
+      return next
+    }) as InteractionOutput['scenarios'][number]['act'],
+    assert: sc.assert.map((a) => {
+      if ('field' in a && typeof a.field === 'string') {
+        return { ...a, field: resolve(a.field) }
+      }
+      return a
+    }),
+  }))
+  return { ...output, handlers, scenarios }
+}
+
+function expandAddButtonSpecs(
   formJson: FormJson,
   op: Extract<InteractionStructureOp, { op: 'addButton' }>,
-  warnings: string[],
-): { error?: string } {
+): { specs?: CreateWidgetSpec[]; error?: string } {
   const label = op.label
   const baseName = op.name || slugName(label, 'btn')
-  const overrides = op.optionOverrides
 
   if (op.eachTabPane) {
     const panes = findTabPanes(formJson)
     if (!panes.length) return { error: 'addButton eachTabPane: 表单中没有 tab-pane' }
-    for (const pane of panes) {
-      const paneName = String(pane.options?.name || pane.id || 'pane')
-      const btnName = `${baseName}__${paneName}`
-      const btn = makeButton(formJson, label, btnName, overrides)
-      // makeButton already uniquified; force exact derived name if free
-      const forcedName = uniqueButtonName(formJson, btnName)
-      ;(btn.options as Record<string, unknown>).name = forcedName
-      btn.id = `btn_${forcedName}`
-      pane.widgetList = appendToList(pane.widgetList, btn)
-      warnings.push(`addButton:${forcedName}@${paneName}`)
+    return {
+      specs: panes.map((pane) => {
+        const paneName = String(pane.options?.name || pane.id || 'pane')
+        const parent =
+          typeof pane.options?.name === 'string' && pane.options.name
+            ? { name: pane.options.name }
+            : { id: String(pane.id || '') }
+        return createSpecFromAddButton({
+          label,
+          name: `${baseName}__${paneName}`,
+          parent,
+          optionOverrides: op.optionOverrides,
+        })
+      }),
     }
-    return {}
   }
 
-  if (op.parent) {
-    const parentHint = op.parent.id || op.parent.name || op.parent.label
-    if (!parentHint) return { error: 'addButton parent 缺少 id/name/label' }
-    const parent = findByNameOrId(formJson, parentHint)
-    if (!parent) return { error: `addButton parent 未找到: ${parentHint}` }
-    const btn = makeButton(formJson, label, baseName, overrides)
-    parent.widgetList = appendToList(parent.widgetList, btn)
-    warnings.push(`addButton:${btn.options?.name}@${parentHint}`)
-    return {}
+  return {
+    specs: [
+      createSpecFromAddButton({
+        label,
+        name: baseName,
+        parent: op.parent,
+        optionOverrides: op.optionOverrides,
+      }),
+    ],
   }
-
-  const btn = makeButton(formJson, label, baseName, overrides)
-  formJson.widgetList = appendToList(formJson.widgetList as WidgetNode[], btn)
-  warnings.push(`addButton:${btn.options?.name}@root`)
-  return {}
 }
 
 function writeHandler(
@@ -157,6 +199,16 @@ function writeHandler(
   const warnings: string[] = []
   if (isInterfaceEventKey(eventKey) || !INTERACTION_EVENT_KEYS.has(eventKey)) {
     return { error: `禁写事件键：${eventKey}`, warnings }
+  }
+  if (target !== 'form') {
+    const nodes = resolveHandlerTargets(formJson, target)
+    const type = nodes[0]?.type
+    if (type) {
+      const allowed = catalogEventKeysForType(String(type))
+      if (allowed.length && !allowed.includes(eventKey)) {
+        return { error: `eventKey "${eventKey}" 不在 type=${type} 的 Catalog create.eventKeys`, warnings }
+      }
+    }
   }
 
   const mode = opts?.mergeMode || (opts?.confirmOverwrite ? 'overwrite' : undefined)
@@ -220,12 +272,15 @@ function writeHandler(
 }
 
 export type InteractionMergeResult =
-  | { ok: true; formJson: FormJson; warnings: string[] }
+  | { ok: true; formJson: FormJson; warnings: string[]; outputResolved: InteractionOutput }
   | { ok: false; error: string; httpStatus: 422 }
 
 /**
- * 结构 + 事件同一事务：任一步失败则整单失败（调用方丢弃候选，保留原 formJson）。
- * 不走 v0.8 eventJsGuard 白名单，仅网络静态检查。
+ * 结构 + 事件同一事务：
+ * 1) 编译并写入全部结构候选；
+ * 2) 解析 tempRef → name；
+ * 3) 再绑定 handlers。
+ * 任一步失败则整单失败（调用方丢弃候选，保留原 formJson）。
  */
 export function applyInteractionOutput(
   currentFormJson: FormJson,
@@ -253,40 +308,55 @@ export function applyInteractionOutput(
     resolutionMap.set(`${r.target}::${r.eventKey}`, r.mode)
   }
 
+  // ---- 1) 结构候选（批量，原子）----
+  const structureSpecs: CreateWidgetSpec[] = []
   for (const op of output.structure) {
-    if (op.op === 'addButton') {
-      const r = applyAddButton(next, op as Extract<InteractionStructureOp, { op: 'addButton' }>, warnings)
-      if (r.error) return { ok: false, error: r.error, httpStatus: 422 }
+    if (op.op === 'createWidget') {
+      const { op: _discard, ...spec } = op as CreateWidgetOp
+      void _discard
+      structureSpecs.push(spec)
+    } else if (op.op === 'addButton') {
+      const expanded = expandAddButtonSpecs(
+        next,
+        op as Extract<InteractionStructureOp, { op: 'addButton' }>,
+      )
+      if (expanded.error) return { ok: false, error: expanded.error, httpStatus: 422 }
+      structureSpecs.push(...(expanded.specs || []))
     } else {
       return {
         ok: false,
-        error: `交互合入暂不支持 structure.op=${op.op}（仅 addButton；纯结构请走 /refine）`,
+        error: `交互合入暂不支持 structure.op=${op.op}（仅 createWidget/addButton；纯结构请走 /refine）`,
         httpStatus: 422,
       }
     }
   }
 
   let structureWrote = false
-  for (const op of output.structure) {
-    if (op.op === 'addButton') {
-      const r = applyAddButton(next, op as Extract<InteractionStructureOp, { op: 'addButton' }>, warnings)
-      if (r.error) return { ok: false, error: r.error, httpStatus: 422 }
-      structureWrote = true
-    } else {
-      return {
-        ok: false,
-        error: `交互合入暂不支持 structure.op=${op.op}（仅 addButton；纯结构请走 /refine）`,
-        httpStatus: 422,
-      }
-    }
+  let tempRefMap = new Map<string, { tempRef: string; id: string; name: string; type: string }>()
+  if (structureSpecs.length) {
+    const r = applyCreateWidgetStructure(next, structureSpecs, warnings)
+    if (r.error) return { ok: false, error: r.error, httpStatus: 422 }
+    tempRefMap = r.tempRefMap
+    structureWrote = true
+  }
+
+  // ---- 2) tempRef 解析后再绑事件 ----
+  const resolved = rewriteTempRefsInOutput(output, tempRefMap)
+  // eventResolutions 的 target 也可能是 tempRef
+  const resolvedResolutionMap = new Map<string, EventMergeMode>()
+  for (const [key, mode] of resolutionMap) {
+    const [t, ek] = key.split('::')
+    const rt = tempRefMap.get(t)?.name || t
+    resolvedResolutionMap.set(`${rt}::${ek}`, mode)
   }
 
   let handlerWrote = false
-  let handlerSkippedAll = (output.handlers?.length || 0) > 0
-  for (const h of output.handlers) {
+  let handlerSkippedAll = (resolved.handlers?.length || 0) > 0
+  for (const h of resolved.handlers) {
     const key = `${h.target}::${h.eventKey}`
     const existing = readExistingHandlerCode(currentFormJson, h.target, h.eventKey)
-    let mergeMode: EventMergeMode | undefined = resolutionMap.get(key)
+    // 也查原始 form 上按 resolved name；tempRef 不会在原 form 上
+    let mergeMode: EventMergeMode | undefined = resolvedResolutionMap.get(key)
     if (existing.trim()) {
       if (mergeMode === 'cancel') {
         warnings.push(`cancel:${h.target}.${h.eventKey}`)
@@ -302,23 +372,26 @@ export function applyInteractionOutput(
         }
       }
     }
-    const r = writeHandler(next, h.target, h.eventKey, h.code, {
+    const wr = writeHandler(next, h.target, h.eventKey, h.code, {
       confirmOverwrite: mergeMode === 'overwrite' || opts?.confirmOverwrite,
-      mergeMode: mergeMode === 'prepend' || mergeMode === 'append' || mergeMode === 'overwrite' ? mergeMode : undefined,
+      mergeMode:
+        mergeMode === 'prepend' || mergeMode === 'append' || mergeMode === 'overwrite'
+          ? mergeMode
+          : undefined,
     })
-    if (r.error) return { ok: false, error: r.error, httpStatus: 422 }
-    if (!r.skipped) {
+    if (wr.error) return { ok: false, error: wr.error, httpStatus: 422 }
+    if (!wr.skipped) {
       handlerWrote = true
       handlerSkippedAll = false
     }
-    warnings.push(...r.warnings)
+    warnings.push(...wr.warnings)
   }
 
   if (handlerSkippedAll && !structureWrote && !handlerWrote) {
     return { ok: false, error: '全部事件冲突已取消，无写入', httpStatus: 422 }
   }
 
-  return { ok: true, formJson: next, warnings }
+  return { ok: true, formJson: next, warnings, outputResolved: resolved }
 }
 
 export function readExistingHandlerCode(formJson: FormJson, target: string, eventKey: string): string {

@@ -189,6 +189,17 @@ export const widgetCatalogVariantSchema = z.object({
   structure: widgetStructureSchema,
 })
 
+export const widgetCreateCapabilitySchema = z.object({
+  createKind: z.enum(['standalone', 'internal', 'composite', 'extension']),
+  allowedParents: z.array(z.string().min(1)),
+  eventKeys: z.array(z.string().min(1)),
+  previewCapabilities: z.object({
+    acts: z.array(z.string().min(1)),
+    asserts: z.array(z.string().min(1)),
+  }),
+  semanticAliases: z.array(z.string().min(1)),
+})
+
 export const widgetCatalogEntrySchema = z.object({
   type: z.string().min(1),
   category: z.enum(['container', 'basic', 'advanced', 'custom', 'chart-container', 'chart-widget']),
@@ -201,6 +212,8 @@ export const widgetCatalogEntrySchema = z.object({
   /** 容器级属性键（category=container；非 form-item field） */
   containerLevelKeys: z.array(z.string().min(1)).optional(),
   constraints: z.record(optionConstraintSchema),
+  /** v0.11：NL 创建/预览/事件能力与语义别名 */
+  create: widgetCreateCapabilitySchema.optional(),
   notes: z
     .object({
       structureSurgery: z.enum(['supported', 'partial', 'unsupported']).optional(),

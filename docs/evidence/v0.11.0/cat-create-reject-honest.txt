@@ -1,0 +1,7 @@
+case: cat-create-reject-honest
+status: pass
+observed: unknown/illegal eventKey on number + network JS rejected by validateInteractionOutput; create-compiler rejects unknown type/parent/options
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: main@d455d3fad91b (working tree has uncommitted changes)
+capturedAt: 2026-10-12T03:07:37.813Z
+type: agent-script

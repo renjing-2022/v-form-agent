@@ -136,6 +136,11 @@ export function rewriteClarificationQuestion(
   const slot = question.binds?.slot
   const prompt = question.prompt || ''
 
+  // Catalog type 歧义选项来自语义别名真源，禁止按画布控件名改写
+  if (slot === 'create.type') {
+    return question
+  }
+
   if (slot === 'target.widget' || (!slot && looksLikeWidgetQuestion(prompt))) {
     const truth = listFormWidgetOptions(formJson, ctx?.instruction)
     const modelValues = new Set((question.options || []).map((o) => optionValueAsString(o.value)))

@@ -1,6 +1,10 @@
-import { buildWidgetFromCatalogDefaults, getWidgetDefaultSchema } from '../knowledge/widgetDefaults.js'
+import { buildWidgetFromCatalogDefaults } from '../knowledge/widgetDefaults.js'
 import type { RefineOperation, RefinePlan, TargetRef, FormJson } from '../schemas/refinePlan.js'
-import type { FieldType } from '../schemas/fieldPlan.js'
+import {
+  applyCreateBatchInPlace,
+  createSpecFromAddField,
+} from './createCompiler.js'
+import type { CreateWidgetOp } from '../schemas/createWidget.js'
 import {
   sanitizeFormPatch,
   sanitizeWidgetPatch,
@@ -9,7 +13,6 @@ import {
   widgetSupportsOptionValueType,
 } from './refinePropertyPolicy.js'
 import { mergeCssCode, validateCssCode } from './cssGuard.js'
-import { isHeavyStructureType } from './catalogValidator.js'
 import { resolveScopeFields } from './targetResolver.js'
 import {
   findWidgetByTarget,
@@ -35,9 +38,6 @@ import {
   normalizeFormJsonWidgetCustomClasses,
   toVFormWidgetCustomClass,
 } from './customClassRuntime.js'
-
-/** addField 可作 parent 的重型容器（其余 heavy 仍拒绝） */
-const ADD_FIELD_PARENT_ALLOWED_HEAVY = new Set(['sub-form', 'vf-dialog'])
 
 type WidgetNode = Record<string, unknown> & {
   type?: string
@@ -208,47 +208,6 @@ function findByLabel(root: WidgetNode[], label: string): WidgetNode | null {
   return null
 }
 
-function createFieldWidget(
-  field: {
-    key: string
-    label: string
-    type: FieldType
-    required?: boolean
-    options?: Array<{ label: string; value: string | number }>
-    textContent?: string
-    formula?: string
-    formulaEnabled?: boolean
-  },
-  usedNames: Set<string>,
-  usedIds: Set<string>,
-): WidgetNode {
-  const schema = getWidgetDefaultSchema(field.type)
-  if (!schema) {
-    throw new Error(`addField 无法克隆 widgetsConfig 默认项: type="${field.type}" 不在 Catalog`)
-  }
-  const name = uniqueName(slugify(field.key || field.label, 'field'), usedNames)
-  const optionOverrides: Record<string, unknown> = {
-    label: field.label,
-    required: Boolean(field.required),
-  }
-  if (field.type === 'radio' || field.type === 'select') {
-    optionOverrides.optionItems = (field.options || []).map((o) => ({ label: o.label, value: o.value }))
-  }
-  if (field.type === 'static-text') {
-    optionOverrides.textContent = field.textContent || field.label
-  }
-  if (field.type === 'number' && (field.formula || field.formulaEnabled)) {
-    optionOverrides.formulaEnabled = field.formulaEnabled !== false
-    optionOverrides.formula = field.formula || ''
-  }
-  const idPrefix = field.type.replace(/-/g, '')
-  return buildWidgetFromCatalogDefaults(field.type, {
-    id: nextId(idPrefix, usedIds),
-    name,
-    optionOverrides,
-  }) as WidgetNode
-}
-
 function applyUpdateField(root: WidgetNode[], op: Extract<RefineOperation, { op: 'updateField' }>, warnings: string[]) {
   const widget = findWidget(root, op.target)
   if (!widget) {
@@ -372,33 +331,72 @@ function applySetFormula(root: WidgetNode[], op: Extract<RefineOperation, { op: 
 }
 
 function applyAddField(root: WidgetNode[], op: Extract<RefineOperation, { op: 'addField' }>, warnings: string[]) {
-  const usedNames = collectAllNames(root)
-  const usedIds = collectAllIds(root)
-  const widget = createFieldWidget(op.field, usedNames, usedIds)
-  if (widget.type === 'number' && typeof widget.options?.formula === 'string' && widget.options.formula) {
-    const compiled = compileFormula(String(widget.options.formula), root)
-    warnings.push(...compiled.warnings)
-    widget.options.formula = compiled.formula
-    widget.options.formulaEnabled = true
-  }
-  if (op.parent) {
-    const parent = findWidget(root, op.parent)
-    if (!parent) {
-      warnings.push(`addField parent 未找到，已追加到根节点`)
-      root.push(widget)
-      return
+  applyCreateWidget(
+    root,
+    {
+      op: 'createWidget',
+      ...createSpecFromAddField(op),
+    },
+    warnings,
+    'addField',
+  )
+}
+
+function applyCreateWidget(
+  root: WidgetNode[],
+  op: CreateWidgetOp,
+  warnings: string[],
+  via: string = 'createWidget',
+) {
+  const formJson: FormJson = { widgetList: root, formConfig: {} }
+  const { op: _discard, ...spec } = op
+  void _discard
+  const result = applyCreateBatchInPlace(formJson, [spec])
+  warnings.push(...result.warnings)
+  if (!result.ok) {
+    for (const err of result.errors) {
+      warnings.push(`${via} 失败: ${err.message}`)
     }
-    const parentType = String(parent.type || '')
-    if (isHeavyStructureType(parentType) && !ADD_FIELD_PARENT_ALLOWED_HEAVY.has(parentType)) {
-      warnings.push(`父容器 ${parentType} 未纳入结构手术能力，字段已追加到根节点`)
-      root.push(widget)
-      return
-    }
-    if (!Array.isArray(parent.widgetList)) parent.widgetList = []
-    parent.widgetList.push(widget)
     return
   }
-  root.push(widget)
+  if (formJson.widgetList !== root) {
+    root.length = 0
+    root.push(...((formJson.widgetList || []) as WidgetNode[]))
+  }
+  const createdNames = new Set<string>()
+  for (const binding of result.tempRefMap.values()) {
+    if (binding.name) createdNames.add(binding.name)
+  }
+  for (const w of result.warnings) {
+    const m = w.match(/^createWidget:([^@]+)@/)
+    if (m?.[1]) createdNames.add(m[1])
+  }
+  // 无 tempRef 时用刚分配的 name（warnings 已含 createWidget:name@…）
+  recompileCreatedNumberFormulas(root, createdNames, warnings)
+}
+
+function recompileCreatedNumberFormulas(
+  root: WidgetNode[],
+  createdNames: Set<string>,
+  warnings: string[],
+) {
+  const visit = (list: WidgetNode[]) => {
+    for (const w of list) {
+      if (
+        w.type === 'number' &&
+        createdNames.has(String(w.options?.name || '')) &&
+        typeof w.options?.formula === 'string' &&
+        w.options.formula
+      ) {
+        const compiled = compileFormula(String(w.options.formula), root)
+        warnings.push(...compiled.warnings)
+        w.options.formula = compiled.formula
+        w.options.formulaEnabled = true
+      }
+      for (const child of childCollections(w)) visit(child)
+    }
+  }
+  visit(root)
 }
 
 function applyWrapInTabs(root: WidgetNode[], op: Extract<RefineOperation, { op: 'wrapInTabs' }>, warnings: string[]) {
@@ -649,6 +647,9 @@ export function applyRefinePlan(current: FormJson, plan: RefinePlan): MergeResul
         break
       case 'addField':
         applyAddField(root, op, warnings)
+        break
+      case 'createWidget':
+        applyCreateWidget(root, op, warnings)
         break
       case 'wrapInTabs':
         applyWrapInTabs(root, op, warnings)

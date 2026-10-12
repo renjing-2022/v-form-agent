@@ -1,0 +1,7 @@
+case: cat-v010-regression
+status: pass
+observed: ask-before-act:check ok (schema/fingerprint/risk/L1-L3/merge/plan_expired)
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: main@d455d3fad91b (working tree has uncommitted changes)
+capturedAt: 2026-10-12T03:07:38.741Z
+type: agent-script

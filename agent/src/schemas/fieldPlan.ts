@@ -1,14 +1,27 @@
 import { z } from 'zod'
 
+/** v0.11 普通可创建字段（Catalog 子集；与 FIELD_CREATE_WHITELIST 对齐） */
 export const widgetTypeSchema = z.enum([
   'input',
   'textarea',
-  'radio',
-  'select',
   'number',
+  'radio',
+  'checkbox',
+  'select',
+  'cascader',
   'date',
+  'date-range',
+  'time',
+  'time-range',
+  'switch',
+  'rate',
+  'color',
+  'slider',
   'static-text',
+  'html-text',
+  'button',
   'divider',
+  'rich-editor',
 ])
 
 export const fieldOptionSchema = z.object({

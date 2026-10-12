@@ -1,0 +1,7 @@
+case: cat-preview-ordinary
+status: pass
+observed: ordinary field create matrix + interaction scenario acts (input/select/click) exercised via create-compiler and tab-sum fixture
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: main@d455d3fad91b (working tree has uncommitted changes)
+capturedAt: 2026-10-12T03:07:39.546Z
+type: agent-script

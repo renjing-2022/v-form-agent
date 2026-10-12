@@ -373,7 +373,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -416,6 +416,38 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onClick",
+          "onCreated",
+          "onMounted"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "click",
+            "mount"
+          ],
+          "asserts": [
+            "hidden",
+            "disabled",
+            "label",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "按钮"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -573,7 +605,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -657,6 +689,29 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "composite",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [
+          "onButtonGroupClick",
+          "onCreated",
+          "onMounted"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -1244,7 +1299,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -1354,6 +1409,46 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onBlur",
+          "onChange",
+          "onCreated",
+          "onFocus",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "select",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "级联",
+          "级联选择"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -1904,7 +1999,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -1992,6 +2087,44 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onChange",
+          "onCreated",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "select",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "多选",
+          "多选题"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -2367,7 +2500,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -2455,6 +2588,44 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onChange",
+          "onCreated",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "select",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "颜色",
+          "颜色选择器"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -2997,7 +3168,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -3535,6 +3706,43 @@
           "forbiddenReason": "event"
         }
       },
+      "create": {
+        "createKind": "composite",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [
+          "onCellClick",
+          "onCellDoubleClick",
+          "onCreated",
+          "onCurrentPageChange",
+          "onDisableOperationButton",
+          "onGetOperationButtonLabel",
+          "onGetRowClassName",
+          "onGetSpanMethod",
+          "onHeaderClick",
+          "onHideOperationButton",
+          "onMounted",
+          "onOperationButtonClick",
+          "onPageSizeChange",
+          "onRowClick",
+          "onRowDoubleClick",
+          "onSelectionChange",
+          "onSortChange"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
+      },
       "notes": {
         "structureSurgery": "partial",
         "highPrecisionReady": true
@@ -4042,7 +4250,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -4152,6 +4360,45 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onBlur",
+          "onChange",
+          "onCreated",
+          "onFocus",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "pickDate",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "日期"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -4670,7 +4917,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -4780,6 +5027,46 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onBlur",
+          "onChange",
+          "onCreated",
+          "onFocus",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "pickDate",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "日期区间",
+          "日期范围"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -4919,7 +5206,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -4951,6 +5238,38 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onCreated",
+          "onMounted"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "observeText",
+            "mount"
+          ],
+          "asserts": [
+            "text",
+            "hidden",
+            "label",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "分割线",
+          "分隔线"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -5371,7 +5690,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -5492,6 +5811,36 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onBeforeUpload",
+          "onCreated",
+          "onFileRemove",
+          "onMounted",
+          "onUploadError",
+          "onUploadSuccess",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -5673,7 +6022,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -5683,6 +6032,27 @@
             "effect": "options.customClass 作为 el-form-item class（fieldMixin 运行时维护 string[] join）"
           }
         }
+      },
+      "create": {
+        "createKind": "composite",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "栅格"
+        ]
       },
       "notes": {
         "structureSurgery": "supported",
@@ -5878,7 +6248,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -5888,6 +6258,25 @@
             "effect": "options.customClass 作为 el-form-item class（fieldMixin 运行时维护 string[] join）"
           }
         }
+      },
+      "create": {
+        "createKind": "internal",
+        "allowedParents": [
+          "grid"
+        ],
+        "eventKeys": [],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "栅格列"
+        ]
       },
       "notes": {
         "structureSurgery": "supported",
@@ -6085,7 +6474,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -6139,6 +6528,30 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "composite",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [
+          "onSubFormRowAdd",
+          "onSubFormRowChange",
+          "onSubFormRowDelete",
+          "onSubFormRowInsert"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -6243,7 +6656,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -6275,6 +6688,37 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onCreated",
+          "onMounted"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "observeText",
+            "mount"
+          ],
+          "asserts": [
+            "text",
+            "hidden",
+            "label",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "HTML"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -6762,7 +7206,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -6994,6 +7438,48 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onAppendButtonClick",
+          "onBlur",
+          "onChange",
+          "onCreated",
+          "onFocus",
+          "onInput",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "input",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "单行输入",
+          "输入框"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -7442,7 +7928,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -7607,6 +8093,47 @@
           "forbiddenReason": "event"
         }
       },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onBlur",
+          "onChange",
+          "onCreated",
+          "onFocus",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "input",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "数字",
+          "数字输入",
+          "计数器"
+        ]
+      },
       "notes": {
         "structureSurgery": "unsupported",
         "highPrecisionReady": true
@@ -7709,7 +8236,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -7741,6 +8268,28 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "composite",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [
+          "onCreated",
+          "onMounted"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -8160,7 +8709,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -8281,6 +8830,36 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onBeforeUpload",
+          "onCreated",
+          "onFileRemove",
+          "onMounted",
+          "onUploadError",
+          "onUploadSuccess",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -8831,7 +9410,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -8919,6 +9498,44 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onChange",
+          "onCreated",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "select",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "单选",
+          "单选题"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -9287,7 +9904,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -9435,6 +10052,43 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onChange",
+          "onCreated",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "rate",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "星级评分",
+          "评分"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -9767,7 +10421,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -9864,6 +10518,38 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onCreated",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "observeText",
+            "mount"
+          ],
+          "asserts": [
+            "text",
+            "hidden",
+            "label",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "富文本"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -10498,7 +11184,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -10619,6 +11305,48 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onBlur",
+          "onChange",
+          "onCreated",
+          "onFocus",
+          "onMounted",
+          "onRemoteQuery",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "select",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "下拉",
+          "下拉选择",
+          "下拉选项"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -11009,7 +11737,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -11147,6 +11875,43 @@
           "forbiddenReason": "event"
         }
       },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onChange",
+          "onCreated",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "slide",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "滑块"
+        ]
+      },
       "notes": {
         "structureSurgery": "unsupported",
         "highPrecisionReady": true
@@ -11217,7 +11982,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -11227,6 +11992,25 @@
             "effect": "options.customClass 作为 el-form-item class（fieldMixin 运行时维护 string[] join）"
           }
         }
+      },
+      "create": {
+        "createKind": "extension",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -11380,7 +12164,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -11412,6 +12196,39 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onCreated",
+          "onMounted"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "observeText",
+            "mount"
+          ],
+          "asserts": [
+            "text",
+            "hidden",
+            "label",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "说明文字",
+          "静态文字",
+          "静态文本"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -11609,7 +12426,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -11663,6 +12480,30 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "composite",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [
+          "onSubFormRowAdd",
+          "onSubFormRowChange",
+          "onSubFormRowDelete",
+          "onSubFormRowInsert"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
       },
       "notes": {
         "structureSurgery": "partial",
@@ -11956,7 +12797,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -12095,6 +12936,42 @@
           "forbiddenReason": "event"
         }
       },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onChange",
+          "onCreated",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "toggle",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "开关"
+        ]
+      },
       "notes": {
         "structureSurgery": "unsupported",
         "highPrecisionReady": true
@@ -12221,7 +13098,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -12242,6 +13119,33 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "composite",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [
+          "onTabClick"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "mount",
+            "switchTab"
+          ],
+          "asserts": [
+            "hidden",
+            "activeTab",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "标签页",
+          "选项卡"
+        ]
       },
       "notes": {
         "structureSurgery": "supported",
@@ -12365,7 +13269,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -12375,6 +13279,28 @@
             "effect": "options.customClass 作为 el-form-item class（fieldMixin 运行时维护 string[] join）"
           }
         }
+      },
+      "create": {
+        "createKind": "internal",
+        "allowedParents": [
+          "tab"
+        ],
+        "eventKeys": [],
+        "previewCapabilities": {
+          "acts": [
+            "mount",
+            "switchTab"
+          ],
+          "asserts": [
+            "hidden",
+            "activeTab",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "选项卡页"
+        ]
       },
       "notes": {
         "structureSurgery": "supported",
@@ -12459,7 +13385,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -12469,6 +13395,25 @@
             "effect": "options.customClass 作为 el-form-item class（fieldMixin 运行时维护 string[] join）"
           }
         }
+      },
+      "create": {
+        "createKind": "composite",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -12605,7 +13550,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -12615,6 +13560,23 @@
             "effect": "options.customClass 作为 el-form-item class（fieldMixin 运行时维护 string[] join）"
           }
         }
+      },
+      "create": {
+        "createKind": "internal",
+        "allowedParents": [
+          "table"
+        ],
+        "eventKeys": [],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -13064,7 +14026,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -13215,6 +14177,47 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onBlur",
+          "onChange",
+          "onCreated",
+          "onFocus",
+          "onInput",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "input",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "多行文本",
+          "多行输入"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -13679,7 +14682,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -13789,6 +14792,45 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onBlur",
+          "onChange",
+          "onCreated",
+          "onFocus",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "pickTime",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "时间"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -14266,7 +15308,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -14376,6 +15418,46 @@
           "writable": false,
           "forbiddenReason": "event"
         }
+      },
+      "create": {
+        "createKind": "standalone",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col",
+          "table-cell",
+          "sub-form",
+          "vf-dialog"
+        ],
+        "eventKeys": [
+          "onBlur",
+          "onChange",
+          "onCreated",
+          "onFocus",
+          "onMounted",
+          "onValidate"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "pickTime",
+            "clear",
+            "mount"
+          ],
+          "asserts": [
+            "value",
+            "hidden",
+            "disabled",
+            "required",
+            "label",
+            "valid",
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": [
+          "时间区间",
+          "时间范围"
+        ]
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -14780,7 +15862,7 @@
             "pairedValueKind": "array",
             "pairedValueType": "array",
             "pairedNullable": false,
-            "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+            "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
           },
           "writable": true,
           "renderConvention": {
@@ -14878,6 +15960,32 @@
           "propertyScope": "container",
           "writable": true
         }
+      },
+      "create": {
+        "createKind": "composite",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [
+          "onCheckChange",
+          "onCreated",
+          "onMounted",
+          "onNodeCheck",
+          "onNodeClick",
+          "onNodeContextmenu"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
       },
       "notes": {
         "structureSurgery": "unsupported",
@@ -15183,6 +16291,30 @@
           "forbiddenReason": "event"
         }
       },
+      "create": {
+        "createKind": "composite",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [
+          "onCancelButtonClick",
+          "onDialogBeforeClose",
+          "onDialogOpened",
+          "onOkButtonClick"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
+      },
       "notes": {
         "structureSurgery": "unsupported",
         "highPrecisionReady": true
@@ -15484,6 +16616,30 @@
           "forbiddenReason": "event"
         }
       },
+      "create": {
+        "createKind": "composite",
+        "allowedParents": [
+          "root",
+          "tab-pane",
+          "grid-col"
+        ],
+        "eventKeys": [
+          "onCancelButtonClick",
+          "onDrawerBeforeClose",
+          "onDrawerOpened",
+          "onOkButtonClick"
+        ],
+        "previewCapabilities": {
+          "acts": [
+            "mount"
+          ],
+          "asserts": [
+            "noError",
+            "noNetwork"
+          ]
+        },
+        "semanticAliases": []
+      },
       "notes": {
         "structureSurgery": "unsupported",
         "highPrecisionReady": true
@@ -15693,7 +16849,7 @@
           "pairedValueKind": "string",
           "pairedValueType": "string",
           "pairedNullable": false,
-          "note": "字段 options.customClass 为 string；formConfig.customClass 为 string[]"
+          "note": "计划/sanitize 层字段 customClass 为 string；写出 formJson 时规范为 string[]（对齐 v-form multiple/.join）；formConfig.customClass 为 string[]"
         },
         "writable": true
       },

@@ -2278,10 +2278,21 @@ async function main() {
   )
   writeCaseTo(outDirV060, 'refine-grid-subform-still-non-goal', 'grid-sub-form shell+node NON_GOAL', { type: 'agent' })
 
-  assert(REFINE_CREATE_WHITELIST.length === 12, `create whitelist must stay 12, got ${REFINE_CREATE_WHITELIST.length}`)
-  writeCaseTo(outDirV060, 'create-whitelist-unchanged', `REFINE_CREATE_WHITELIST length=${REFINE_CREATE_WHITELIST.length}`, {
-    type: 'static',
-  })
+  // v0.11：普通字段 20 + tab/tab-pane；grid/grid-col 仍无 create op
+  assert(REFINE_CREATE_WHITELIST.length === 22, `create whitelist must be 22, got ${REFINE_CREATE_WHITELIST.length}`)
+  assert(!(REFINE_CREATE_WHITELIST as readonly string[]).includes('grid'), 'grid not in create whitelist')
+  assert(!(REFINE_CREATE_WHITELIST as readonly string[]).includes('grid-col'), 'grid-col not in create whitelist')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('button'), 'button in create whitelist')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('checkbox'), 'checkbox in create whitelist')
+  assert(CREATE_NON_GOAL.grid === 'structure-no-create-op', 'grid NON_GOAL structure-no-create-op')
+  assert(CREATE_NON_GOAL['grid-col'] === 'internal-container', 'grid-col NON_GOAL internal-container')
+  assert(CREATE_NON_GOAL['file-upload'] === 'advanced-field', 'file-upload remains NON_GOAL')
+  writeCaseTo(
+    outDirV060,
+    'create-whitelist-unchanged',
+    `REFINE_CREATE_WHITELIST length=${REFINE_CREATE_WHITELIST.length}; ordinary fields + tab; grid/grid-col still NON_GOAL`,
+    { type: 'static' },
+  )
 
   const heavyParity = checkContainerRefinePolicyParity(catalog)
   assert(heavyParity.length === 0, `container refine parity: ${heavyParity.join('; ')}`)

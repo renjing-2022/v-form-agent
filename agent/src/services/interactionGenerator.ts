@@ -19,7 +19,8 @@ import type { RiskLevel } from '../schemas/clarification.js'
 import { validateInteractionOutput } from './interactionValidate.js'
 import { checkHandlersNetworkStatic } from './interactionNetworkPolicy.js'
 import { buildInteractionCandidate } from './interactionApply.js'
-import { buildPreGenerateRiskGate } from './interactionRiskGate.js'
+import { buildPreGenerateRiskGate, buildTypeAmbiguityGate } from './interactionRiskGate.js'
+import { isCreateAllowedType } from '../knowledge/createWhitelistPolicy.js'
 import { assessInteractionRisk } from './interactionRiskPolicy.js'
 import { computeFormFingerprint } from './formFingerprint.js'
 import { createPendingPlan, updatePendingPlanQuestions } from './pendingPlanStore.js'
@@ -220,6 +221,7 @@ function withCandidate(
   }
   return {
     ...base,
+    output: preview.outputResolved,
     formJsonCandidate: preview.formJsonCandidate,
     scenarioNarration: preview.scenarioNarration,
     scenarioFingerprint: preview.scenarioFingerprint,
@@ -402,6 +404,65 @@ function parseConfirmedSlots(instruction: string): Record<string, unknown> {
 
 function buildMockAfterClarify(instruction: string): InteractionOutput | null {
   const slots = parseConfirmedSlots(instruction)
+  const createType = String(slots['create.type'] || '').trim()
+  if (createType && isCreateAllowedType(createType)) {
+    const name = `new_${createType.replace(/-/g, '_')}`
+    const tempRef = 't_clarify_create'
+    const hid = 'h_clarify_create'
+    const eventKey = createType === 'button' ? 'onClick' : 'onChange'
+    const act =
+      createType === 'button'
+        ? [{ click: tempRef }]
+        : createType === 'radio' || createType === 'checkbox' || createType === 'select'
+          ? [{ select: tempRef, value: 'a' }]
+          : [{ input: tempRef, value: createType === 'number' ? 1 : 'x' }]
+    return interactionOutputSchema.parse({
+      intent: 'mixed',
+      summary: `已根据澄清创建 ${createType}（mock）`,
+      structure: [
+        {
+          op: 'createWidget',
+          type: createType,
+          tempRef,
+          name,
+          label: `新建${createType}`,
+          ...(createType === 'radio' || createType === 'checkbox' || createType === 'select'
+            ? {
+                optionOverrides: {
+                  optionItems: [
+                    { label: '甲', value: 'a' },
+                    { label: '乙', value: 'b' },
+                  ],
+                },
+              }
+            : {}),
+        },
+      ],
+      handlers: [
+        {
+          id: hid,
+          target: tempRef,
+          eventKey,
+          code:
+            createType === 'button'
+              ? 'this.$message("ok")'
+              : `const f=this.getFormRef();f.setFieldValue('${name}',f.getFieldValue('${name}'));`,
+          explain: '澄清后 mock 绑定',
+        },
+      ],
+      scenarios: [
+        {
+          id: 's_clarify_create',
+          handlerRefs: [hid],
+          title: '澄清后创建验收',
+          arrange: {},
+          act,
+          assert: [{ noError: true }, { noNetwork: true }],
+        },
+      ],
+      unsupported: [],
+    })
+  }
   const target = String(slots['target.widget'] || '').trim()
   if (!target || target === 'form') return null
   const eventKey = String(slots['target.eventKey'] || 'onChange').trim() || 'onChange'
@@ -587,6 +648,35 @@ export async function generateInteraction(params: {
   const confirmedRiskCodes = params.confirmedRiskCodes || []
 
   if (!params.skipRiskGate) {
+    const typeGate = buildTypeAmbiguityGate({
+      instruction: params.instruction,
+      formJson: params.currentFormJson,
+      messages: params.messages,
+      confirmedRiskCodes,
+    })
+    if (!typeGate.ok) {
+      return attachRewrittenClarification(
+        params.currentFormJson,
+        {
+          output: typeGate.output,
+          status: 'need_clarification',
+          usedMock: false,
+          rewriteCount: 0,
+          clarification: typeGate.clarification,
+          pendingPlan: typeGate.pendingPlan,
+          riskLevel: 'L1',
+          riskFacts: [],
+          questions: typeGate.output.questions,
+          formFingerprint: computeFormFingerprint(params.currentFormJson),
+        },
+        {
+          instruction: params.instruction,
+          messages: params.messages,
+          confirmedRiskCodes,
+        },
+      )
+    }
+
     const gate = buildPreGenerateRiskGate({
       instruction: params.instruction,
       formJson: params.currentFormJson,

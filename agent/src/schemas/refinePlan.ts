@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { generateResponseSchema, widgetTypeSchema } from './fieldPlan.js'
 import { normalizeTargetRef } from '../services/parentScopeParser.js'
+import { createWidgetOpSchema } from './createWidget.js'
 
 export const chatTurnSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -128,6 +129,8 @@ export const refineOperationSchema = z.discriminatedUnion('op', [
     /** 可选：放入指定 tab-pane / sub-form（id/name） */
     parent: targetRefSchema.optional(),
   }),
+  /** v0.11 Catalog 驱动统一创建；type 不做手写枚举收窄 */
+  createWidgetOpSchema,
   z.object({
     op: z.literal('wrapInTabs'),
     tabName: z.string().min(1).max(64).optional(),

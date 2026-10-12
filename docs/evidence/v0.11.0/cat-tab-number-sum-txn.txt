@@ -1,0 +1,7 @@
+case: cat-tab-number-sum-txn
+status: pass
+observed: mixed createWidget×tabs+radio+sum handlers; candidate; no-confirm draft; confirm applied; tempRef resolved
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: main@d455d3fad91b (working tree has uncommitted changes)
+capturedAt: 2026-10-12T03:07:37.764Z
+type: agent-script

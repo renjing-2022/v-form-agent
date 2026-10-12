@@ -16,6 +16,8 @@
     "repair:catalog-defaultvalue": "tsx scripts/repair-catalog-defaultvalue.ts",
     "catalog:sync": "tsx scripts/sync-widget-catalog.ts",
     "catalog:check": "tsx scripts/check-widget-catalog.ts",
+    "create-compiler:check": "tsx scripts/create-compiler-check.ts",
+    "v0110:acceptance": "tsx scripts/v0110-acceptance-check.ts",
     "event-shape:sync": "tsx scripts/sync-event-shape.ts",
     "event-shape:check": "tsx scripts/sync-event-shape.ts",
     "typecheck": "tsc --noEmit"

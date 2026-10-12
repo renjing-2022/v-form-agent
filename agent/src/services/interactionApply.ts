@@ -61,6 +61,12 @@ export function recomputeInteractionVerification(
         if (!valuesMatch(got, a.value)) failed.push(`field:${a.field}`)
         continue
       }
+      if ('field' in a && 'text' in a) {
+        const key = `text:${a.field}`
+        const got = Object.prototype.hasOwnProperty.call(actual, key) ? actual[key] : actual[a.field]
+        if (!valuesMatch(got, a.text)) failed.push(`text:${a.field}`)
+        continue
+      }
       if ('field' in a && 'hidden' in a) {
         if (!valuesMatch(actual[`hidden:${a.field}`], a.hidden)) failed.push(`hidden:${a.field}`)
         continue
@@ -246,9 +252,10 @@ export function buildInteractionCandidate(
     ok: true,
     formJsonCandidate: merged.formJson,
     warnings: merged.warnings,
-    scenarioFingerprint: scenarioFingerprint(output.scenarios),
-    scenarioNarration: narrateScenarios(output.scenarios),
+    scenarioFingerprint: scenarioFingerprint(merged.outputResolved.scenarios),
+    scenarioNarration: narrateScenarios(merged.outputResolved.scenarios),
     eventConflicts,
+    outputResolved: merged.outputResolved,
   }
 }
 
@@ -260,5 +267,7 @@ export type InteractionMergePreview =
       scenarioFingerprint: string
       scenarioNarration: string[]
       eventConflicts?: import('../schemas/clarification.js').EventConflict[]
+      /** tempRef 已解析为真实 name，供预览/合入使用 */
+      outputResolved: InteractionOutput
     }
   | { ok: false; error: string }
