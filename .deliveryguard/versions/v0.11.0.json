@@ -15,8 +15,8 @@
   ],
   "openSpec": {
     "changeId": "ai-form-catalog-widget-create",
-    "path": "openspec/changes/ai-form-catalog-widget-create",
-    "status": "applied"
+    "path": "openspec/changes/archive/2026-10-12-ai-form-catalog-widget-create",
+    "status": "archived"
   },
   "sources": [
     {
