@@ -25,6 +25,7 @@
 | `fr-3-reorder` (v0.5.0) | `refine-reorder-sibling` | Move 姓名 after 年龄; order observable in formJson |
 | `fr-4-duplicate` (v0.5.0) | `refine-duplicate-field` | Duplicate 时间定向; unique widget ids after apply |
 | `fr-6-regression` (v0.5.0) | `refine-v04-regression` | labelAlign=label-right-align on radios |
+| `fr-3-large-form` / `ac-3-large-form-e2e` (v0.13.0) | `large-form-ambiguity-e2e` | Seed F-large (>120 nodes, depth>8); 备注歧义 → need_clarification; canvas unchanged |
 
 Keep case IDs synchronized across the test annotation, `.deliveryguard/acceptance/<version>/evidence.json`, and `docs/evidence/<version>/<case-id>.txt`.
 

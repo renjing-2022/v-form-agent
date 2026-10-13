@@ -254,11 +254,31 @@ export type EventConflict = {
   incomingCode: string;
   mergeSafe: boolean;
   suggestedModes: EventMergeMode[];
+  rollbackCode?: string;
+  reasons?: string[];
   diffPreview?: {
     old: string;
     mergedPrepend?: string;
     mergedAppend?: string;
     incoming: string;
+  };
+};
+
+export type RepairDecision = {
+  class: 'code' | 'structure' | 'intent' | 'policy' | 'infrastructure';
+  route: 'repair_code' | 'replan' | 'clarify' | 'reject' | 'blocked';
+  reasons: string[];
+  consumeBusinessBudget: boolean;
+  candidateFingerprint: string;
+  failureFingerprint: string;
+  attemptFingerprint: string;
+  duplicate: boolean;
+  budgetExhausted: boolean;
+  ledger: {
+    codeAttempts: number;
+    replanAttempts: number;
+    totalAttempts: number;
+    seenAttemptFingerprints: string[];
   };
 };
 
@@ -308,6 +328,8 @@ export type AgentInteractionResponse = {
   riskFacts?: RiskFact[];
   formFingerprint?: string;
   eventConflicts?: EventConflict[];
+  repairDecision?: RepairDecision;
+  attemptFingerprints?: string[];
 };
 
 async function postInteraction(body: Record<string, unknown>): Promise<AgentInteractionResponse> {
@@ -340,6 +362,9 @@ export async function interactionFormByAgent(payload: {
   verificationReport?: AgentInteractionResponse['verificationReport'];
   round?: number;
   expectedScenarioFingerprint?: string;
+  attemptFingerprints?: string[];
+  codeAttempts?: number;
+  replanAttempts?: number;
   userConfirmed?: boolean;
   confirmOverwrite?: boolean;
   eventResolutions?: EventResolution[];
@@ -356,6 +381,9 @@ export async function interactionFormByAgent(payload: {
     verificationReport: payload.verificationReport,
     round: payload.round,
     expectedScenarioFingerprint: payload.expectedScenarioFingerprint,
+    attemptFingerprints: payload.attemptFingerprints,
+    codeAttempts: payload.codeAttempts,
+    replanAttempts: payload.replanAttempts,
     userConfirmed: payload.userConfirmed,
     confirmOverwrite: payload.confirmOverwrite,
     eventResolutions: payload.eventResolutions,

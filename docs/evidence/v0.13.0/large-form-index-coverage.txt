@@ -1,0 +1,7 @@
+case: large-form-index-coverage
+status: pass
+observed: nodes=143 maxDepth=10; truncated=true; omissions=1; deepLeaf indexed; 备注 ambiguity→clarify
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0985bbd37f44 (working tree has uncommitted changes)
+capturedAt: 2026-10-13T09:07:30.428Z
+type: agent-script

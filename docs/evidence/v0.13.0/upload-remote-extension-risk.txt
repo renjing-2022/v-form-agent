@@ -1,0 +1,7 @@
+case: upload-remote-extension-risk
+status: pass
+observed: managed upload/datasource ok; credential/prod URL rejected; missing-manifest/custom blocked; generated JS network → unsupported
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0985bbd37f44 (working tree has uncommitted changes)
+capturedAt: 2026-10-13T09:07:32.365Z
+type: agent-script

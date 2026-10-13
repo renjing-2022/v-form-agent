@@ -5,8 +5,9 @@ import type { EventMergeMode, EventResolution } from '../schemas/clarification.j
 import { checkHandlersNetworkStatic } from './interactionNetworkPolicy.js'
 import { isInterfaceEventKey } from '../knowledge/eventAllowlist.js'
 import { catalogEventKeysForType, INTERACTION_EVENT_KEYS } from './interactionValidate.js'
-import { applyMergeMode, buildEventConflict } from './eventAstMerge.js'
+import { applyMergeMode, assessEventMergeSafety, buildEventConflict } from './eventAstMerge.js'
 import type { EventConflict } from '../schemas/clarification.js'
+import type { OverwriteRollback } from './eventMergeScenarios.js'
 import {
   applyCreateBatchInPlace,
   createSpecFromAddButton,
@@ -194,8 +195,13 @@ function writeHandler(
   target: string,
   eventKey: string,
   code: string,
-  opts?: { confirmOverwrite?: boolean; mergeMode?: 'prepend' | 'append' | 'overwrite' },
-): { error?: string; warnings: string[]; skipped?: boolean } {
+  opts?: {
+    confirmOverwrite?: boolean
+    mergeMode?: 'prepend' | 'append' | 'overwrite'
+    /** 用户显式选择前置/后置时允许强制包装 */
+    forceMerge?: boolean
+  },
+): { error?: string; warnings: string[]; skipped?: boolean; rollbackCode?: string } {
   const warnings: string[] = []
   if (isInterfaceEventKey(eventKey) || !INTERACTION_EVENT_KEYS.has(eventKey)) {
     return { error: `禁写事件键：${eventKey}`, warnings }
@@ -222,16 +228,16 @@ function writeHandler(
       if (mode === 'overwrite') {
         warnings.push(`overwrite:form.${eventKey}`)
         formJson.formConfig = { ...(formJson.formConfig || {}), [eventKey]: code }
-        return { warnings }
+        return { warnings, rollbackCode: existing }
       }
-      const merged = applyMergeMode(mode, existing, code)
+      const merged = applyMergeMode(mode, existing, code, { force: opts?.forceMerge })
       if (!merged.ok) {
         if ('skip' in merged && merged.skip) return { warnings, skipped: true }
         return { error: 'error' in merged ? merged.error : 'merge failed', warnings }
       }
       warnings.push(`${mode}:form.${eventKey}`)
       formJson.formConfig = { ...(formJson.formConfig || {}), [eventKey]: merged.code }
-      return { warnings }
+      return { warnings, rollbackCode: merged.rollbackCode || existing }
     }
     formJson.formConfig = { ...(formJson.formConfig || {}), [eventKey]: code }
     return { warnings }
@@ -240,6 +246,7 @@ function writeHandler(
   const targets = resolveHandlerTargets(formJson, target)
   if (!targets.length) return { error: `handler target 未找到: ${target}`, warnings }
 
+  let rollbackCode: string | undefined
   for (const w of targets) {
     const existing = String((w.options || {})[eventKey] || '')
     if (existing.trim()) {
@@ -251,10 +258,11 @@ function writeHandler(
       }
       if (mode === 'overwrite') {
         warnings.push(`overwrite:${w.options?.name}.${eventKey}`)
+        rollbackCode = existing
         w.options = { ...(w.options || {}), [eventKey]: code }
         continue
       }
-      const merged = applyMergeMode(mode, existing, code)
+      const merged = applyMergeMode(mode, existing, code, { force: opts?.forceMerge })
       if (!merged.ok) {
         if ('skip' in merged && merged.skip) {
           warnings.push(`cancel:${w.options?.name}.${eventKey}`)
@@ -263,16 +271,23 @@ function writeHandler(
         return { error: 'error' in merged ? merged.error : 'merge failed', warnings }
       }
       warnings.push(`${mode}:${w.options?.name}.${eventKey}`)
+      rollbackCode = merged.rollbackCode || existing
       w.options = { ...(w.options || {}), [eventKey]: merged.code }
       continue
     }
     w.options = { ...(w.options || {}), [eventKey]: code }
   }
-  return { warnings }
+  return { warnings, rollbackCode }
 }
 
 export type InteractionMergeResult =
-  | { ok: true; formJson: FormJson; warnings: string[]; outputResolved: InteractionOutput }
+  | {
+      ok: true
+      formJson: FormJson
+      warnings: string[]
+      outputResolved: InteractionOutput
+      overwriteRollbacks?: OverwriteRollback[]
+    }
   | { ok: false; error: string; httpStatus: 422 }
 
 /**
@@ -352,24 +367,41 @@ export function applyInteractionOutput(
 
   let handlerWrote = false
   let handlerSkippedAll = (resolved.handlers?.length || 0) > 0
+  const overwriteRollbacks: OverwriteRollback[] = []
   for (const h of resolved.handlers) {
     const key = `${h.target}::${h.eventKey}`
     const existing = readExistingHandlerCode(currentFormJson, h.target, h.eventKey)
     // 也查原始 form 上按 resolved name；tempRef 不会在原 form 上
     let mergeMode: EventMergeMode | undefined = resolvedResolutionMap.get(key)
+    let forceMerge = false
     if (existing.trim()) {
       if (mergeMode === 'cancel') {
         warnings.push(`cancel:${h.target}.${h.eventKey}`)
         continue
       }
+      const safety = assessEventMergeSafety(existing, h.code)
       if (!mergeMode && opts?.confirmOverwrite) mergeMode = 'overwrite'
-      if (!mergeMode && opts?.previewForceOverwrite) mergeMode = 'overwrite'
+      if (!mergeMode && opts?.previewForceOverwrite) {
+        // 可证明安全时预览用 append，避免静默覆盖误导；否则临时 overwrite 仅供预览
+        mergeMode = safety.mergeSafe ? 'append' : 'overwrite'
+        if (safety.mergeSafe) warnings.push(`preview-auto-append-safe:${h.target}.${h.eventKey}`)
+      }
+      // apply 路径不自动合并：默认只在可证明安全时「允许」前置/后置，仍须显式 resolutions
       if (!mergeMode) {
         return {
           ok: false,
           error: `${h.target}.${h.eventKey} 已有代码，需 eventResolutions 或 confirmOverwrite`,
           httpStatus: 422,
         }
+      }
+      // 用户显式选择前置/后置：即使 AST 不确定也允许强制包装
+      if (
+        (mergeMode === 'prepend' || mergeMode === 'append') &&
+        resolvedResolutionMap.has(key) &&
+        !safety.mergeSafe
+      ) {
+        forceMerge = true
+        warnings.push(`force-${mergeMode}:${h.target}.${h.eventKey}`)
       }
     }
     const wr = writeHandler(next, h.target, h.eventKey, h.code, {
@@ -378,11 +410,20 @@ export function applyInteractionOutput(
         mergeMode === 'prepend' || mergeMode === 'append' || mergeMode === 'overwrite'
           ? mergeMode
           : undefined,
+      forceMerge,
     })
     if (wr.error) return { ok: false, error: wr.error, httpStatus: 422 }
     if (!wr.skipped) {
       handlerWrote = true
       handlerSkippedAll = false
+    }
+    if (mergeMode === 'overwrite' && wr.rollbackCode) {
+      overwriteRollbacks.push({
+        target: h.target,
+        eventKey: h.eventKey,
+        previousCode: wr.rollbackCode,
+        incomingCode: h.code,
+      })
     }
     warnings.push(...wr.warnings)
   }
@@ -391,7 +432,13 @@ export function applyInteractionOutput(
     return { ok: false, error: '全部事件冲突已取消，无写入', httpStatus: 422 }
   }
 
-  return { ok: true, formJson: next, warnings, outputResolved: resolved }
+  return {
+    ok: true,
+    formJson: next,
+    warnings,
+    outputResolved: resolved,
+    overwriteRollbacks: overwriteRollbacks.length ? overwriteRollbacks : undefined,
+  }
 }
 
 export function readExistingHandlerCode(formJson: FormJson, target: string, eventKey: string): string {

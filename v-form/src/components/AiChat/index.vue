@@ -327,6 +327,9 @@ const lastInteraction = ref<AgentInteractionResponse | null>(null)
 const lastInteractionInstruction = ref('')
 const interactionVerifiedPass = ref(false)
 const repairRound = ref(0)
+const attemptFingerprints = ref<string[]>([])
+const codeAttempts = ref(0)
+const replanAttempts = ref(0)
 const messages = ref<ChatTurn[]>([])
 
 const activeClarification = ref<ClarificationPayload | null>(null)
@@ -512,6 +515,9 @@ function onReset() {
   lastInteractionInstruction.value = ''
   interactionVerifiedPass.value = false
   repairRound.value = 0
+  attemptFingerprints.value = []
+  codeAttempts.value = 0
+  replanAttempts.value = 0
   error.value = ''
   prompt.value = ''
   clearClarificationState()
@@ -680,6 +686,9 @@ async function runInteraction(text: string) {
   lastInteraction.value = null
   interactionVerifiedPass.value = false
   repairRound.value = 0
+  attemptFingerprints.value = []
+  codeAttempts.value = 0
+  replanAttempts.value = 0
   activeConflicts.value = []
   try {
     const history = messages.value.slice(-20)
@@ -844,7 +853,37 @@ async function onRepairInteraction() {
       verificationReport: lastInteraction.value.verificationReport,
       round: nextRound,
       expectedScenarioFingerprint: lastInteraction.value.scenarioFingerprint,
+      attemptFingerprints: attemptFingerprints.value,
+      codeAttempts: codeAttempts.value,
+      replanAttempts: replanAttempts.value,
     })
+    if (data.attemptFingerprints) {
+      attemptFingerprints.value = data.attemptFingerprints
+    }
+    if (data.repairDecision?.ledger) {
+      codeAttempts.value = data.repairDecision.ledger.codeAttempts
+      replanAttempts.value = data.repairDecision.ledger.replanAttempts
+    }
+    const decision = data.repairDecision
+    if (decision && decision.route !== 'repair_code') {
+      lastInteraction.value = { ...lastInteraction.value, ...data, status: data.status }
+      if (decision.route === 'replan') {
+        ElMessage.warning(data.summary || '结构问题需重新描述/规划，未消耗无效代码修正')
+      } else if (decision.route === 'clarify') {
+        ElMessage.info(data.summary || '需要澄清后再继续')
+      } else if (decision.route === 'reject') {
+        ElMessage.warning(data.summary || '策略拒绝，不再自动修正')
+      } else if (decision.class === 'infrastructure') {
+        ElMessage.warning(data.summary || '预览基础设施阻塞，不计入业务修正次数')
+      } else {
+        ElMessage.warning(data.summary || '修正已阻断')
+      }
+      // infrastructure / 非 code 路由不增加业务 repairRound（round 仅对 code 路径前进）
+      if (decision.consumeBusinessBudget) {
+        repairRound.value = nextRound
+      }
+      return
+    }
     repairRound.value = nextRound
     if (data.status === 'tamper') {
       ElMessage.error('修正试图改动验证场景，已拒绝')

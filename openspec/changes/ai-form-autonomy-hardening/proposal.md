@@ -4,7 +4,7 @@
 
 - Version: `v0.13.0`
 - Primary requirement: `docs/requirements/ai-form-autonomy-hardening.md`
-- Status: proposed
+- Status: applied
 - Depends on: `ai-form-composite-extension-create`
 
 ## Problem

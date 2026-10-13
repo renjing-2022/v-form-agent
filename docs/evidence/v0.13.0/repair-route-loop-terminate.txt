@@ -1,0 +1,7 @@
+case: repair-route-loop-terminate
+status: pass
+observed: Plan/Scenario Critic + failureClassify routes (code/structure/intent/policy/infrastructure); duplicate fingerprint blocked; infra does not consume business budget
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0985bbd37f44 (working tree has uncommitted changes)
+capturedAt: 2026-10-13T09:07:31.276Z
+type: agent-script

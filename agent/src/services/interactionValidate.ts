@@ -94,19 +94,53 @@ export function collectFormNames(formJson: { widgetList?: unknown[] }): {
   return { names, ids, typesByName }
 }
 
-/** 计划中将新建的控件 name / tempRef → type */
-export function collectPlannedCreates(output: InteractionOutput): {
+function collectTabPaneNames(formJson?: { widgetList?: unknown[] }): string[] {
+  if (!formJson?.widgetList) return []
+  const panes: string[] = []
+  const walk = (list: WidgetNode[] | undefined) => {
+    if (!list) return
+    for (const w of list) {
+      if (!w || typeof w !== 'object') continue
+      if (w.type === 'tab-pane') {
+        const name = typeof w.options?.name === 'string' && w.options.name ? w.options.name : String(w.id || 'pane')
+        panes.push(name)
+      }
+      walk(w.widgetList)
+      walk(w.tabs)
+      walk(w.cols)
+      if (Array.isArray(w.rows)) {
+        for (const row of w.rows) walk(row.cells)
+      }
+    }
+  }
+  walk(formJson.widgetList as WidgetNode[] | undefined)
+  return panes
+}
+
+/** 计划中将新建的控件 name / tempRef → type；传入 formJson 时展开 eachTabPane 派生名 */
+export function collectPlannedCreates(
+  output: InteractionOutput,
+  formJson?: { widgetList?: unknown[] },
+): {
   names: Set<string>
   typesByTarget: Map<string, string>
 } {
   const names = new Set<string>()
   const typesByTarget = new Map<string, string>()
+  const paneNames = collectTabPaneNames(formJson)
   for (const op of output.structure) {
     if (op.op === 'addButton') {
       const btn = op as { name?: string; eachTabPane?: boolean }
       if (btn.name) {
         names.add(btn.name)
         typesByTarget.set(btn.name, 'button')
+        if (btn.eachTabPane) {
+          for (const pane of paneNames) {
+            const derived = `${btn.name}__${pane}`
+            names.add(derived)
+            typesByTarget.set(derived, 'button')
+          }
+        }
       }
       continue
     }
@@ -175,7 +209,7 @@ export function validateInteractionOutput(
 ): InteractionValidationIssue[] {
   const issues: InteractionValidationIssue[] = []
   const { names, typesByName } = collectFormNames(formJson)
-  const planned = collectPlannedCreates(output)
+  const planned = collectPlannedCreates(output, formJson)
   const knownTargets = new Set<string>([...names, ...planned.names, 'form'])
 
   if (output.intent === 'need_clarification') {

@@ -1,7 +1,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { chatCompletion, type ChatMessage } from './deepseek.js'
-import { buildFormSummary } from './formSummary.js'
+import { buildFormSummaryReport, formatFormSummaryMeta } from './formSummary.js'
+import { buildTargetAmbiguityGate } from './targetAmbiguityGate.js'
 import { renderInteractionApiReferenceMarkdown } from '../knowledge/interactionApiReference.js'
 import {
   interactionOutputSchema,
@@ -28,6 +29,9 @@ import {
   buildClarificationFromNeedClarification,
   rewriteClarificationPayload,
 } from './clarificationOptionRewrite.js'
+import { buildPlanCriticInput, runPlanCritic } from './planCritic.js'
+import { buildScenarioCriticInput, runScenarioCritic } from './scenarioCritic.js'
+import type { PlanCriticVerdict, ScenarioCriticVerdict } from '../schemas/autonomyCritic.js'
 
 function attachRewrittenClarification(
   formJson: RefineFormJson,
@@ -207,6 +211,130 @@ function withCandidate(
     }
   }
 
+  const staticIssues = validateInteractionOutput(base.output, formJson)
+  const planVerdict = runPlanCritic(
+    buildPlanCriticInput({
+      instruction,
+      formJson,
+      output: base.output,
+      staticIssues,
+    }),
+  )
+  const scenarioVerdict = runScenarioCritic(
+    buildScenarioCriticInput({
+      instruction,
+      formJson,
+      output: base.output,
+    }),
+  )
+
+  if (!planVerdict.pass || !scenarioVerdict.pass) {
+    const blocking = !planVerdict.pass ? planVerdict : scenarioVerdict
+    const findingText = blocking.findings.map((f) => f.message).join('；')
+    if (blocking.route === 'reject') {
+      return {
+        ...base,
+        status: 'unsupported',
+        planCritic: planVerdict,
+        scenarioCritic: scenarioVerdict,
+        riskLevel: risk.riskLevel,
+        riskFacts: risk.riskFacts,
+        formFingerprint: computeFormFingerprint(formJson),
+        output: {
+          ...base.output,
+          intent: 'unsupported',
+          summary: findingText || '独立审核拒绝',
+          unsupported: [
+            ...(base.output.unsupported || []),
+            ...blocking.findings.map((f) => ({ text: f.code, reason: f.message })),
+          ],
+        },
+      }
+    }
+
+    if (blocking.route === 'clarify') {
+      const clarification = rewriteClarificationPayload(
+        clarificationPayloadSchema.parse({
+          protocol: 'structured-clarify-v1',
+          questions: [
+            {
+              id: `q_critic_${blocking.critic}`,
+              type: 'text',
+              prompt: `计划/场景需要澄清：${findingText || '请补充目标控件或意图'}`,
+              required: true,
+              riskNote: findingText || blocking.critic,
+              binds: { slot: 'target.widget' },
+            },
+          ],
+        }),
+        formJson,
+        instruction,
+      )
+      const output = withDerivedQuestions(
+        {
+          intent: 'need_clarification',
+          summary: findingText || '独立审核需要澄清',
+          structure: [],
+          handlers: [],
+          scenarios: [],
+          unsupported: [],
+        },
+        clarification,
+      )
+      const pendingPlan = createPendingPlan({
+        formFingerprint: computeFormFingerprint(formJson),
+        goal: instruction.slice(0, 200) || '交互澄清',
+        ambiguities: blocking.findings.map((f) => f.message),
+        plannedStructure: {
+          summary: base.output.structure?.map((s) => s.op).join(',') || '',
+          opKinds: (base.output.structure || []).map((s) => s.op),
+        },
+        plannedHandlers: (base.output.handlers || []).map((h) => ({
+          target: h.target,
+          eventKey: h.eventKey,
+          action: 'create' as const,
+        })),
+        riskLevel: risk.riskLevel,
+        riskFacts: risk.riskFacts,
+        nextStepsAfterAnswer: ['回答澄清', '重新生成'],
+        resume: {
+          instruction,
+          messages: opts?.messages,
+          questionSnapshot: clarification.questions,
+          slotValues: {},
+          confirmedRiskCodes: [...confirmed],
+        },
+      })
+      return {
+        ...base,
+        status: 'need_clarification',
+        output,
+        clarification,
+        pendingPlan,
+        questions: output.questions,
+        planCritic: planVerdict,
+        scenarioCritic: scenarioVerdict,
+        riskLevel: risk.riskLevel,
+        riskFacts: risk.riskFacts,
+        formFingerprint: computeFormFingerprint(formJson),
+        formJsonCandidate: undefined,
+      }
+    }
+    // replan：诚实失败，要求重新规划，不把有问题的候选交给预览
+    return {
+      ...base,
+      status: 'error',
+      error: `独立审核要求重规划：${findingText}`,
+      issues: blocking.findings.map((f) => ({ path: f.path || f.code, message: f.message })),
+      planCritic: planVerdict,
+      scenarioCritic: scenarioVerdict,
+      riskLevel: risk.riskLevel,
+      riskFacts: risk.riskFacts,
+      formFingerprint: computeFormFingerprint(formJson),
+      formJsonCandidate: undefined,
+    }
+  }
+
   const preview = buildInteractionCandidate(formJson, base.output)
   if (!preview.ok) {
     return {
@@ -214,6 +342,8 @@ function withCandidate(
       status: 'error',
       error: preview.error,
       issues: [{ path: 'merge', message: preview.error }],
+      planCritic: planVerdict,
+      scenarioCritic: scenarioVerdict,
       riskLevel: risk.riskLevel,
       riskFacts: risk.riskFacts,
       formFingerprint: computeFormFingerprint(formJson),
@@ -227,6 +357,11 @@ function withCandidate(
     scenarioFingerprint: preview.scenarioFingerprint,
     mergeWarnings: preview.warnings,
     eventConflicts: preview.eventConflicts,
+    eventMergeClarification: preview.eventMergeClarification,
+    overwriteRollbacks: preview.overwriteRollbacks,
+    provenance: preview.provenance,
+    planCritic: planVerdict,
+    scenarioCritic: scenarioVerdict,
     riskLevel: risk.riskLevel,
     riskFacts: risk.riskFacts,
     formFingerprint: computeFormFingerprint(formJson),
@@ -596,7 +731,17 @@ export type GenerateInteractionResult = {
   riskFacts?: RiskFact[]
   formFingerprint?: string
   eventConflicts?: EventConflict[]
+  eventMergeClarification?: ClarificationPayload
+  overwriteRollbacks?: Array<{
+    target: string
+    eventKey: string
+    previousCode: string
+    incomingCode: string
+  }>
+  provenance?: import('./previewProvenance.js').PreviewProvenance
   questions?: string[]
+  planCritic?: PlanCriticVerdict
+  scenarioCritic?: ScenarioCriticVerdict
 }
 
 function mapStatus(output: InteractionOutput): GenerateInteractionResult['status'] {
@@ -667,6 +812,35 @@ export async function generateInteraction(params: {
           riskLevel: 'L1',
           riskFacts: [],
           questions: typeGate.output.questions,
+          formFingerprint: computeFormFingerprint(params.currentFormJson),
+        },
+        {
+          instruction: params.instruction,
+          messages: params.messages,
+          confirmedRiskCodes,
+        },
+      )
+    }
+
+    const targetGate = buildTargetAmbiguityGate({
+      instruction: params.instruction,
+      formJson: params.currentFormJson,
+      messages: params.messages,
+      confirmedRiskCodes,
+    })
+    if (!targetGate.ok) {
+      return attachRewrittenClarification(
+        params.currentFormJson,
+        {
+          output: targetGate.output,
+          status: 'need_clarification',
+          usedMock: false,
+          rewriteCount: 0,
+          clarification: targetGate.clarification,
+          pendingPlan: targetGate.pendingPlan,
+          riskLevel: 'L1',
+          riskFacts: [],
+          questions: targetGate.output.questions,
           formFingerprint: computeFormFingerprint(params.currentFormJson),
         },
         {
@@ -785,12 +959,13 @@ export async function generateInteraction(params: {
     role: m.role as ChatMessage['role'],
     content: m.content,
   }))
-  const formSummary = buildFormSummary(params.currentFormJson, params.instruction)
+  const summaryReport = buildFormSummaryReport(params.currentFormJson, params.instruction)
   const apiManual = renderInteractionApiReferenceMarkdown()
 
   const userPayload = {
     instruction: params.instruction,
-    formSummary,
+    formSummary: summaryReport.fields,
+    formSummaryMeta: formatFormSummaryMeta(summaryReport),
     apiManual,
   }
 

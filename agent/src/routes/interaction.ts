@@ -8,6 +8,11 @@ import { scenarioFingerprint } from '../services/interactionMerger.js'
 import { narrateScenarios } from '../services/scenarioNarrator.js'
 import { clarifyInteraction } from '../services/interactionClarify.js'
 import { computeFormFingerprint } from '../services/formFingerprint.js'
+import {
+  commitRepairAttempt,
+  routeRepairAttempt,
+  summarizeRepairDecision,
+} from '../services/repairRouter.js'
 
 export async function registerInteractionRoutes(app: FastifyInstance) {
   app.post('/api/agent/v1/interaction', async (request, reply) => {
@@ -63,6 +68,11 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
           riskFacts: result.riskFacts,
           formFingerprint: result.formFingerprint || computeFormFingerprint(data.currentFormJson),
           eventConflicts: result.eventConflicts,
+          eventMergeClarification: result.eventMergeClarification,
+          overwriteRollbacks: result.overwriteRollbacks,
+          provenance: result.provenance,
+          planCritic: result.planCritic,
+          scenarioCritic: result.scenarioCritic,
         })
       }
 
@@ -105,6 +115,39 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
             round: data.round,
           })
         }
+
+        const routed = routeRepairAttempt({
+          formJson: data.currentFormJson,
+          output: data.output,
+          verificationReport: data.verificationReport,
+          attemptFingerprints: data.attemptFingerprints,
+          codeAttempts: data.codeAttempts,
+          replanAttempts: data.replanAttempts,
+        })
+        const decisionSummary = summarizeRepairDecision(routed.decision)
+
+        if (!routed.allowProceed) {
+          const status =
+            routed.decision.route === 'clarify'
+              ? 'need_clarification'
+              : routed.decision.route === 'reject'
+                ? 'unsupported'
+                : routed.decision.route === 'replan'
+                  ? 'failed'
+                  : 'failed'
+          return reply.code(200).send({
+            status,
+            summary: decisionSummary,
+            applied: false,
+            formJson: data.currentFormJson,
+            output: data.output,
+            round: data.round,
+            repairDecision: routed.decision,
+            attemptFingerprints: routed.decision.ledger.seenAttemptFingerprints,
+            formFingerprint: computeFormFingerprint(data.currentFormJson),
+          })
+        }
+
         const expected =
           data.expectedScenarioFingerprint || scenarioFingerprint(data.output.scenarios)
         const result = await repairInteraction({
@@ -123,6 +166,8 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
             output: data.output,
             round: data.round,
             expectedScenarioFingerprint: expected,
+            repairDecision: routed.decision,
+            attemptFingerprints: routed.decision.ledger.seenAttemptFingerprints,
           })
         }
         if (!result.ok) {
@@ -134,10 +179,22 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
             formJson: data.currentFormJson,
             output: result.output,
             round: data.round,
+            repairDecision: routed.decision,
+            attemptFingerprints: routed.decision.ledger.seenAttemptFingerprints,
           })
         }
         const preview = buildInteractionCandidate(data.currentFormJson, result.output)
         const out = preview.ok ? preview.outputResolved : result.output
+        const committed = commitRepairAttempt(routed.ledger, routed.decision)
+        const decision = {
+          ...routed.decision,
+          ledger: {
+            codeAttempts: committed.codeAttempts,
+            replanAttempts: committed.replanAttempts,
+            totalAttempts: committed.totalAttempts,
+            seenAttemptFingerprints: committed.seenAttemptFingerprints,
+          },
+        }
         return reply.code(200).send({
           status: 'generated',
           summary: out.summary,
@@ -151,7 +208,11 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
           usedMock: result.usedMock,
           mergeError: preview.ok ? undefined : preview.error,
           eventConflicts: preview.ok ? preview.eventConflicts : undefined,
+          eventMergeClarification: preview.ok ? preview.eventMergeClarification : undefined,
+          overwriteRollbacks: preview.ok ? preview.overwriteRollbacks : undefined,
           formFingerprint: computeFormFingerprint(data.currentFormJson),
+          repairDecision: decision,
+          attemptFingerprints: committed.seenAttemptFingerprints,
         })
       }
 
@@ -181,6 +242,9 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
           scenarioFingerprint: preview.scenarioFingerprint,
           warnings: preview.warnings,
           eventConflicts: preview.eventConflicts,
+          eventMergeClarification: preview.eventMergeClarification,
+          overwriteRollbacks: preview.overwriteRollbacks,
+          provenance: preview.provenance,
           formFingerprint: computeFormFingerprint(data.currentFormJson),
         })
       }
@@ -193,6 +257,7 @@ export async function registerInteractionRoutes(app: FastifyInstance) {
         userConfirmed: data.userConfirmed,
         confirmOverwrite: data.confirmOverwrite,
         eventResolutions: data.eventResolutions,
+        transactionFingerprint: data.transactionFingerprint,
       })
       return reply.code(httpStatus).send({
         ...response,

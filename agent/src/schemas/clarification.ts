@@ -155,6 +155,9 @@ export const eventConflictSchema = z.object({
   incomingCode: z.string().max(20000),
   mergeSafe: z.boolean(),
   suggestedModes: z.array(eventMergeModeSchema).min(1).max(4),
+  /** 覆盖前可回滚的旧代码快照（不直接破坏画布） */
+  rollbackCode: z.string().max(20000).optional(),
+  reasons: z.array(z.string().max(500)).max(20).optional(),
   diffPreview: z
     .object({
       old: z.string().max(20000),

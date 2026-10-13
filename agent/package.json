@@ -19,6 +19,12 @@
     "create-compiler:check": "tsx scripts/create-compiler-check.ts",
     "v0110:acceptance": "tsx scripts/v0110-acceptance-check.ts",
     "v0120:acceptance": "tsx scripts/v0120-acceptance-check.ts",
+    "v0130:acceptance": "tsx scripts/v0130-acceptance-check.ts",
+    "fixture:f-large": "tsx scripts/write-f-large-fixture.ts",
+    "autonomy:check": "tsx scripts/autonomy-hardening-check.ts",
+    "form-context:check": "tsx scripts/form-context-check.ts",
+    "event-merge:check": "tsx scripts/event-merge-check.ts",
+    "observability:check": "tsx scripts/observability-check.ts",
     "event-shape:sync": "tsx scripts/sync-event-shape.ts",
     "event-shape:check": "tsx scripts/sync-event-shape.ts",
     "typecheck": "tsc --noEmit"

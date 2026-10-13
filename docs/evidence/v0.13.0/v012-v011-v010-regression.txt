@@ -1,0 +1,7 @@
+case: v012-v011-v010-regression
+status: pass
+observed: v0120:acceptance + v0110:acceptance + ask-before-act:check + interaction:check all green
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0985bbd37f44 (working tree has uncommitted changes)
+capturedAt: 2026-10-13T09:07:50.629Z
+type: agent-script

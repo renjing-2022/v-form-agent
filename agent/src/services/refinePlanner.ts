@@ -2,7 +2,7 @@ import { refinePlanSchema, type FormJson, type RefinePlan } from '../schemas/ref
 import { chatCompletion, type ChatMessage } from './deepseek.js'
 import { REFINE_CREATE_WHITELIST } from '../knowledge/widgetWhitelist.js'
 import { buildCatalogSnippets } from '../knowledge/catalogContext.js'
-import { buildFormSummary } from './formSummary.js'
+import { buildFormSummary, buildFormSummaryReport, formatFormSummaryMeta } from './formSummary.js'
 import {
   buildOverlapPropertyPatch,
   instructionHasOverlapIntent,
@@ -102,7 +102,8 @@ export async function planRefine(params: {
     content: m.content,
   }))
 
-  const formSummary = buildFormSummary(params.currentFormJson, params.instruction)
+  const summaryReport = buildFormSummaryReport(params.currentFormJson, params.instruction)
+  const formSummary = summaryReport.fields
   const catalogSnippets = buildCatalogSnippets(formSummary, undefined, params.instruction)
 
   const content = await chatCompletion([
@@ -113,8 +114,9 @@ export async function planRefine(params: {
       content: JSON.stringify({
         instruction: params.instruction,
         formSummary,
+        formSummaryMeta: formatFormSummaryMeta(summaryReport),
         catalogSnippets,
-        note: '请基于 formSummary 的 id/name/path/parent 精确定位；parentScope 可用 tab-pane/标签名、tab-pane#name、path:widgetList[0].tabs[0]；属性写入必须属于 catalogSnippets.writableKeys；枚举值必须属于 catalogSnippets.constraints.*.enum；未提及控件保持不变。',
+        note: '请基于 formSummary 的 id/name/path/parent 精确定位；parentScope 可用 tab-pane/标签名、tab-pane#name、path:widgetList[0].tabs[0]；属性写入必须属于 catalogSnippets.writableKeys；枚举值必须属于 catalogSnippets.constraints.*.enum；未提及控件保持不变。若 formSummaryMeta.truncated=true，须结合 omissions 与意图检索，勿假设未列入摘要的节点不存在。',
       }),
     },
   ])

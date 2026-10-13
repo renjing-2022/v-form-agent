@@ -1,0 +1,7 @@
+case: capability-observability-gate
+status: pass
+observed: form-context+observability ok; capability matrix rows=42 holes=0; provenance+txn+eval harness covered
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0985bbd37f44 (working tree has uncommitted changes)
+capturedAt: 2026-10-13T09:07:34.277Z
+type: agent-script

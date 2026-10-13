@@ -9,7 +9,7 @@ import { validateInteractionOutput } from './interactionValidate.js'
 import { checkHandlersNetworkStatic } from './interactionNetworkPolicy.js'
 import { scenarioFingerprint } from './interactionMerger.js'
 import type { InteractionVerificationReport } from './interactionApply.js'
-import { buildFormSummary } from './formSummary.js'
+import { buildFormSummaryReport, formatFormSummaryMeta } from './formSummary.js'
 
 const MAX_REPAIR_ROUNDS = 2
 
@@ -99,7 +99,13 @@ scenarios 必须与输入完全一致。禁止网络请求。
       role: 'user',
       content: JSON.stringify({
         instruction: params.instruction,
-        formSummary: buildFormSummary(params.currentFormJson, params.instruction),
+        ...(() => {
+          const report = buildFormSummaryReport(params.currentFormJson, params.instruction)
+          return {
+            formSummary: report.fields,
+            formSummaryMeta: formatFormSummaryMeta(report),
+          }
+        })(),
         apiManual: renderInteractionApiReferenceMarkdown(),
         previous: params.previous,
         failedScenarios: failed,

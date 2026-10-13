@@ -12,6 +12,7 @@
     "test:v080": "playwright test tests/ai-form-v080.spec.ts",
     "test:v0110": "playwright test tests/ai-form-v0110.spec.ts",
     "test:v0120": "playwright test tests/ai-form-v0120.spec.ts",
+    "test:v0130": "playwright test tests/ai-form-v0130.spec.ts",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "typecheck": "tsc --noEmit",

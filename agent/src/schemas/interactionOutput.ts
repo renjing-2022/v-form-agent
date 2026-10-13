@@ -155,6 +155,16 @@ export const interactionGenerateRequestSchema = z.object({
   messages: z.array(chatTurnSchema).max(40).default([]),
 })
 
+export const previewProvenanceSchema = z.object({
+  structureFingerprint: z.string().min(1).max(128),
+  handlerFingerprint: z.string().min(1).max(128),
+  scenarioFingerprint: z.string().min(1).max(128),
+  scenarioSource: z.enum(['generator', 'repair', 'legacy-smoke', 'mixed', 'unknown']),
+  environmentFingerprint: z.string().min(1).max(128),
+  formFingerprint: z.string().min(1).max(128),
+  transactionFingerprint: z.string().min(1).max(128),
+})
+
 export const interactionVerificationReportSchema = z.object({
   runner: z.enum(['designer-preview', 'playwright']),
   results: z.array(
@@ -169,6 +179,7 @@ export const interactionVerificationReportSchema = z.object({
   pass: z.boolean(),
   networkHits: z.array(z.string()).optional(),
   errors: z.array(z.string()).optional(),
+  provenance: previewProvenanceSchema.optional(),
 })
 
 export const interactionRepairRequestSchema = z.object({
@@ -179,6 +190,10 @@ export const interactionRepairRequestSchema = z.object({
   verificationReport: interactionVerificationReportSchema,
   round: z.number().int().positive().max(5),
   expectedScenarioFingerprint: z.string().min(1).optional(),
+  /** v0.13：客户端回传的 attempt fingerprint，用于阻断无进展循环 */
+  attemptFingerprints: z.array(z.string().min(1).max(128)).max(40).optional(),
+  codeAttempts: z.number().int().nonnegative().max(20).optional(),
+  replanAttempts: z.number().int().nonnegative().max(20).optional(),
 })
 
 export const interactionApplyRequestSchema = z.object({
@@ -190,6 +205,8 @@ export const interactionApplyRequestSchema = z.object({
   userConfirmed: z.boolean(),
   confirmOverwrite: z.boolean().optional(),
   eventResolutions: z.array(eventResolutionSchema).max(80).optional(),
+  /** v0.13：apply 前事务指纹再验 */
+  transactionFingerprint: z.string().min(1).max(128).optional(),
 })
 
 /** 按 eventResolutions 重建预览候选（切换合并模式后重验） */

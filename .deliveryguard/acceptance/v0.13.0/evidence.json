@@ -1,0 +1,133 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.13.0",
+  "documents": [
+    {
+      "documentId": "ai-form-autonomy-hardening-prd",
+      "requirementIds": [
+        "fr-1-critics",
+        "fr-2-repair-routes",
+        "fr-3-large-form",
+        "fr-4-event-merge",
+        "fr-5-capability-matrix",
+        "fr-6-observability",
+        "ac-1-loop-terminate",
+        "ac-2-replan-clarify",
+        "ac-3-large-form-e2e",
+        "ac-4-event-four-modes",
+        "ac-5-extension-risk-regression",
+        "ac-6-prior-version-regression"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-critics",
+      "description": "独立 Plan Critic / Scenario Critic，不复用 generator 结论",
+      "caseIds": ["repair-route-loop-terminate"]
+    },
+    {
+      "id": "fr-2-repair-routes",
+      "description": "失败分类路由到修代码/重规划/澄清/拒绝/阻塞；fingerprint 阻断无进展循环",
+      "caseIds": ["repair-route-loop-terminate"]
+    },
+    {
+      "id": "fr-3-large-form",
+      "description": ">120 节点与深度>8：全量索引、可见截断、目标检索与歧义澄清",
+      "caseIds": ["large-form-index-coverage", "large-form-ambiguity-e2e"]
+    },
+    {
+      "id": "fr-4-event-merge",
+      "description": "手写事件 AST 安全前置/后置/覆盖/取消，覆盖可回滚",
+      "caseIds": ["event-merge-four-mode-matrix"]
+    },
+    {
+      "id": "fr-5-capability-matrix",
+      "description": "全组件 capability matrix 无未解释空洞",
+      "caseIds": ["capability-observability-gate"]
+    },
+    {
+      "id": "fr-6-observability",
+      "description": "preview 四指纹、脱敏质量指标、事务 fingerprint/rollback",
+      "caseIds": ["capability-observability-gate"]
+    },
+    {
+      "id": "ac-1-loop-terminate",
+      "description": "相同候选与失败不循环；预算内终止",
+      "caseIds": ["repair-route-loop-terminate"]
+    },
+    {
+      "id": "ac-2-replan-clarify",
+      "description": "结构错误重规划，语义缺口澄清",
+      "caseIds": ["repair-route-loop-terminate", "large-form-ambiguity-e2e"]
+    },
+    {
+      "id": "ac-3-large-form-e2e",
+      "description": "大表 UI 目标歧义澄清且画布不变",
+      "caseIds": ["large-form-ambiguity-e2e"]
+    },
+    {
+      "id": "ac-4-event-four-modes",
+      "description": "前置/后置/覆盖/取消正负例",
+      "caseIds": ["event-merge-four-mode-matrix"]
+    },
+    {
+      "id": "ac-5-extension-risk-regression",
+      "description": "上传/远程/runtime extension 与禁网边界回归",
+      "caseIds": ["upload-remote-extension-risk"]
+    },
+    {
+      "id": "ac-6-prior-version-regression",
+      "description": "v0.12 / v0.11 / v0.10 验收脚本回归",
+      "caseIds": ["v012-v011-v010-regression"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "large-form-index-coverage",
+      "title": "大表全量索引、可见截断、deepLeaf 检索与备注歧义澄清",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.13.0/large-form-index-coverage.txt"]
+    },
+    {
+      "id": "large-form-ambiguity-e2e",
+      "title": "F-large UI：备注歧义 → need_clarification，画布不变（Playwright）",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.13.0/large-form-ambiguity-e2e.txt",
+        "docs/evidence/v0.13.0/large-form-ambiguity-e2e.png"
+      ]
+    },
+    {
+      "id": "repair-route-loop-terminate",
+      "title": "Critic/失败分类路由与 duplicate fingerprint 循环终止",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.13.0/repair-route-loop-terminate.txt"]
+    },
+    {
+      "id": "event-merge-four-mode-matrix",
+      "title": "手写事件 prepend/append/overwrite(+rollback)/cancel 矩阵",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.13.0/event-merge-four-mode-matrix.txt"]
+    },
+    {
+      "id": "upload-remote-extension-risk",
+      "title": "受管上传/远程正例；凭据/生产 URL/缺 manifest/网络 JS 拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.13.0/upload-remote-extension-risk.txt"]
+    },
+    {
+      "id": "capability-observability-gate",
+      "title": "capability matrix 无空洞；form-context + observability 门禁",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.13.0/capability-observability-gate.txt"]
+    },
+    {
+      "id": "v012-v011-v010-regression",
+      "title": "v0.12/v0.11/v0.10 验收与 interaction 回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.13.0/v012-v011-v010-regression.txt"]
+    }
+  ]
+}

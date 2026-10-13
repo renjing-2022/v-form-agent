@@ -1,0 +1,8 @@
+case: large-form-ambiguity-e2e
+status: pass
+observed: F-large seeded (widgetList=133); status=need_clarification; canvas unchanged; target.widget bind present
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: feature/v0.13.0-autonomy-hardening@0985bbd37f44 (working tree has uncommitted changes)
+capturedAt: 2026-10-13T09:45:55.540Z
+durationMs: 22938
+screenshot: docs/evidence/v0.13.0/large-form-ambiguity-e2e.png

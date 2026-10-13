@@ -1,0 +1,7 @@
+case: event-merge-four-mode-matrix
+status: pass
+observed: event-merge:check ok; prepend/append/overwrite(+rollback) write; cancel rejects write and keeps handwritten handler
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0985bbd37f44 (working tree has uncommitted changes)
+capturedAt: 2026-10-13T09:07:32.304Z
+type: agent-script

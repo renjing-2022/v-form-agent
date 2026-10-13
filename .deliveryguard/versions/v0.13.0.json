@@ -16,11 +16,13 @@
   "openSpec": {
     "changeId": "ai-form-autonomy-hardening",
     "path": "openspec/changes/ai-form-autonomy-hardening",
-    "status": "proposed"
+    "status": "applied"
   },
   "sources": [],
   "acceptance": {
-    "status": "pending"
+    "status": "pending",
+    "evidence": ".deliveryguard/acceptance/v0.13.0/evidence.json",
+    "report": "docs/acceptance/v0.13.0.md"
   },
   "deployments": [],
   "release": {
