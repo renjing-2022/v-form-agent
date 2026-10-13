@@ -1,6 +1,6 @@
 # Archive note: ai-form-composite-extension-create
 
-Archived against DeliveryGuard version `v0.12.0` after tasks, source, and acceptance were closed. Production tag / release facts remain separate and are recorded only after a concrete production anchor exists.
+Archived against DeliveryGuard version `v0.12.0` after tasks, source, and acceptance were closed. Production tag `v0.12.0` and release facts were recorded after archive (see version record).
 
 ## Pre-archive checklist
 
@@ -8,11 +8,11 @@ Archived against DeliveryGuard version `v0.12.0` after tasks, source, and accept
 |---|---|
 | Tasks all checked | Yes (`tasks.md` §1–§5) |
 | Proposal / tasks artifacts exist | Yes (`proposal.md`, `tasks.md`) |
-| Linked version validates | `v0.12.0` → `verified` at archive time |
+| Linked version validates | `v0.12.0` → `verified` at archive time；release facts added post-archive |
 | Source | `merged` @ `ca648fa0bd41f87593d814f84ba0a1ff3d893f8a` (`app` / `main`) |
 | Acceptance | `passed`（11/11 Manifest cases；agent + Playwright；report 齐全） |
-| Production deployment | pending（尚未 push / tag） |
-| Release | pending |
+| Production deployment | `succeeded` @ `5962c344f81922db7328d87bbe259d6131789e5f`（GitHub tree `v0.12.0`） |
+| Release | `published` |
 
 ## Proposal vs implemented (deliberate notes)
 
@@ -29,3 +29,4 @@ Visible residual / intentional limits:
 - Move change to `openspec/changes/archive/2026-10-13-ai-form-composite-extension-create`.
 - No OpenSpec `specs/` delta in this change directory.
 - DeliveryGuard `openSpec.status` → `archived`，path 更新为上述归档目录。
+- Post-archive: `main` + annotated tag `v0.12.0` pushed to `origin`；deployment/release facts recorded on the version record.

@@ -4,7 +4,7 @@
 
 - Version: `v0.12.0`
 - Primary requirement: `docs/requirements/ai-form-composite-extension-create.md`
-- Status: archived（tasks/source/acceptance 已关闭；release 待生产锚点）
+- Status: archived；DeliveryGuard release published（tag `v0.12.0`）
 - Depends on: `ai-form-catalog-widget-create`
 
 ## Problem

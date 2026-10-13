@@ -31,8 +31,20 @@
     "evidence": ".deliveryguard/acceptance/v0.12.0/evidence.json",
     "report": "docs/acceptance/v0.12.0.md"
   },
-  "deployments": [],
+  "deployments": [
+    {
+      "repositoryId": "app",
+      "environmentId": "production",
+      "branch": "main",
+      "commit": "5962c344f81922db7328d87bbe259d6131789e5f",
+      "status": "succeeded",
+      "anchor": "https://github.com/renjing-2022/v-form-agent/tree/v0.12.0",
+      "recordedAt": "2026-10-13T01:45:59Z"
+    }
+  ],
   "release": {
-    "status": "pending"
+    "status": "published",
+    "anchor": "https://github.com/renjing-2022/v-form-agent/tree/v0.12.0",
+    "releasedAt": "2026-10-13T01:45:59Z"
   }
 }
