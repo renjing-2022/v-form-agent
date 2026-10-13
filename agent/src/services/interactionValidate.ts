@@ -259,6 +259,9 @@ export function validateInteractionOutput(
         const id = h.id || `${h.target}:${h.eventKey}:${i}`
         return id === ref || `${h.target}:${h.eventKey}` === ref || h.target === ref
       })
+      // 纯结构事务（handlers 为空）允许 scenario 引用 createWidget 计划目标（name/tempRef），
+      // 前提是该 ref 确实是本事务计划创建的控件，而不是表单上不存在的目标。
+      if (!matched && output.handlers.length === 0 && planned.names.has(ref)) continue
       if (!matched) {
         issues.push({
           path: `scenarios[${si}].handlerRefs`,

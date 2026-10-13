@@ -1,0 +1,7 @@
+case: internal-no-parent-reject
+status: pass
+observed: tab-pane/grid-col/table-cell without parent rejected; grid-col via tempRef parent ok
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0d1f3add5f84 (working tree has uncommitted changes)
+capturedAt: 2026-10-12T10:48:41.259Z
+type: agent-script

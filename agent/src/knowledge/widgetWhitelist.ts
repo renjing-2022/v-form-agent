@@ -242,8 +242,8 @@ export const widgetTemplates: Record<string, FieldTemplate> = {
 }
 
 /**
- * @deprecated 新建容器请使用 `widgetDefaults.ts`（Catalog/widgetsConfig 克隆）。
- * grid/grid-col 仅作历史对照；v0.11 起不在 CONTAINER_CREATE_WHITELIST。
+ * @deprecated 新建容器请使用 `widgetDefaults.ts`（Catalog/widgetsConfig 克隆）与复合模板。
+ * v0.12 起 grid/grid-col 已在 CONTAINER_CREATE_WHITELIST，由 createCompiler 展开。
  */
 export const containerTemplates: Record<string, ContainerTemplate> = {
   tab: {

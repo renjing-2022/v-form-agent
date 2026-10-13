@@ -1,12 +1,32 @@
 /**
- * v0.11 统一创建编译器：Catalog defaults + optionOverrides 消毒 +
- * 确定性 id/name + tempRef 同事务解析 + parent/position 插入。
+ * v0.12 统一创建编译器：Catalog defaults + optionOverrides 消毒 +
+ * 复合模板展开 + 确定性子树 id/name + tempRef 同事务解析 + parent/position 插入。
  */
 import {
   createNonGoalReason,
   createRejectMessageForType,
   isCreateAllowedType,
 } from '../knowledge/createWhitelistPolicy.js'
+import {
+  EXTENSION_CREATE_TYPES,
+  getCompositeTemplate,
+  resolveChildSlotKey,
+  type TemplateChildSpec,
+} from '../knowledge/compositeTemplatePolicy.js'
+import {
+  assertManagedPreviewIsolation,
+  compileManagedNetworkOverrides,
+  MANAGED_PRIVILEGED_OPTION_KEYS,
+} from '../knowledge/managedNetworkPolicy.js'
+import {
+  assertExtensionPreviewSafe,
+  buildWidgetFromExtensionManifest,
+  getExtensionManifest,
+  isExtensionManifestCreatable,
+  isRuntimeOnlyExtensionType,
+  resolveExtensionForCreate,
+  sanitizeExtensionOptionOverrides,
+} from '../knowledge/extensionManifestPolicy.js'
 import { getWidgetCatalog } from '../knowledge/widgetCatalogStore.js'
 import { buildWidgetFromCatalogDefaults, getWidgetDefaultSchema } from '../knowledge/widgetDefaults.js'
 import { valueMatchesConstraint } from '../knowledge/widgetCatalog.js'
@@ -27,6 +47,7 @@ export type CreateWidgetNode = Record<string, unknown> & {
   widgetList?: CreateWidgetNode[]
   tabs?: CreateWidgetNode[]
   cols?: CreateWidgetNode[]
+  rows?: CreateWidgetNode[]
 }
 
 export type TempRefBinding = {
@@ -63,11 +84,22 @@ export type CompileCreateBatchResult = {
   tempRefMap: Map<string, TempRefBinding>
   errors: CompileCreateIssue[]
   warnings: string[]
+  /** 受管 mock dataSources，apply 时注入 formConfig（预览隔离） */
+  formDataSources: Array<Record<string, unknown>>
 }
 
 function isTypeCreatable(type: string, opts?: CompileCreateOptions): boolean {
   if (isCreateAllowedType(type)) return true
+  if (isExtensionManifestCreatable(type)) return true
   return Boolean(opts?.extraAllowedTypes?.includes(type))
+}
+
+function extensionCreateRejectMessage(type: string): string | null {
+  if (EXTENSION_CREATE_TYPES.has(type) || isRuntimeOnlyExtensionType(type) || !isCreateAllowedType(type)) {
+    const resolved = resolveExtensionForCreate(type)
+    if (!resolved.ok) return resolved.message
+  }
+  return null
 }
 
 export type ApplyCreateBatchResult = {
@@ -76,6 +108,51 @@ export type ApplyCreateBatchResult = {
   tempRefMap: Map<string, TempRefBinding>
   warnings: string[]
   errors: CompileCreateIssue[]
+}
+
+function applyPrivilegedManagedPatch(
+  node: CreateWidgetNode,
+  privilegedPatch: Record<string, unknown>,
+): void {
+  if (!privilegedPatch || Object.keys(privilegedPatch).length === 0) return
+  if (!node.options || typeof node.options !== 'object') node.options = {}
+  for (const [key, value] of Object.entries(privilegedPatch)) {
+    if (!MANAGED_PRIVILEGED_OPTION_KEYS.has(key)) continue
+    node.options[key] = value
+  }
+}
+
+function mergeManagedDataSources(
+  formJson: FormJson,
+  sources: Array<Record<string, unknown>>,
+): string[] {
+  if (!sources.length) return []
+  const warnings: string[] = []
+  const formConfig = { ...(formJson.formConfig || {}) } as Record<string, unknown>
+  const existing = Array.isArray(formConfig.dataSources)
+    ? [...(formConfig.dataSources as Record<string, unknown>[])]
+    : []
+  const byName = new Set(
+    existing.map((s) => String((s as { uniqueName?: string }).uniqueName || '')).filter(Boolean),
+  )
+  for (const src of sources) {
+    const name = String(src.uniqueName || '')
+    if (!name) continue
+    if (byName.has(name)) {
+      warnings.push(`managed-datasource already present: ${name}`)
+      continue
+    }
+    existing.push(src)
+    byName.add(name)
+    warnings.push(`managed-datasource injected: ${name}`)
+  }
+  formConfig.dataSources = existing
+  formJson.formConfig = formConfig
+  const isolation = assertManagedPreviewIsolation(formConfig)
+  if (isolation.length) {
+    warnings.push(...isolation.map((m) => `preview-isolation: ${m}`))
+  }
+  return warnings
 }
 
 function slugify(input: string, fallback: string) {
@@ -99,7 +176,148 @@ function walkWidgets(list: CreateWidgetNode[] | undefined, visit: (w: CreateWidg
         if (Array.isArray(col.widgetList)) walkWidgets(col.widgetList, visit)
       }
     }
+    if (Array.isArray(w.rows)) {
+      for (const row of w.rows) {
+        visit(row)
+        if (Array.isArray(row.cols)) {
+          for (const cell of row.cols) {
+            visit(cell)
+            if (Array.isArray(cell.widgetList)) walkWidgets(cell.widgetList, visit)
+          }
+        }
+        if (Array.isArray(row.widgetList)) walkWidgets(row.widgetList, visit)
+      }
+    }
   }
+}
+
+function appendToSlot(parent: CreateWidgetNode, slotKey: string, child: CreateWidgetNode) {
+  const existing = parent[slotKey]
+  if (Array.isArray(existing)) {
+    existing.push(child)
+    return
+  }
+  parent[slotKey] = [child]
+}
+
+type TableRowNode = CreateWidgetNode & { cols?: CreateWidgetNode[]; merged?: boolean }
+
+/** 按版本化 minPreset/optionPreset/matrixPreset 展开复合子树 */
+function expandCompositePreset(
+  rootType: string,
+  rootNode: CreateWidgetNode,
+  usedNames: Set<string>,
+  usedIds: Set<string>,
+): { ok: true } | { ok: false; message: string } {
+  const tmpl = getCompositeTemplate(rootType)
+  if (!tmpl) return { ok: true }
+
+  type BuildChildResult =
+    | { ok: true; node: CreateWidgetNode }
+    | { ok: false; error: string }
+
+  const buildChild = (spec: TemplateChildSpec, parentType: string): BuildChildResult => {
+    void parentType
+    if (!getWidgetDefaultSchema(spec.type)) {
+      return { ok: false, error: `复合模板子节点 type="${spec.type}" 缺少 Catalog defaults` }
+    }
+    const baseName = slugify(spec.label || spec.type, spec.type)
+    const name = uniqueName(baseName, usedNames)
+    const id = nextId(spec.type.replace(/-/g, ''), usedIds)
+    const child = buildWidgetFromCatalogDefaults(spec.type, {
+      id,
+      name,
+      label: spec.label,
+      optionOverrides: spec.optionOverrides,
+    }) as CreateWidgetNode
+    if (spec.children?.length) {
+      for (const nested of spec.children) {
+        const nestedNode = buildChild(nested, spec.type)
+        if (!nestedNode.ok) return nestedNode
+        const nestedSlot = resolveChildSlotKey(spec.type, nested.type) || nested.slot
+        appendToSlot(child, nestedSlot, nestedNode.node)
+      }
+    }
+    return { ok: true, node: child }
+  }
+
+  // table 矩阵：rows[] → { cols: table-cell[] }
+  if (tmpl.matrixPreset) {
+    const { rows, cols } = tmpl.matrixPreset
+    const matrix: TableRowNode[] = []
+    for (let r = 0; r < rows; r += 1) {
+      const rowId = nextId('tablerow', usedIds)
+      const row: TableRowNode = { id: rowId, merged: false, cols: [] }
+      for (let c = 0; c < cols; c += 1) {
+        const cell = buildChild(
+          {
+            type: 'table-cell',
+            slot: 'rows',
+            label: `单元格${r + 1}-${c + 1}`,
+          },
+          rootType,
+        )
+        if (!cell.ok) return { ok: false, message: cell.error }
+        row.cols!.push(cell.node)
+      }
+      matrix.push(row)
+    }
+    rootNode.rows = matrix
+  }
+
+  for (const preset of tmpl.minPreset) {
+    const child = buildChild(preset, rootType)
+    if (!child.ok) return { ok: false, message: child.error }
+    const slotKey = resolveChildSlotKey(rootType, preset.type) || preset.slot
+    appendToSlot(rootNode, slotKey, child.node)
+  }
+
+  // requiredChildren 存在性
+  const present = new Set<string>()
+  walkWidgets([rootNode], (w) => {
+    if (w !== rootNode && typeof w.type === 'string') present.add(w.type)
+  })
+  for (const required of tmpl.requiredChildren) {
+    if (!present.has(required)) {
+      return { ok: false, message: `复合模板展开后缺少 requiredChild "${required}"` }
+    }
+  }
+  return { ok: true }
+}
+
+function getOrCreateChildCollection(
+  parent: CreateWidgetNode,
+  childType: string,
+): { ok: true; list: CreateWidgetNode[]; key: string } | { ok: false; message: string } {
+  const parentType = String(parent.type || '')
+
+  // table-cell 挂在 rows[i].cols，而非扁平 rows
+  if (parentType === 'table' && childType === 'table-cell') {
+    if (!Array.isArray(parent.rows)) parent.rows = []
+    const rows = parent.rows as TableRowNode[]
+    if (rows.length === 0) {
+      const usedRowIds = new Set(rows.map((r) => String(r.id || '')))
+      let i = 1
+      while (usedRowIds.has(`tablerow${i}`)) i += 1
+      rows.push({ id: `tablerow${i}`, merged: false, cols: [] })
+    }
+    const last = rows[rows.length - 1]
+    if (!Array.isArray(last.cols)) last.cols = []
+    return { ok: true, list: last.cols, key: 'rows.cols' }
+  }
+
+  const slotKey = resolveChildSlotKey(parentType, childType)
+  if (!slotKey) {
+    return {
+      ok: false,
+      message: `parent type="${parentType}" 无法接收 child type="${childType}"（无匹配 childSlot）`,
+    }
+  }
+  const existing = parent[slotKey]
+  if (!Array.isArray(existing)) {
+    parent[slotKey] = []
+  }
+  return { ok: true, list: parent[slotKey] as CreateWidgetNode[], key: slotKey }
 }
 
 export function collectIdentitySets(root: CreateWidgetNode[]): { names: Set<string>; ids: Set<string> } {
@@ -238,6 +456,14 @@ function resolveAllowedParentType(
 }
 
 function assertParentAllowed(type: string, parentType: string): string | null {
+  if (isRuntimeOnlyExtensionType(type) || EXTENSION_CREATE_TYPES.has(type)) {
+    const manifest = getExtensionManifest(type)
+    const allowed = manifest?.allowedParents || ['root']
+    if (!allowed.includes(parentType)) {
+      return `type "${type}" 不允许 parent=${parentType}（allowedParents=${allowed.join(',')})`
+    }
+    return null
+  }
   const catalog = getWidgetCatalog()
   const entry = catalog.widgets.find((w) => w.type === type)
   const allowed = entry?.create?.allowedParents || ['root']
@@ -306,6 +532,7 @@ export function compileCreateBatch(
 ): CompileCreateBatchResult {
   const errors: CompileCreateIssue[] = []
   const warnings: string[] = []
+  const formDataSources: Array<Record<string, unknown>> = []
   const root = (currentFormJson.widgetList || []) as CreateWidgetNode[]
   const { names: usedNames, ids: usedIds } = collectIdentitySets(root)
   const tempRefMap = new Map<string, TempRefBinding>()
@@ -325,22 +552,43 @@ export function compileCreateBatch(
 
   specs.forEach((spec, index) => {
     const path = `specs[${index}]`
+    const runtimeOnly = isRuntimeOnlyExtensionType(spec.type)
     const entry = catalog.widgets.find((w) => w.type === spec.type)
-    if (!entry) {
-      errors.push({ path: `${path}.type`, message: `未知 type "${spec.type}"（不在 Catalog）` })
-      return
-    }
-    if (!isTypeCreatable(spec.type, opts)) {
-      const reason = createNonGoalReason(spec.type)
+    if (!entry && !runtimeOnly) {
+      const extMsg = extensionCreateRejectMessage(spec.type)
       errors.push({
         path: `${path}.type`,
-        message: reason
-          ? createRejectMessageForType(spec.type)
-          : `type "${spec.type}" 不在 refine create whitelist`,
+        message: extMsg || `未知 type "${spec.type}"（不在 Catalog）`,
       })
       return
     }
-    if (!getWidgetDefaultSchema(spec.type, catalog)) {
+    if (!isTypeCreatable(spec.type, opts)) {
+      const extMsg = extensionCreateRejectMessage(spec.type)
+      const reason = createNonGoalReason(spec.type)
+      errors.push({
+        path: `${path}.type`,
+        message:
+          extMsg ||
+          (reason
+            ? createRejectMessageForType(spec.type)
+            : `type "${spec.type}" 不在 refine create whitelist`),
+      })
+      return
+    }
+    // 静态 adjacent / runtime-only：须 manifest 通过
+    if (EXTENSION_CREATE_TYPES.has(spec.type) || runtimeOnly) {
+      const resolved = resolveExtensionForCreate(spec.type)
+      if (!resolved.ok) {
+        errors.push({ path: `${path}.type`, message: resolved.message })
+        return
+      }
+      const previewIssues = assertExtensionPreviewSafe(spec.type)
+      if (previewIssues.length) {
+        errors.push({ path: `${path}.type`, message: previewIssues.join('; ') })
+        return
+      }
+    }
+    if (!runtimeOnly && !getWidgetDefaultSchema(spec.type, catalog)) {
       errors.push({ path: `${path}.type`, message: `Catalog 缺少 type="${spec.type}" 的 defaults` })
       return
     }
@@ -377,32 +625,101 @@ export function compileCreateBatch(
       return
     }
 
-    const rawOverrides = mergeCreateLabelOverrides(spec.type, spec.label, spec.optionOverrides)
-    const sanitized = sanitizeCreateOptionOverrides(spec.type, rawOverrides)
-    if (!sanitized.ok) {
-      for (const message of sanitized.errors) {
-        errors.push({ path: `${path}.optionOverrides`, message })
-      }
-      return
-    }
-    warnings.push(...sanitized.warnings)
-
     // 显式 name 保持原样（仅截断/去重），避免 slugify 改变 handler 引用
     const baseName = spec.name?.trim()
       ? spec.name.trim().slice(0, 64)
       : slugify(spec.label || spec.tempRef || spec.type, spec.type)
     const name = uniqueName(baseName, usedNames)
     const id = nextId(spec.type.replace(/-/g, ''), usedIds)
-    const optionOverrides: Record<string, unknown> = { ...sanitized.patch }
-    const labelForNode =
-      typeof optionOverrides.label === 'string' ? optionOverrides.label : undefined
 
-    const node = buildWidgetFromCatalogDefaults(spec.type, {
-      id,
-      name,
-      label: labelForNode,
-      optionOverrides,
-    }) as CreateWidgetNode
+    let node: CreateWidgetNode
+
+    if (runtimeOnly) {
+      const extSanitized = sanitizeExtensionOptionOverrides(spec.type, spec.optionOverrides)
+      if (!extSanitized.ok) {
+        for (const message of extSanitized.errors) {
+          errors.push({ path: `${path}.optionOverrides`, message })
+        }
+        return
+      }
+      const built = buildWidgetFromExtensionManifest(spec.type, {
+        id,
+        name,
+        label: spec.label,
+        optionOverrides: extSanitized.patch,
+      })
+      if (!built.ok) {
+        errors.push({ path: `${path}.type`, message: built.message })
+        return
+      }
+      node = built.node as CreateWidgetNode
+      warnings.push(`extension:${spec.type}:Runtime-ready`)
+    } else {
+      // 受管上传/远程引用：先编译再 sanitize（managed*Ref 不入 Catalog）
+      const managed = compileManagedNetworkOverrides(spec.type, spec.optionOverrides)
+      if (!managed.ok) {
+        for (const issue of managed.errors) {
+          errors.push({ path: `${path}.${issue.path}`, message: issue.message })
+        }
+        return
+      }
+      warnings.push(...managed.warnings)
+      formDataSources.push(...managed.formDataSources)
+
+      const rawOverrides = mergeCreateLabelOverrides(spec.type, spec.label, managed.publicOverrides)
+      const sanitized = sanitizeCreateOptionOverrides(spec.type, rawOverrides)
+      if (!sanitized.ok) {
+        for (const message of sanitized.errors) {
+          errors.push({ path: `${path}.optionOverrides`, message })
+        }
+        return
+      }
+      warnings.push(...sanitized.warnings)
+
+      // Catalog defaults → 模板 optionPreset → 用户消毒 patch
+      const tmpl = getCompositeTemplate(spec.type)
+      const optionOverrides: Record<string, unknown> = {
+        ...(tmpl?.optionPreset ? structuredClone(tmpl.optionPreset) : {}),
+        ...sanitized.patch,
+      }
+      const labelForNode =
+        typeof optionOverrides.label === 'string' ? optionOverrides.label : undefined
+
+      node = buildWidgetFromCatalogDefaults(spec.type, {
+        id,
+        name,
+        label: labelForNode,
+        optionOverrides,
+      }) as CreateWidgetNode
+      applyPrivilegedManagedPatch(node, managed.privilegedPatch)
+
+      const expanded = expandCompositePreset(spec.type, node, usedNames, usedIds)
+      if (!expanded.ok) {
+        errors.push({ path: `${path}.type`, message: expanded.message })
+        return
+      }
+    }
+
+    // 子树内身份冲突：与表单其余节点 + 本批已编译节点不得重复
+    const subtreeIds = new Set<string>()
+    const subtreeNames = new Set<string>()
+    let identityConflict: string | null = null
+    walkWidgets([node], (w) => {
+      if (identityConflict) return
+      if (typeof w.id === 'string' && w.id) {
+        if (subtreeIds.has(w.id)) identityConflict = `子树内重复 id "${w.id}"`
+        subtreeIds.add(w.id)
+      }
+      const childName = w.options?.name
+      if (typeof childName === 'string' && childName) {
+        if (subtreeNames.has(childName)) identityConflict = `子树内重复 name "${childName}"`
+        subtreeNames.add(childName)
+      }
+    })
+    if (identityConflict) {
+      errors.push({ path, message: identityConflict })
+      return
+    }
 
     if (spec.tempRef) {
       tempRefMap.set(spec.tempRef, { tempRef: spec.tempRef, id, name, type: spec.type })
@@ -427,6 +744,7 @@ export function compileCreateBatch(
     tempRefMap,
     errors,
     warnings,
+    formDataSources,
   }
 }
 
@@ -465,7 +783,12 @@ export function applyCompiledCreates(
         })
         continue
       }
-      list = getOrCreateWidgetList(host)
+      const collection = getOrCreateChildCollection(host, item.type)
+      if (!collection.ok) {
+        errors.push({ path: `specs[${item.specIndex}].parent`, message: collection.message })
+        continue
+      }
+      list = collection.list
     } else {
       const host = findWidgetByTarget(root, parent as TargetRef) as CreateWidgetNode | null
       if (!host) {
@@ -475,7 +798,12 @@ export function applyCompiledCreates(
         })
         continue
       }
-      list = getOrCreateWidgetList(host)
+      const collection = getOrCreateChildCollection(host, item.type)
+      if (!collection.ok) {
+        errors.push({ path: `specs[${item.specIndex}].parent`, message: collection.message })
+        continue
+      }
+      list = collection.list
     }
 
     const inserted = insertIntoList(list, item.node, item.position, compiled.tempRefMap, root)
@@ -484,6 +812,15 @@ export function applyCompiledCreates(
         path: `specs[${item.specIndex}].position`,
         message: inserted.message || '插入失败',
       })
+    }
+  }
+
+  if (errors.length === 0 && compiled.formDataSources.length) {
+    const injected = mergeManagedDataSources(formJson, compiled.formDataSources)
+    const isolationFails = injected.filter((w) => w.startsWith('preview-isolation:'))
+    warnings.push(...injected.filter((w) => !w.startsWith('preview-isolation:')))
+    for (const msg of isolationFails) {
+      errors.push({ path: 'formConfig.dataSources', message: msg })
     }
   }
 
@@ -552,7 +889,18 @@ export function mergeCreateLabelOverrides(
     if (next.textContent == null) next.textContent = label
     return next
   }
-  if (next.label == null) next.label = label
+  if (type === 'vf-dialog' || type === 'vf-drawer') {
+    if (next.title == null) next.title = label
+    return next
+  }
+  if (next.label == null) {
+    const catalog = getWidgetCatalog()
+    const entry = catalog.widgets.find((w) => w.type === type)
+    // grid/table 等容器无 label 可写键时跳过，避免消毒失败
+    if (!entry || entry.writableKeys.includes('label')) {
+      next.label = label
+    }
+  }
   return next
 }
 

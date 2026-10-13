@@ -1,0 +1,8 @@
+case: ext-missing-manifest-e2e
+status: pass
+observed: 无 manifest runtime type 拒绝：status=error; canvas unchanged
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: feat/v0.12.0-composite-extension-create@0d1f3add5f84 (working tree has uncommitted changes)
+capturedAt: 2026-10-12T10:58:59.542Z
+durationMs: 2906
+screenshot: docs/evidence/v0.12.0/ext-missing-manifest-e2e.png

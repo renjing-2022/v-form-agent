@@ -1,0 +1,104 @@
+{
+  "match": {
+    "scenarioId": "nl-grid-amount-txn",
+    "instructionIncludes": ["加一个grid", "金额=数量*单价"]
+  },
+  "output": {
+    "intent": "mixed",
+    "summary": "grid 内 number 数量 + input 单价，变化时金额=数量*单价",
+    "structure": [
+      {
+        "op": "createWidget",
+        "type": "grid",
+        "tempRef": "t_grid",
+        "name": "calc_grid",
+        "label": "计算栅格",
+        "parent": { "kind": "root" },
+        "position": { "kind": "last" }
+      },
+      {
+        "op": "createWidget",
+        "type": "grid-col",
+        "tempRef": "t_c1",
+        "label": "数量列",
+        "parent": { "kind": "tempRef", "tempRef": "t_grid" },
+        "optionOverrides": { "span": 12 }
+      },
+      {
+        "op": "createWidget",
+        "type": "grid-col",
+        "tempRef": "t_c2",
+        "label": "单价列",
+        "parent": { "kind": "tempRef", "tempRef": "t_grid" },
+        "optionOverrides": { "span": 12 }
+      },
+      {
+        "op": "createWidget",
+        "type": "number",
+        "tempRef": "t_qty",
+        "name": "g_qty",
+        "label": "数量",
+        "parent": { "kind": "tempRef", "tempRef": "t_c1" }
+      },
+      {
+        "op": "createWidget",
+        "type": "input",
+        "tempRef": "t_price",
+        "name": "g_price",
+        "label": "单价",
+        "parent": { "kind": "tempRef", "tempRef": "t_c2" }
+      },
+      {
+        "op": "createWidget",
+        "type": "grid-col",
+        "tempRef": "t_c3",
+        "label": "金额列",
+        "parent": { "kind": "tempRef", "tempRef": "t_grid" },
+        "optionOverrides": { "span": 12 }
+      },
+      {
+        "op": "createWidget",
+        "type": "number",
+        "tempRef": "t_amount",
+        "name": "g_amount",
+        "label": "金额",
+        "parent": { "kind": "tempRef", "tempRef": "t_c3" }
+      }
+    ],
+    "handlers": [
+      {
+        "id": "h_amount",
+        "target": "t_qty",
+        "eventKey": "onChange",
+        "code": "const q = Number(this.getWidgetRef('g_qty')?.getValue() || 0);\nconst p = Number(this.getWidgetRef('g_price')?.getValue() || 0);\nthis.getWidgetRef('g_amount')?.setValue(q * p);",
+        "explain": "数量变化时按金额公式 g_amount=g_qty*g_price 写入金额字段"
+      },
+      {
+        "id": "h_amount2",
+        "target": "t_price",
+        "eventKey": "onChange",
+        "code": "const q = Number(this.getWidgetRef('g_qty')?.getValue() || 0);\nconst p = Number(this.getWidgetRef('g_price')?.getValue() || 0);\nthis.getWidgetRef('g_amount')?.setValue(q * p);",
+        "explain": "单价变化时按金额公式 g_amount=g_qty*g_price 写入金额字段"
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s-amount",
+        "handlerRefs": ["h_amount"],
+        "title": "数量变化按公式刷新金额",
+        "arrange": { "values": { "t_qty": 3, "t_price": "2" } },
+        "act": [{ "input": "t_qty", "value": 4 }],
+        "assert": [{ "field": "t_qty", "value": 4 }, { "field": "t_amount", "value": 8 }, { "noError": true }, { "noNetwork": true }]
+      },
+      {
+        "id": "s-price",
+        "handlerRefs": ["h_amount2"],
+        "title": "单价变化按公式刷新金额",
+        "arrange": { "values": { "t_qty": 3, "t_price": "2" } },
+        "act": [{ "input": "t_price", "value": "5" }],
+        "assert": [{ "field": "t_price", "value": "5" }, { "field": "t_amount", "value": 15 }, { "noError": true }, { "noNetwork": true }]
+      }
+    ],
+    "unsupported": []
+  }
+}

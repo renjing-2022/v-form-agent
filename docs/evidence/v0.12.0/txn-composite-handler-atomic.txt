@@ -1,0 +1,7 @@
+case: txn-composite-handler-atomic
+status: pass
+observed: composite grid + number/input + handlers + scenarios single transaction; failed handler → no write; confirm → applied
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0d1f3add5f84 (working tree has uncommitted changes)
+capturedAt: 2026-10-12T10:48:41.207Z
+type: agent-script

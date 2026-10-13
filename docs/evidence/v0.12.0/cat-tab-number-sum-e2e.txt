@@ -1,0 +1,8 @@
+case: cat-tab-number-sum-e2e
+status: pass
+observed: tab number+radio+sum handlers generated→verify→applied; handlers=3
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: feat/v0.12.0-composite-extension-create@0d1f3add5f84 (working tree has uncommitted changes)
+capturedAt: 2026-10-12T10:58:47.689Z
+durationMs: 4201
+screenshot: docs/evidence/v0.12.0/cat-tab-number-sum-e2e.png

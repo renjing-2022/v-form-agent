@@ -1,0 +1,8 @@
+case: cat-alias-ambiguous-clarify-e2e
+status: pass
+observed: 文本框歧义→create.type input→generated candidate; canvas unchanged until apply; plan=plan_mv552te8_g84ctl8y
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: feat/v0.12.0-composite-extension-create@0d1f3add5f84 (working tree has uncommitted changes)
+capturedAt: 2026-10-12T10:58:43.503Z
+durationMs: 3338
+screenshot: docs/evidence/v0.12.0/cat-alias-ambiguous-clarify-e2e.png

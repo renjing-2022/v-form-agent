@@ -1,6 +1,11 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { CREATE_NON_GOAL, type CreateNonGoalReason } from './createWhitelistPolicy.js'
+import { CREATE_NON_GOAL } from './createWhitelistPolicy.js'
+import {
+  EXTENSION_MANIFEST_REGISTRY,
+  STATIC_MANIFEST_CREATE_TYPES,
+  resolveExtensionForCreate,
+} from './extensionManifestPolicy.js'
 import { WIDGETS_CONFIG_REL } from './catalogPolicy.js'
 import type { WidgetCatalog, WidgetCatalogEntry } from './widgetCatalog.js'
 
@@ -45,12 +50,12 @@ export const KNOWN_RUNTIME_EXTENSIONS: readonly KnownRuntimeExtension[] = [
   },
 ] as const
 
-/** widgetsConfig 静态存在、但 agent create 划为 extension-runtime NON_GOAL 的 type */
+/** widgetsConfig 静态存在、须经 extension manifest 才可 create 的 type */
 export const STATIC_EXTENSION_ADJACENT_TYPES = ['slot'] as const
 
 export type ExtensionBoundaryWidgetNote = {
   kind: 'static-adjacent'
-  createNonGoal: Extract<CreateNonGoalReason, 'extension-runtime'>
+  createGate: 'manifest'
   note: string
 }
 
@@ -58,8 +63,8 @@ export function extensionBoundaryWidgetNote(type: string): ExtensionBoundaryWidg
   if (!(STATIC_EXTENSION_ADJACENT_TYPES as readonly string[]).includes(type)) return undefined
   return {
     kind: 'static-adjacent',
-    createNonGoal: 'extension-runtime',
-    note: 'slot 在 widgetsConfig 静态 advancedFields 内登记形状；运行时插槽语义，agent 不得 NL 新建',
+    createGate: 'manifest',
+    note: 'slot 在 widgetsConfig 静态 advancedFields 内登记形状；须 extension manifest 才可 NL 新建',
   }
 }
 
@@ -106,12 +111,13 @@ export function extensionBoundaryCatalogBlock() {
         note: ext.note,
       })),
       staticCoverage: 'NON_GOAL' as const,
-      note: '运行时 loadExtension 注册的组件/editor/generator 不在 v0.4 静态 DesignTruthGraph 全覆盖（须有 policy 声明边界）',
+      note: '运行时 loadExtension 注册的组件/editor/generator 不在静态 DesignTruthGraph 全覆盖；须 extension manifest 才可 create',
     },
-    createNonGoal: {
-      reason: 'extension-runtime' as const,
+    manifestGate: {
+      reason: 'extension-manifest' as const,
       staticTypes: [...STATIC_EXTENSION_ADJACENT_TYPES],
-      note: 'Catalog 静态 type 中 extension-adjacent 项与 CREATE_NON_GOAL.extension-runtime 对齐',
+      runtimeTypes: KNOWN_RUNTIME_EXTENSIONS.map((e) => e.type),
+      note: '静态 adjacent 与 runtime-only 扩展均须机器可读 manifest；无 manifest / 漂移 / 非法权限拒绝创建',
     },
   }
 }
@@ -140,8 +146,8 @@ export function checkExtensionBoundaryParity(root: string, catalog: WidgetCatalo
   if (policy.runtimeRegister.staticCoverage !== 'NON_GOAL') {
     issues.push('extensionPolicy.runtimeRegister.staticCoverage must be NON_GOAL')
   }
-  if (policy.createNonGoal.reason !== 'extension-runtime') {
-    issues.push('extensionPolicy.createNonGoal.reason must be extension-runtime')
+  if (policy.manifestGate?.reason !== 'extension-manifest') {
+    issues.push('extensionPolicy.manifestGate.reason must be extension-manifest')
   }
 
   const catalogTypes = new Set(catalog.widgets.map((w) => w.type))
@@ -155,23 +161,43 @@ export function checkExtensionBoundaryParity(root: string, catalog: WidgetCatalo
     } else if (declared.registerVia !== ext.registerVia) {
       issues.push(`knownRuntimeTypes.${ext.type} registerVia mismatch`)
     }
+    if (!EXTENSION_MANIFEST_REGISTRY[ext.type]) {
+      issues.push(`runtime type "${ext.type}" missing extension manifest`)
+    } else {
+      const resolved = resolveExtensionForCreate(ext.type)
+      if (!resolved.ok) {
+        issues.push(`runtime type "${ext.type}" manifest not creatable: ${resolved.message}`)
+      }
+    }
+    if (!policy.manifestGate?.runtimeTypes.includes(ext.type)) {
+      issues.push(`extensionPolicy.manifestGate.runtimeTypes must include ${ext.type}`)
+    }
   }
 
   for (const type of STATIC_EXTENSION_ADJACENT_TYPES) {
     if (!catalogTypes.has(type)) {
       issues.push(`static extension-adjacent type "${type}" must remain in Catalog`)
     }
-    if (CREATE_NON_GOAL[type] !== 'extension-runtime') {
-      issues.push(`${type} must be CREATE_NON_GOAL extension-runtime`)
+    if (CREATE_NON_GOAL[type] != null) {
+      issues.push(`${type} must not remain CREATE_NON_GOAL once manifest create is open`)
     }
-    if (!policy.createNonGoal.staticTypes.includes(type)) {
-      issues.push(`extensionPolicy.createNonGoal.staticTypes must include ${type}`)
+    if (!(STATIC_MANIFEST_CREATE_TYPES as readonly string[]).includes(type)) {
+      issues.push(`${type} must be in STATIC_MANIFEST_CREATE_TYPES`)
+    }
+    {
+      const r = resolveExtensionForCreate(type)
+      if (!r.ok) {
+        issues.push(`${type} manifest not creatable: ${r.message}`)
+      }
+    }
+    if (!policy.manifestGate?.staticTypes.includes(type)) {
+      issues.push(`extensionPolicy.manifestGate.staticTypes must include ${type}`)
     }
     const widget = catalog.widgets.find((w) => w.type === type)
     if (!widget?.notes?.extensionBoundary) {
       issues.push(`${type} missing notes.extensionBoundary`)
-    } else if (widget.notes.extensionBoundary.createNonGoal !== 'extension-runtime') {
-      issues.push(`${type} extensionBoundary.createNonGoal must be extension-runtime`)
+    } else if (widget.notes.extensionBoundary.createGate !== 'manifest') {
+      issues.push(`${type} extensionBoundary.createGate must be manifest`)
     }
   }
 

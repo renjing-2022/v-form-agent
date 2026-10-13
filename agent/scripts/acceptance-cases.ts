@@ -611,13 +611,14 @@ async function main() {
     assert(!catalog.widgets.some((w) => w.type === ext.type), `runtime type ${ext.type} absent from catalog`)
   }
   const slotEntry = catalog.widgets.find((w) => w.type === 'slot')
-  assert(slotEntry?.notes?.extensionBoundary?.createNonGoal === 'extension-runtime', 'slot extension boundary')
-  assert(CREATE_NON_GOAL.slot === 'extension-runtime', 'slot CREATE_NON_GOAL')
+  assert(slotEntry?.notes?.extensionBoundary?.createGate === 'manifest', 'slot extension boundary')
+  assert(CREATE_NON_GOAL.slot == null, 'slot no longer CREATE_NON_GOAL')
   assert(STATIC_EXTENSION_ADJACENT_TYPES.includes('slot'), 'slot static extension-adjacent')
+  assert(catalog.extensionPolicy?.manifestGate?.reason === 'extension-manifest', 'manifestGate reason')
   writeCaseTo(
     outDirV040,
     'extension-boundary-policy-parity',
-    `knownRuntime=${KNOWN_RUNTIME_EXTENSIONS.map((e) => e.type).join(',')}; customFields empty; slot extension-runtime NON_GOAL`,
+    `knownRuntime=${KNOWN_RUNTIME_EXTENSIONS.map((e) => e.type).join(',')}; customFields empty; slot manifest-gated create`,
     { type: 'agent/static' },
   )
 
@@ -1686,11 +1687,12 @@ async function main() {
   )
 
   // refine-reject-keeps-canvas: illegal new type rejected; UI does not auto-apply
+  // v0.12：静态 Catalog 全开放；用无 manifest 的 runtime type 作负例
   const bad = structuredClone(base) as any
   bad.widgetList.push({
-    type: 'data-table',
+    type: 'chart-foo',
     id: 'new_illegal_1',
-    options: { name: 'bad_table' },
+    options: { name: 'bad_chart' },
     widgetList: [],
   })
   const badIssues = validateFormJson(bad, { mode: 'refine', existingIds: ids0 })
@@ -2221,11 +2223,14 @@ async function main() {
   )
   writeCaseTo(outDirV060, 'refine-dialog-event-forbid', 'onOkButtonClick stripped/forbidden', { type: 'agent' })
 
-  assert(!(REFINE_CREATE_WHITELIST as readonly string[]).includes('data-table'), 'data-table not in create whitelist')
-  assert(!(REFINE_CREATE_WHITELIST as readonly string[]).includes('sub-form'), 'sub-form not in create whitelist')
-  assert(!(REFINE_CREATE_WHITELIST as readonly string[]).includes('vf-dialog'), 'vf-dialog not in create whitelist')
-  assert(CREATE_NON_GOAL['data-table'] && CREATE_NON_GOAL['sub-form'] && CREATE_NON_GOAL['vf-dialog'], 'heavy create NON_GOAL')
-  writeCaseTo(outDirV060, 'refine-heavy-create-reject', 'data-table/sub-form/vf-dialog remain CREATE_NON_GOAL', {
+  // v0.12：重型+上传+slot create 已开放
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('data-table'), 'data-table in create whitelist')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('sub-form'), 'sub-form in create whitelist')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('vf-dialog'), 'vf-dialog in create whitelist')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('file-upload'), 'file-upload in create whitelist')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('slot'), 'slot in create whitelist')
+  assert(CREATE_NON_GOAL.slot == null, 'slot no longer NON_GOAL')
+  writeCaseTo(outDirV060, 'refine-heavy-create-reject', 'v0.12 heavy+upload+slot create open; CREATE_NON_GOAL empty', {
     type: 'agent',
   })
 
@@ -2278,19 +2283,25 @@ async function main() {
   )
   writeCaseTo(outDirV060, 'refine-grid-subform-still-non-goal', 'grid-sub-form shell+node NON_GOAL', { type: 'agent' })
 
-  // v0.11：普通字段 20 + tab/tab-pane；grid/grid-col 仍无 create op
-  assert(REFINE_CREATE_WHITELIST.length === 22, `create whitelist must be 22, got ${REFINE_CREATE_WHITELIST.length}`)
-  assert(!(REFINE_CREATE_WHITELIST as readonly string[]).includes('grid'), 'grid not in create whitelist')
-  assert(!(REFINE_CREATE_WHITELIST as readonly string[]).includes('grid-col'), 'grid-col not in create whitelist')
+  // v0.12：普通字段 20 + 容器/重型 14 + 上传 2 + slot 1 = 37；CREATE_NON_GOAL 空
+  assert(REFINE_CREATE_WHITELIST.length === 37, `create whitelist must be 37, got ${REFINE_CREATE_WHITELIST.length}`)
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('grid'), 'grid in create whitelist')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('sub-form'), 'sub-form in create whitelist')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('data-table'), 'data-table in create whitelist')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('vf-dialog'), 'vf-dialog in create whitelist')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('table'), 'table in create whitelist')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('file-upload'), 'file-upload in create whitelist')
   assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('button'), 'button in create whitelist')
-  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('checkbox'), 'checkbox in create whitelist')
-  assert(CREATE_NON_GOAL.grid === 'structure-no-create-op', 'grid NON_GOAL structure-no-create-op')
-  assert(CREATE_NON_GOAL['grid-col'] === 'internal-container', 'grid-col NON_GOAL internal-container')
-  assert(CREATE_NON_GOAL['file-upload'] === 'advanced-field', 'file-upload remains NON_GOAL')
+  assert((REFINE_CREATE_WHITELIST as readonly string[]).includes('slot'), 'slot in create whitelist')
+  assert(CREATE_NON_GOAL.grid == null, 'grid no longer NON_GOAL')
+  assert(CREATE_NON_GOAL['sub-form'] == null, 'sub-form no longer NON_GOAL')
+  assert(CREATE_NON_GOAL['file-upload'] == null, 'file-upload no longer NON_GOAL')
+  assert(CREATE_NON_GOAL.slot == null, 'slot no longer NON_GOAL')
+  assert(Object.keys(CREATE_NON_GOAL).length === 0, 'CREATE_NON_GOAL empty')
   writeCaseTo(
     outDirV060,
     'create-whitelist-unchanged',
-    `REFINE_CREATE_WHITELIST length=${REFINE_CREATE_WHITELIST.length}; ordinary fields + tab; grid/grid-col still NON_GOAL`,
+    `REFINE_CREATE_WHITELIST length=${REFINE_CREATE_WHITELIST.length}; heavy+upload+slot open; CREATE_NON_GOAL empty`,
     { type: 'static' },
   )
 

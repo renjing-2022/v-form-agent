@@ -5,6 +5,7 @@ import {
   WIDGET_WHITELIST,
   createRejectMessageForType,
 } from '../knowledge/widgetWhitelist.js'
+import { isExtensionManifestCreatable } from '../knowledge/extensionManifestPolicy.js'
 import {
   validateFormConfigAgainstCatalog,
   validateWidgetOptionsAgainstCatalog,
@@ -67,12 +68,18 @@ function isAllowedType(
   existingIds?: Set<string>,
 ): boolean {
   if (mode === 'generate') {
-    return WIDGET_WHITELIST.includes(type as (typeof WIDGET_WHITELIST)[number])
+    return (
+      WIDGET_WHITELIST.includes(type as (typeof WIDGET_WHITELIST)[number]) ||
+      isExtensionManifestCreatable(type)
+    )
   }
   if (id && existingIds?.has(id)) {
     return true
   }
-  return REFINE_CREATE_WHITELIST.includes(type as (typeof REFINE_CREATE_WHITELIST)[number])
+  return (
+    REFINE_CREATE_WHITELIST.includes(type as (typeof REFINE_CREATE_WHITELIST)[number]) ||
+    isExtensionManifestCreatable(type)
+  )
 }
 
 function validateContainerShape(type: string, widget: WidgetNode, path: string, issues: ValidationIssue[]) {

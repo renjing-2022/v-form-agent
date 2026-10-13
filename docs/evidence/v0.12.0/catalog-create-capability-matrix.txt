@@ -1,0 +1,7 @@
+case: catalog-create-capability-matrix
+status: pass
+observed: catalog:check + create-compiler:check ok; 37/37 types createKind/allowedParents/preview asserted; CREATE_NON_GOAL empty
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0d1f3add5f84 (working tree has uncommitted changes)
+capturedAt: 2026-10-12T10:48:42.788Z
+type: agent-script

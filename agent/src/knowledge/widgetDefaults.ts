@@ -51,6 +51,8 @@ export function buildWidgetFromCatalogDefaults(
     optionOverrides?: Record<string, unknown>
     widgetList?: Record<string, unknown>[]
     tabs?: Record<string, unknown>[]
+    cols?: Record<string, unknown>[]
+    rows?: Record<string, unknown>[]
   },
   catalog = getWidgetCatalog(),
 ): Record<string, unknown> {
@@ -76,6 +78,8 @@ export function buildWidgetFromCatalogDefaults(
   }
   if (params.widgetList) node.widgetList = params.widgetList
   if (params.tabs) node.tabs = params.tabs
+  if (params.cols) node.cols = params.cols
+  if (params.rows) node.rows = params.rows
   return node
 }
 

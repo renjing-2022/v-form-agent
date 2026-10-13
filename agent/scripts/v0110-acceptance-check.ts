@@ -85,12 +85,13 @@ async function main() {
   // --- cat-grid-whitelist-parity ---
   const catalogOut = runNpm('catalog:check')
   assert(
-    /DESIGN_TRUTH_CATALOG_SYNC_OK/.test(catalogOut) && /createAllowed=22/.test(catalogOut),
+    /DESIGN_TRUTH_CATALOG_SYNC_OK/.test(catalogOut),
     `catalog:check: ${catalogOut.slice(-400)}`,
   )
+  const createAllowed = /createAllowed=(\d+)/.exec(catalogOut)?.[1] || '0'
   writeEvidence(
     'cat-grid-whitelist-parity',
-    `catalog:check ok; grid/grid-col removed from create whitelist / CREATE_NON_GOAL parity`,
+    `catalog:check ok; createAllowed=${createAllowed} (v0.11 基线 22，v0.12 开放至 37)；CREATE_NON_GOAL parity`,
   )
 
   // --- cat-alias-ambiguous-clarify ---

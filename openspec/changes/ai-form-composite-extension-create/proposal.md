@@ -4,7 +4,7 @@
 
 - Version: `v0.12.0`
 - Primary requirement: `docs/requirements/ai-form-composite-extension-create.md`
-- Status: proposed
+- Status: applied（任务组 1–5 已完成；acceptance 证据已收口）
 - Depends on: `ai-form-catalog-widget-create`
 
 ## Problem

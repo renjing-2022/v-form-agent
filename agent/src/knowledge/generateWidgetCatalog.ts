@@ -74,6 +74,9 @@ import {
   checkCreateOpWhitelistParity,
   checkSemanticAliasRegistryParity,
 } from './createCapabilityPolicy.js'
+import { checkCompositeTemplateParity } from './compositeTemplatePolicy.js'
+import { checkManagedNetworkPolicyParity } from './managedNetworkPolicy.js'
+import { checkExtensionManifestParity } from './extensionManifestPolicy.js'
 import {
   checkCatalogSampleParity,
   checkPolicyEnumConvergence,
@@ -604,6 +607,9 @@ export function checkCreateWhitelistPolicy(catalog: WidgetCatalog): string[] {
     ...checkCreateOpWhitelistParity(catalog),
     ...checkCreateCapabilityParity(catalog),
     ...checkSemanticAliasRegistryParity(catalog),
+    ...checkCompositeTemplateParity(catalog),
+    ...checkManagedNetworkPolicyParity(),
+    ...checkExtensionManifestParity(),
   ]
 }
 
@@ -617,6 +623,7 @@ export { checkFormFieldDualTrackParity } from './formFieldDualTrackPolicy.js'
 export { checkIdentityForbiddenParity } from './identityForbiddenPolicy.js'
 export { checkRenderConventionParity } from './renderConventionPolicy.js'
 export { checkExtensionBoundaryParity } from './extensionBoundaryPolicy.js'
+export { checkExtensionManifestParity } from './extensionManifestPolicy.js'
 export {
   checkCatalogSampleParity,
   checkPolicyEnumConvergence,

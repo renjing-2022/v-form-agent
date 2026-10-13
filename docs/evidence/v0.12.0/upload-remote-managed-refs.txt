@@ -1,0 +1,7 @@
+case: upload-remote-managed-refs
+status: pass
+observed: managed upload/datasource refs create ok; direct credential/production URL rejected
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0d1f3add5f84 (working tree has uncommitted changes)
+capturedAt: 2026-10-12T10:48:42.834Z
+type: agent-script

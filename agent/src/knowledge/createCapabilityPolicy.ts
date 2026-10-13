@@ -1,16 +1,34 @@
 /**
- * v0.11 Catalog 创建能力真源：createKind / allowedParents / eventKeys /
+ * v0.12 Catalog 创建能力真源：createKind（含 runtime-extension≡extension）/
+ * allowedParents / requiredChildren / childSlots / eventKeys /
  * previewCapabilities / 中文语义别名，以及与 create op 声明的漂移检查。
  */
 import { isEventKey } from './catalogPolicy.js'
 import {
   CREATE_NON_GOAL,
+  EXTENSION_CREATE_WHITELIST,
   REFINE_CREATE_WHITELIST,
+  UPLOAD_CREATE_WHITELIST,
   isCreateAllowedType,
 } from './createWhitelistPolicy.js'
+import {
+  COMPOSITE_CREATE_TYPES,
+  EXTENSION_CREATE_TYPES,
+  HEAVY_CREATE_TYPES,
+  INTERNAL_CREATE_TYPES,
+  childSlotsFor,
+  requiredChildrenFor,
+  type ChildSlotDef,
+  type CreateKind,
+} from './compositeTemplatePolicy.js'
+import {
+  getExtensionPreviewCapabilities,
+  isRuntimeOnlyExtensionType,
+} from './extensionManifestPolicy.js'
 import type { WidgetCatalog, WidgetCatalogEntry } from './widgetCatalog.js'
 
-export type CreateKind = 'standalone' | 'internal' | 'composite' | 'extension'
+export type { CreateKind } from './compositeTemplatePolicy.js'
+export { COMPOSITE_CREATE_TYPES, EXTENSION_CREATE_TYPES, INTERNAL_CREATE_TYPES } from './compositeTemplatePolicy.js'
 
 export type PreviewAct =
   | 'input'
@@ -41,6 +59,8 @@ export type PreviewAssert =
 export type WidgetCreateCapability = {
   createKind: CreateKind
   allowedParents: string[]
+  requiredChildren: string[]
+  childSlots: ChildSlotDef[]
   eventKeys: string[]
   previewCapabilities: {
     acts: PreviewAct[]
@@ -50,29 +70,18 @@ export type WidgetCreateCapability = {
   semanticAliases: string[]
 }
 
-/** 必须挂在固定父容器下的内部节点 */
-export const INTERNAL_CREATE_TYPES = new Set(['grid-col', 'table-cell', 'tab-pane'])
-
-/** 需要复杂子树 / 专用结构 op 的复合容器 */
-export const COMPOSITE_CREATE_TYPES = new Set([
-  'grid',
-  'tab',
-  'table',
+/** 普通字段默认可挂载的父级（含重型壳与内部单元格） */
+const STANDALONE_PARENTS = [
+  'root',
+  'tab-pane',
+  'grid-col',
+  'table-cell',
   'sub-form',
   'grid-sub-form',
-  'data-table',
-  'tree',
-  'button-group',
   'object-group',
   'vf-dialog',
   'vf-drawer',
-])
-
-/** 扩展/插槽边界（静态 Catalog 内） */
-export const EXTENSION_CREATE_TYPES = new Set(['slot'])
-
-/** 普通字段默认可挂载的父级（含既有 refine addField 已开放的重型壳） */
-const STANDALONE_PARENTS = ['root', 'tab-pane', 'grid-col', 'table-cell', 'sub-form', 'vf-dialog'] as const
+] as const
 
 const FIELD_PREVIEW: WidgetCreateCapability['previewCapabilities'] = {
   acts: ['input', 'clear', 'mount'],
@@ -151,6 +160,10 @@ export const SEMANTIC_ALIAS_REGISTRY: Readonly<Record<string, readonly string[]>
   标签页: ['tab'],
   选项卡: ['tab'],
   选项卡页: ['tab-pane'],
+  插槽: ['slot'],
+  卡片: ['card'],
+  提示: ['alert'],
+  警告条: ['alert'],
 }
 
 /** PRD FR-3 必须覆盖的别名 */
@@ -163,7 +176,7 @@ export const REQUIRED_SEMANTIC_ALIASES = [
   '说明文字',
 ] as const
 
-/** 具备实际 NL create op 的 type（与白名单对齐；grid/grid-col 不得出现） */
+/** 具备实际 NL create op 的 type（与白名单对齐；含 grid/grid-col） */
 export const CREATE_OP_SUPPORTED_TYPES = new Set<string>([
   ...REFINE_CREATE_WHITELIST,
 ])
@@ -207,6 +220,12 @@ export function allowedParentsFor(type: string, createKind: CreateKind): string[
 
 export function previewCapabilitiesFor(type: string): WidgetCreateCapability['previewCapabilities'] {
   switch (type) {
+    case 'file-upload':
+    case 'picture-upload':
+      return {
+        acts: ['mount'],
+        asserts: ['hidden', 'disabled', 'label', 'noError', 'noNetwork'],
+      }
     case 'input':
     case 'textarea':
     case 'number':
@@ -254,6 +273,16 @@ export function previewCapabilitiesFor(type: string): WidgetCreateCapability['pr
     case 'tab':
     case 'tab-pane':
       return CONTAINER_PREVIEW
+    case 'slot': {
+      const preview = getExtensionPreviewCapabilities('slot')
+      if (preview) {
+        return {
+          acts: preview.acts as WidgetCreateCapability['previewCapabilities']['acts'],
+          asserts: preview.asserts as WidgetCreateCapability['previewCapabilities']['asserts'],
+        }
+      }
+      return EMPTY_PREVIEW
+    }
     default:
       return EMPTY_PREVIEW
   }
@@ -343,6 +372,8 @@ export function buildWidgetCreateCapability(entry: WidgetCatalogEntry): WidgetCr
   return {
     createKind,
     allowedParents: allowedParentsFor(entry.type, createKind),
+    requiredChildren: requiredChildrenFor(entry.type),
+    childSlots: childSlotsFor(entry.type),
     eventKeys: eventKeysFor(entry),
     previewCapabilities: previewCapabilitiesFor(entry.type),
     semanticAliases: semanticAliasesFor(entry.type),
@@ -371,7 +402,7 @@ export function checkSemanticAliasRegistryParity(catalog: WidgetCatalog): string
       continue
     }
     for (const type of types) {
-      if (!catalogTypes.has(type)) {
+      if (!catalogTypes.has(type) && !isRuntimeOnlyExtensionType(type)) {
         issues.push(`semantic alias "${alias}" → unknown type "${type}"`)
       }
     }
@@ -412,6 +443,15 @@ export function checkCreateCapabilityParity(catalog: WidgetCatalog): string[] {
     if (JSON.stringify([...actual.allowedParents].sort()) !== JSON.stringify([...expected.allowedParents].sort())) {
       issues.push(`${widget.type} allowedParents drift`)
     }
+    if (
+      JSON.stringify([...(actual.requiredChildren || [])].sort()) !==
+      JSON.stringify([...expected.requiredChildren].sort())
+    ) {
+      issues.push(`${widget.type} requiredChildren drift`)
+    }
+    if (JSON.stringify(actual.childSlots || []) !== JSON.stringify(expected.childSlots)) {
+      issues.push(`${widget.type} childSlots drift`)
+    }
     if (JSON.stringify(actual.eventKeys) !== JSON.stringify(expected.eventKeys)) {
       issues.push(`${widget.type} eventKeys drift`)
     }
@@ -442,19 +482,35 @@ export function checkCreateCapabilityParity(catalog: WidgetCatalog): string[] {
 
 /**
  * 白名单与实际 create op 漂移：
- * - 白名单 type 必须有 create op（字段 addField / tab wrapInTabs）
- * - grid/grid-col 不得再出现在白名单（无专用 create op）
+ * - 白名单 type 必须有 create op（字段 / 复合模板）
+ * - grid/table 与重型容器必须在白名单且不得再登记为 NON_GOAL
  */
 export function checkCreateOpWhitelistParity(catalog: WidgetCatalog): string[] {
   const issues: string[] = []
   const catalogTypes = new Set(catalog.widgets.map((w) => w.type))
+  const requiredCreateOps = [
+    'grid',
+    'grid-col',
+    'tab',
+    'tab-pane',
+    ...HEAVY_CREATE_TYPES,
+    ...UPLOAD_CREATE_WHITELIST,
+    ...EXTENSION_CREATE_WHITELIST,
+  ] as const
 
-  for (const banned of ['grid', 'grid-col'] as const) {
-    if (isCreateAllowedType(banned)) {
-      issues.push(`${banned} is in REFINE_CREATE_WHITELIST but has no dedicated create op`)
+  for (const required of requiredCreateOps) {
+    if (!catalogTypes.has(required)) {
+      issues.push(`${required} missing from Catalog`)
+      continue
     }
-    if (CREATE_NON_GOAL[banned] == null && catalogTypes.has(banned)) {
-      issues.push(`${banned} must be CREATE_NON_GOAL when not creatable`)
+    if (!isCreateAllowedType(required)) {
+      issues.push(`${required} must be in REFINE_CREATE_WHITELIST (v0.12 create op)`)
+    }
+    if (CREATE_NON_GOAL[required] != null) {
+      issues.push(`${required} must not remain CREATE_NON_GOAL once create op is open`)
+    }
+    if (!CREATE_OP_SUPPORTED_TYPES.has(required)) {
+      issues.push(`${required} missing create-op support declaration`)
     }
   }
 
@@ -462,13 +518,6 @@ export function checkCreateOpWhitelistParity(catalog: WidgetCatalog): string[] {
     if (!CREATE_OP_SUPPORTED_TYPES.has(type)) {
       issues.push(`REFINE_CREATE_WHITELIST type "${type}" missing create-op support declaration`)
     }
-  }
-
-  if (CREATE_NON_GOAL.grid !== 'structure-no-create-op') {
-    issues.push('grid CREATE_NON_GOAL must be structure-no-create-op')
-  }
-  if (CREATE_NON_GOAL['grid-col'] !== 'internal-container') {
-    issues.push('grid-col CREATE_NON_GOAL must be internal-container')
   }
 
   return issues

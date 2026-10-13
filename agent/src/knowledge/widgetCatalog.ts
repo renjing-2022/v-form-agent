@@ -158,16 +158,17 @@ export const catalogExtensionPolicySchema = z.object({
     staticCoverage: z.literal('NON_GOAL'),
     note: z.string().min(1),
   }),
-  createNonGoal: z.object({
-    reason: z.literal('extension-runtime'),
+  manifestGate: z.object({
+    reason: z.literal('extension-manifest'),
     staticTypes: z.array(z.string().min(1)).min(1),
+    runtimeTypes: z.array(z.string().min(1)).min(1),
     note: z.string().min(1),
   }),
 })
 
 export const widgetExtensionBoundaryNoteSchema = z.object({
   kind: z.literal('static-adjacent'),
-  createNonGoal: z.literal('extension-runtime'),
+  createGate: z.literal('manifest'),
   note: z.string().min(1),
 })
 
@@ -189,9 +190,18 @@ export const widgetCatalogVariantSchema = z.object({
   structure: widgetStructureSchema,
 })
 
+export const widgetChildSlotSchema = z.object({
+  key: z.string().min(1),
+  allowedTypes: z.array(z.string().min(1)),
+  minCount: z.number().int().min(0),
+  maxCount: z.number().int().min(0).optional(),
+})
+
 export const widgetCreateCapabilitySchema = z.object({
   createKind: z.enum(['standalone', 'internal', 'composite', 'extension']),
   allowedParents: z.array(z.string().min(1)),
+  requiredChildren: z.array(z.string().min(1)).default([]),
+  childSlots: z.array(widgetChildSlotSchema).default([]),
   eventKeys: z.array(z.string().min(1)),
   previewCapabilities: z.object({
     acts: z.array(z.string().min(1)),

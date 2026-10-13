@@ -1,0 +1,7 @@
+case: v011-v010-regression
+status: pass
+observed: v0.11 create/alias/txn cases re-run via v0110:acceptance; v0.9 interaction validation rejects illegal eventKey; catalog+compiler checks green
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0d1f3add5f84 (working tree has uncommitted changes)
+capturedAt: 2026-10-12T10:48:42.920Z
+type: agent-script

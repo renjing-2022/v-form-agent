@@ -1,0 +1,8 @@
+case: runtime-extension-e2e
+status: pass
+observed: card+alert+slot manifest 扩展单事务 generated→verify→applied；canvas 写入前保持不变
+environment: Playwright Chromium; local Windows; agent mock mode; v-form:3130; agent:3140
+sourceRevision: feat/v0.12.0-composite-extension-create@0d1f3add5f84 (working tree has uncommitted changes)
+capturedAt: 2026-10-12T10:58:56.624Z
+durationMs: 4515
+screenshot: docs/evidence/v0.12.0/runtime-extension-e2e.png

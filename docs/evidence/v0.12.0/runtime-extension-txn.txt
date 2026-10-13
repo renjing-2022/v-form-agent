@@ -1,0 +1,7 @@
+case: runtime-extension-txn
+status: pass
+observed: card+alert+slot created via manifest in one interaction transaction
+environment: local-windows; agent scripts; AGENT_ALLOW_MOCK=1
+sourceRevision: 0d1f3add5f84 (working tree has uncommitted changes)
+capturedAt: 2026-10-12T10:48:42.878Z
+type: agent-script

@@ -108,13 +108,43 @@ function scanOutput(formJson: FormJson, output: InteractionOutput): RiskFact[] {
   const handlers = output.handlers || []
 
   for (const op of output.structure || []) {
-    const rec = op as { op?: string; type?: string }
+    const rec = op as {
+      op?: string
+      type?: string
+      optionOverrides?: Record<string, unknown>
+    }
     if (rec.op === 'addButton') continue
     if (rec.op === 'removeField' || rec.op === 'removeFieldsInScope') {
       facts.push(fact('bulk_delete_rebuild', 'L2', `结构操作 ${rec.op}`, [rec.op || '']))
     }
-    if (String(rec.type || '').toLowerCase().includes('upload')) {
+    const type = String(rec.type || '').toLowerCase()
+    if (type.includes('upload') || type === 'file-upload' || type === 'picture-upload') {
       facts.push(fact('upload_config', 'L2', '结构含上传类控件'))
+    }
+    const overrides = rec.optionOverrides || {}
+    if (overrides.managedUploadRef || overrides.uploadURL) {
+      facts.push(fact('upload_config', 'L2', '结构含受管/声明式上传配置'))
+    }
+    if (overrides.managedDataSourceRef || overrides.dsEnabled === true) {
+      facts.push(fact('remote_datasource', 'L2', '结构含声明式远程数据源配置'))
+    }
+    // 凭据直写 → L3
+    for (const [key, value] of Object.entries(overrides)) {
+      if (/^(authorization|api[_-]?key|token|secret|password|credential)$/i.test(key)) {
+        facts.push(fact('credential_write', 'L3', `optionOverrides 含凭据键 ${key}`))
+      }
+      if (typeof value === 'string' && /api[_-]?key|bearer\s+[a-z0-9]/i.test(value)) {
+        facts.push(fact('credential_write', 'L3', 'optionOverrides 含疑似凭据值'))
+      }
+    }
+    if (overrides.withCredentials === true) {
+      facts.push(fact('credential_write', 'L3', 'withCredentials=true 禁止'))
+    }
+    if (
+      typeof overrides.uploadURL === 'string' &&
+      /production|https?:\/\/(?!localhost|127\.0\.0\.1)/i.test(overrides.uploadURL)
+    ) {
+      facts.push(fact('production_external_write', 'L3', 'uploadURL 疑似生产/外网'))
     }
   }
 

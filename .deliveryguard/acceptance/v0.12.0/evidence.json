@@ -1,0 +1,172 @@
+{
+  "$schema": "https://raw.githubusercontent.com/wzf1997/delivery-harness/main/schemas/evidence.schema.json",
+  "schemaVersion": 1,
+  "version": "v0.12.0",
+  "documents": [
+    {
+      "documentId": "ai-form-composite-extension-create-prd",
+      "requirementIds": [
+        "fr-1-composite",
+        "fr-2-upload",
+        "fr-3-remote-datasource",
+        "fr-4-runtime-extension",
+        "fr-5-internal-nodes",
+        "fr-6-mixed-txn",
+        "ac-1-catalog-matrix",
+        "ac-2-honest-block-reason",
+        "ac-4-upload-remote-l2",
+        "ac-5-network-js-reject",
+        "ac-6-manifest-lifecycle",
+        "ac-7-txn-fail-canvas-unchanged"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "fr-1-composite",
+      "description": "sub-form/grid-sub-form/data-table/tree/button-group/object-group/vf-dialog/vf-drawer/grid/tab/table 复合模板与父子约束",
+      "caseIds": ["catalog-create-capability-matrix", "txn-composite-handler-atomic"]
+    },
+    {
+      "id": "fr-2-upload",
+      "description": "file-upload/picture-upload 创建 + L2 Ask-before-act；受管上传引用；凭据/生产 URL 拒绝",
+      "caseIds": ["upload-remote-managed-refs"]
+    },
+    {
+      "id": "fr-3-remote-datasource",
+      "description": "声明式远程数据源引用与字段映射；JS 网络调用拒绝",
+      "caseIds": ["upload-remote-managed-refs"]
+    },
+    {
+      "id": "fr-4-runtime-extension",
+      "description": "slot/card/alert manifest 注册与创建；custom/chart 发现；缺失/漂移/非法权限拒绝",
+      "caseIds": [
+        "ext-manifest-create-matrix",
+        "ext-manifest-missing-drift-illegal",
+        "runtime-extension-txn",
+        "runtime-extension-e2e",
+        "ext-missing-manifest-e2e"
+      ]
+    },
+    {
+      "id": "fr-5-internal-nodes",
+      "description": "table-cell/grid-col/tab-pane 无父创建拒绝；父上下文内可创建",
+      "caseIds": ["internal-no-parent-reject"]
+    },
+    {
+      "id": "fr-6-mixed-txn",
+      "description": "复合+JS+scenarios 单事务；handlers 引用解析后稳定目标；失败画布不变",
+      "caseIds": [
+        "txn-composite-handler-atomic",
+        "txn-composite-handler-e2e"
+      ]
+    },
+    {
+      "id": "ac-1-catalog-matrix",
+      "description": "静态 Catalog 全 37 type create capability 结论与测试",
+      "caseIds": ["catalog-create-capability-matrix"]
+    },
+    {
+      "id": "ac-2-honest-block-reason",
+      "description": "无 manifest/凭据/生产写返回具体阻塞原因（不泛化白名单拒绝）",
+      "caseIds": ["ext-manifest-missing-drift-illegal", "ext-missing-manifest-e2e"]
+    },
+    {
+      "id": "ac-4-upload-remote-l2",
+      "description": "上传与声明式远程 L2 Ask-before-act",
+      "caseIds": ["upload-remote-managed-refs"]
+    },
+    {
+      "id": "ac-5-network-js-reject",
+      "description": "生成 JS 网络调用仍被拒绝（回归）",
+      "caseIds": ["ext-manifest-missing-drift-illegal", "v011-v010-regression"]
+    },
+    {
+      "id": "ac-6-manifest-lifecycle",
+      "description": "runtime manifest 合法/缺失/版本漂移验收",
+      "caseIds": ["ext-manifest-create-matrix", "ext-manifest-missing-drift-illegal"]
+    },
+    {
+      "id": "ac-7-txn-fail-canvas-unchanged",
+      "description": "复合+JS 事务失败时画布不变",
+      "caseIds": ["txn-composite-handler-atomic", "ext-missing-manifest-e2e"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "ext-manifest-create-matrix",
+      "title": "slot/card/alert manifest 受管创建矩阵",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.12.0/ext-manifest-create-matrix.txt"]
+    },
+    {
+      "id": "ext-manifest-missing-drift-illegal",
+      "title": "manifest 缺失/版本漂移/非法权限诚实拒绝；custom/chart 发现受阻",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.12.0/ext-manifest-missing-drift-illegal.txt"]
+    },
+    {
+      "id": "txn-composite-handler-atomic",
+      "title": "复合结构+JS+scenarios 单事务；失败 handler 整单拒绝画布不变；确认后 applied",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.12.0/txn-composite-handler-atomic.txt"]
+    },
+    {
+      "id": "internal-no-parent-reject",
+      "title": "tab-pane/grid-col/table-cell 无父创建拒绝；tempRef 父上下文可创建",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.12.0/internal-no-parent-reject.txt"]
+    },
+    {
+      "id": "catalog-create-capability-matrix",
+      "title": "静态 Catalog 全 37 type 创建能力矩阵（createKind/allowedParents/preview）",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.12.0/catalog-create-capability-matrix.txt"]
+    },
+    {
+      "id": "upload-remote-managed-refs",
+      "title": "受管 upload/datasource 引用创建；凭据与生产 URL 拒绝",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.12.0/upload-remote-managed-refs.txt"]
+    },
+    {
+      "id": "runtime-extension-txn",
+      "title": "card+alert+slot 单交互事务经 manifest 创建",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.12.0/runtime-extension-txn.txt"]
+    },
+    {
+      "id": "v011-v010-regression",
+      "title": "v0.11 验收与 v0.9 interaction 校验回归",
+      "status": "pass",
+      "evidence": ["docs/evidence/v0.12.0/v011-v010-regression.txt"]
+    },
+    {
+      "id": "txn-composite-handler-e2e",
+      "title": "grid+number/input+金额 handler 单事务 UI generated→verify→applied（Playwright）",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.12.0/txn-composite-handler-e2e.txt",
+        "docs/evidence/v0.12.0/txn-composite-handler-e2e.png"
+      ]
+    },
+    {
+      "id": "runtime-extension-e2e",
+      "title": "card+alert+slot runtime extension 单事务 UI applied（Playwright）",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.12.0/runtime-extension-e2e.txt",
+        "docs/evidence/v0.12.0/runtime-extension-e2e.png"
+      ]
+    },
+    {
+      "id": "ext-missing-manifest-e2e",
+      "title": "无 manifest runtime type UI 诚实拒绝画布不变（Playwright）",
+      "status": "pass",
+      "evidence": [
+        "docs/evidence/v0.12.0/ext-missing-manifest-e2e.txt",
+        "docs/evidence/v0.12.0/ext-missing-manifest-e2e.png"
+      ]
+    }
+  ]
+}

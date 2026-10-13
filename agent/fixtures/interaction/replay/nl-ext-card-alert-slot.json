@@ -1,0 +1,52 @@
+{
+  "match": {
+    "scenarioId": "nl-ext-card-alert-slot",
+    "instructionIncludes": ["加一个alert提示", "加一个card卡片", "加一个slot插槽"]
+  },
+  "output": {
+    "intent": "mixed",
+    "summary": "顶部 alert + 中间 card + 底部 slot（manifest 扩展单事务）",
+    "structure": [
+      {
+        "op": "createWidget",
+        "type": "alert",
+        "tempRef": "t_alert",
+        "name": "top_alert",
+        "label": "提示",
+        "parent": { "kind": "root" },
+        "position": { "kind": "first" },
+        "optionOverrides": { "title": "提示", "type": "info" }
+      },
+      {
+        "op": "createWidget",
+        "type": "card",
+        "tempRef": "t_card",
+        "name": "main_card",
+        "label": "卡片",
+        "parent": { "kind": "root" },
+        "position": { "kind": "last" }
+      },
+      {
+        "op": "createWidget",
+        "type": "slot",
+        "tempRef": "t_slot",
+        "name": "bottom_slot",
+        "label": "插槽",
+        "parent": { "kind": "root" },
+        "position": { "kind": "last" }
+      }
+    ],
+    "handlers": [],
+    "scenarios": [
+      {
+        "id": "s-ext-mount",
+        "handlerRefs": ["top_alert"],
+        "title": "扩展节点挂载无错误",
+        "arrange": {},
+        "act": [{ "mount": true }],
+        "assert": [{ "noError": true }, { "noNetwork": true }]
+      }
+    ],
+    "unsupported": []
+  }
+}
