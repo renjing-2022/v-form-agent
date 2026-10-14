@@ -21,9 +21,9 @@
   "sources": [
     {
       "repositoryId": "app",
-      "branch": "feature/v0.13.0-autonomy-hardening",
+      "branch": "main",
       "commit": "7acf928786370f0f0d7215b417a5c27af5a384a0",
-      "status": "submitted"
+      "status": "merged"
     }
   ],
   "acceptance": {
