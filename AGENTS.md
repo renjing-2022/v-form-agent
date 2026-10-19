@@ -73,6 +73,8 @@ Before editing, inspect the branch, remotes, and working tree. Preserve existing
 
 Stage only task files. Do not push, merge, rebase, rewrite history, delete branches, or publish unless authorized.
 
+When authorized `git push` / `ls-remote` to `github.com` fails with HTTPS connection reset or port 443 unreachable, retry immediately via the local proxy `http://127.0.0.1:7890` using session env vars and/or one-shot `git -c http.proxy=... -c https.proxy=...` (do not change git config). Only escalate if that proxy port is down or auth still fails after the proxy works.
+
 ## Verification and handoff
 
 Run the smallest checks that cover the changed behavior, then expand according to risk. Use repository-native commands and run `deliveryguard check` before making a lifecycle claim. Do not weaken assertions or hide failures. Distinguish regressions from existing failures and environment blockers.
