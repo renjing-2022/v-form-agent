@@ -15,8 +15,8 @@
   ],
   "openSpec": {
     "changeId": "ai-form-autonomy-hardening",
-    "path": "openspec/changes/ai-form-autonomy-hardening",
-    "status": "applied"
+    "path": "openspec/changes/archive/2026-10-19-ai-form-autonomy-hardening",
+    "status": "archived"
   },
   "sources": [
     {
