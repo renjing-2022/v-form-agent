@@ -5,7 +5,7 @@
 | 文档 ID | `ai-form-autonomy-hardening-prd` |
 | 类型 | product-requirement |
 | 目标版本 | `v0.13.0` |
-| 状态 | DeliveryGuard acceptance passed（source=`merged` @ `7acf928` / `main`；release 仍 pending） |
+| 状态 | released（DeliveryGuard `release.published`；acceptance passed；OpenSpec `archived`；tag `v0.13.0`） |
 | 关联 OpenSpec | `ai-form-autonomy-hardening` |
 | 前置版本 | `v0.12.0` released |
 
